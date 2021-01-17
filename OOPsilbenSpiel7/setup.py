@@ -8,11 +8,11 @@ from wiktionary_de_parser import Parser
 
 black = (0,0,0)
 white = (255,255,255)
-col = (125,33,200)
+lila = (125,33,200)
 clock = pg.time.Clock()
 fps = 30
 
-pg.init()
+#pg.init()
 
 def initiate():
     global screen
@@ -34,7 +34,7 @@ def get_bank():
             listesilben.append(record['syllables'])
         if len(listesilben) == 1000:
              break
-    return listesilben
+    return random.sample(listesilben,200) # 200 random ones
 
 
 

@@ -25,20 +25,17 @@ class Bank:
         self.array.append(silbe)
         return self.array
 
-    def runterfallen(self): #recursive?
-        print("fall works 4")
+    def runterfallen(self,player): #recursive?
         rects = self.get_rects()
-        setup.screen.fill(setup.white)
-        print("start moving")
-        for i in range(10):
-
-            for event in pg.event.get():
-                        if event.type == KEYDOWN:
-                            if event.key == K_n:
-                                bool = False
-
+        player.show()
+        for i in range(len(self.array)):
 
             for j in range(len(rects[:i])):
+
+                for event in pg.event.get():
+                    if event.type == KEYDOWN:
+                        player.onemove(event)
+
                 rects[j].show()
                 rects[j].move()
                 pg.display.update()
@@ -46,10 +43,14 @@ class Bank:
 
             rects[i].show()
             rects[i].move()
-            pg.display.update() # zeigt die ganze runde
             print("i ",rects[i].inhalt,rects[i].rect.x,rects[i].rect.y)
+
+            player.show()
+            pg.display.update() # zeigt die ganze runde
+
+
             time.sleep(1)
-            setup.screen.fill(setup.white) # bereit fuer die naechste runde
+            setup.screen.fill(setup.lila) # bereit fuer die naechste runde
 
 
 
