@@ -11,6 +11,7 @@ white = (255,255,255)
 lila = (125,33,200)
 clock = pg.time.Clock()
 fps = 30
+things_on_screen = []
 
 #pg.init()
 
@@ -21,6 +22,7 @@ def initiate():
     screen.fill(white)
     font = pg.font.SysFont("Ariel",30)
     print("setup 4 works")
+
 
 
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
