@@ -15,7 +15,8 @@ class Silbe:
 
 
     def show(self):
-        setup.screen.blit(self.txt,self.rect)
+        #setup.screen.blit(self.txt,self.rect)
+        setup.things_on_screen.append(self)
 
     def move(self):
         self.rect.y += 40
