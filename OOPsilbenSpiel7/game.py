@@ -9,9 +9,16 @@ from OOPsilbenSpiel7 import silbe
 class Game:
 
     def __init__(self):
-        self.user = spieler.Spieler()
+        self.player = spieler.Spieler()
         self.bank = bank.Bank()
         print("game works")
+
+    def start(self):
+        while True:
+            self.bank.runterfallen(self.player)
+
+
+
 
 
 

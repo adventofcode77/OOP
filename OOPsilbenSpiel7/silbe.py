@@ -8,7 +8,7 @@ class Silbe:
         self.inhalt = silbe
         length = len(silbe)*10
         if x == 0:
-            x = random.randrange(50,450,50)
+            x = random.randrange(length,500-length,50)
         print(silbe,x,y)
         self.rect = pg.Rect(x,y,length,20)
         self.txt = setup.font.render(silbe,False,setup.black)
