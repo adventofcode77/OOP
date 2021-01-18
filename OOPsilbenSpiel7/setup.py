@@ -23,7 +23,13 @@ def initiate():
     font = pg.font.SysFont("Ariel",30)
     print("setup 4 works")
 
-
+def screen_update(surface): # after every changed object
+    print(things_on_screen)
+    screen.fill(lila)
+    things_on_screen.append(surface)
+    for surface in things_on_screen:
+        screen.blit(surface.txt,surface.rect)
+    pg.display.update()
 
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
 

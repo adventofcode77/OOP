@@ -15,9 +15,7 @@ class Spieler:
         self.txt = setup.font.render("player",False,setup.black)
 
     def show(self):
-        #setup.screen.blit(self.txt,self.rect)
-        setup.things_on_screen.append(self)
-        #print(self.txt,self.rect.x,self.rect.y)
+        setup.screen_update(self)
 
 
     def onemove(self,event):
