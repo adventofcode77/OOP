@@ -12,7 +12,7 @@ from OOPsilbenSpiel7 import game
 def main():
     pg.init()
     game1 = game.Game()
-    game1.start()
+    game1.loop(0,0,0)
 
 
 

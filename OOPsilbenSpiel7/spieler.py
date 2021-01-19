@@ -1,4 +1,5 @@
 import pygame as pg
+from pygame import *
 import sys, time, random
 from pygame.locals import *
 import numpy as np
@@ -18,15 +19,23 @@ class Spieler:
     def show(self):
         setup.things_on_screen.append(self)
 
-    def slide(self, keys):
+    def slide(self):
+        keys = key.get_pressed()
         if keys[K_LEFT]:
+            print("moved")
             self.rect.x -= 5
         elif keys[K_RIGHT]:
+            print("moved")
             self.rect.x += 5
         elif keys[K_UP]:
+            print("moved")
             self.rect.y -= 5
         elif keys[K_DOWN]:
-            self.rect.y -= 5
+            print("moved")
+            self.rect.y += 5
+        if keys is not []:
+            pg.display.update()
+
 
 
     def onemove(self,event):
