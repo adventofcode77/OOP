@@ -15,27 +15,32 @@ class Game:
         self.rects = self.bank.get_rects()
 
     def move_syls(self,neu,alt):
+        setup.screen_update(self.player)
+        neu = alt+1
         alte_silbe = self.rects[alt]
         alte_silbe.show()
         alte_silbe.move()
-        neue_silbe = self.rects[neu]
-        neue_silbe.show()
-        neue_silbe.move()
-        setup.screen_update(self.player)
-        return [neu if neu>alt+1 else neu+1,alt+1]
+        if neu == alt:
+            neue_silbe = self.rects[neu]
+            neue_silbe.show()
+            neue_silbe.move()
+            return neu+1,0
+        else:
+            return neu,alt+1
+        #return neu+1 if neu==alt+1 else neu,alt+1
 
     def loop(self,neu,alt,counter):
         if neu == len(self.rects)-1:
-            exit()
-        print(counter)
+            self.loop(0,0,0)
+        #print(counter)
         counter += 1
         setup.clock.tick(setup.fps)
-
         for stuff in event.get():
             if stuff.type == QUIT:
                 quit()
         self.player.slide()
-        self.loop(self.move_syls(neu,alt)[0],self.move_syls(neu,alt)[1],counter)
-        #self.loop(neu if neu>alt+1 else neu+1,alt+1,counter)
+        neu, alt = self.move_syls(neu,alt)
+        print(neu,alt)
+        self.loop(neu,alt,counter)
 
 
