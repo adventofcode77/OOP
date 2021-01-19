@@ -12,10 +12,21 @@ class Spieler:
         self.step = 20
         self.my_silben = []
         self.auswahl = []
-        self.txt = setup.font.render("player",False,setup.black)
+        font = pg.font.SysFont("Arial",30)
+        self.txt = font.render("player",False,setup.black)
 
     def show(self):
-        setup.screen_update(self)
+        setup.things_on_screen.append(self)
+
+    def slide(self, keys):
+        if keys[K_LEFT]:
+            self.rect.x -= 5
+        elif keys[K_RIGHT]:
+            self.rect.x += 5
+        elif keys[K_UP]:
+            self.rect.y -= 5
+        elif keys[K_DOWN]:
+            self.rect.y -= 5
 
 
     def onemove(self,event):

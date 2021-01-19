@@ -10,21 +10,18 @@ black = (0,0,0)
 white = (255,255,255)
 lila = (125,33,200)
 clock = pg.time.Clock()
-fps = 30
+fps = 60
 things_on_screen = []
 
 #pg.init()
 
-def initiate():
-    global screen
-    global font
-    screen = pg.display.set_mode((500,500))
-    screen.fill(white)
-    font = pg.font.SysFont("Ariel",30)
-    print("setup 4 works")
+
+# global font
+screen = pg.display.set_mode((500,500))
+screen.fill(white)
+#font = pg.font.SysFont("Arial",30)
 
 def screen_update(surface): # after every changed object
-    print(things_on_screen)
     screen.fill(lila)
     things_on_screen.append(surface)
     for surface in things_on_screen:

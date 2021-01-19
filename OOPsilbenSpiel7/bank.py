@@ -17,8 +17,8 @@ class Bank:
         rects = []
         for syl in self.flat:
             x = random.randrange(50,450,50)
-            hmm = silbe.Silbe(syl,x,0)
-            rects.append(hmm)
+            syl = silbe.Silbe(syl,x,0)
+            rects.append(syl)
         return rects
 
     def add(self,silbe):
