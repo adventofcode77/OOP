@@ -14,33 +14,33 @@ class Game:
         self.bank = bank.Bank()
         self.rects = self.bank.get_rects()
 
-    def move_syls(self,neu,alt):
-        setup.screen_update(self.player)
-        #neu = alt+1
-        alte_silbe = self.rects[alt]
-        alte_silbe.show()
-        alte_silbe.move()
-        neue_silbe = self.rects[neu]
-        neue_silbe.show()
-        if neu == alt:
-            neue_silbe.move()
-            return neu+1,0
-        else:
-            return neu,alt+1
-        #return neu+1 if neu==alt+1 else neu,alt+1
+    def anotherway(self):
+        pass
 
-    def loop(self,neu,alt,counter):
-        if neu == len(self.rects)-1:
-            self.loop(0,0,0)
-        #print(counter)
-        counter += 1
-        setup.clock.tick(setup.fps)
-        for stuff in event.get():
-            if stuff.type == QUIT:
-                quit()
-        self.player.slide()
-        neu, alt = self.move_syls(neu,alt)
-        print(neu,alt)
-        self.loop(neu,alt,counter)
+    def loop1(self):
+        syls = self.rects
+        counter = 0
+        while True:
+            setup.things_on_screen = []
+            counter += 1
+            print("counter ",counter)
+            setup.clock.tick(setup.fps)
+            self.player.slide()
+
+            for stuff in event.get():
+                if stuff.type == QUIT:
+                    quit()
+
+            for i in range(len(syls)):
+                neu = syls[i]
+                for alt in syls[:i]:
+                    alt.move()
+                    # print("this time ",counter)
+                neu.add()
+                neu.move()
+
+            setup.screen_update(self.player)
+            print(len(setup.things_on_screen))
+
 
 
