@@ -11,7 +11,6 @@ from OOPsilbenSpiel7 import game
 
 def main():
     pg.init()
-    setup.initiate()
     game1 = game.Game()
     game1.start()
 
