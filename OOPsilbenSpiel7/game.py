@@ -16,13 +16,13 @@ class Game:
 
     def move_syls(self,neu,alt):
         setup.screen_update(self.player)
-        neu = alt+1
+        #neu = alt+1
         alte_silbe = self.rects[alt]
         alte_silbe.show()
         alte_silbe.move()
+        neue_silbe = self.rects[neu]
+        neue_silbe.show()
         if neu == alt:
-            neue_silbe = self.rects[neu]
-            neue_silbe.show()
             neue_silbe.move()
             return neu+1,0
         else:
