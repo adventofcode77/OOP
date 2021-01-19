@@ -15,26 +15,21 @@ class Spieler:
         self.auswahl = []
         font = pg.font.SysFont("Arial",30)
         self.txt = font.render("player",False,setup.black)
+        self.speed = 30
 
-    def show(self):
+    def add(self):
         setup.things_on_screen.append(self)
 
     def slide(self):
         keys = key.get_pressed()
         if keys[K_LEFT]:
-            print("moved")
-            self.rect.x -= 5
+            self.rect.x -= self.speed
         elif keys[K_RIGHT]:
-            print("moved")
-            self.rect.x += 5
+            self.rect.x += self.speed
         elif keys[K_UP]:
-            print("moved")
-            self.rect.y -= 5
+            self.rect.y -= self.speed
         elif keys[K_DOWN]:
-            print("moved")
-            self.rect.y += 5
-        if keys is not []:
-            pg.display.update()
+            self.rect.y += self.speed
 
 
 

@@ -26,7 +26,7 @@ def screen_update(surface): # after every changed object
     things_on_screen.append(surface)
     for surface in things_on_screen:
         screen.blit(surface.txt,surface.rect)
-    pg.display.update()
+    pg.display.flip()
 
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
 
