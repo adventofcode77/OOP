@@ -22,24 +22,19 @@ class Game:
         bank = self.bank
         rects = bank.get_rects()
         for i in range(len(bank.flat)):
-            setup.things_on_screen = [] #start from empty screen
-
+            setup.things_on_screen = [player] #start from empty screen
             for j in range(len(rects[:i])):
 
                 for event in pg.event.get():
                     if event.type == KEYDOWN:
                         player.onemove(event)
-                        player.show() #den dinamischen objekt in things_on_screen speichern
+                        player.show() #spieler bewegungen zeigen
 
                 rects[j].show()
-                #self.screen_update() #bisherige silben zeigen
                 rects[j].move()
-                #print("j ",rects[j].inhalt,rects[j].rect.x,rects[j].rect.y)
 
             rects[i].show() #neue silbe zeigen
-            #self.screen_update()
             rects[i].move()
-            #print("i ",rects[i].inhalt,rects[i].rect.x,rects[i].rect.y)
 
             time.sleep(1)
 
