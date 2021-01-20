@@ -15,7 +15,7 @@ class Spieler:
         self.auswahl = []
         font = pg.font.SysFont("Arial",30)
         self.txt = font.render("player",False,setup.black)
-        self.speed = 30
+        self.speed = 5
 
     def add(self):
         setup.things_on_screen.append(self)
@@ -32,7 +32,7 @@ class Spieler:
         elif keys[K_DOWN]:
             self.rect.y += self.speed
         setup.screen.blit(self.txt,self.rect)
-        print(self.rect)
+        #print(self.rect)
 
 
 
