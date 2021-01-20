@@ -29,14 +29,21 @@ def screen_update(surface): # after every changed object
         screen.blit(surface.txt,surface.rect)
     pg.display.flip()
 
-def screen_update_and_move(allsyls,uptowhichsyl,player): # after every changed object
+def screen_update_and_move(allsyls,current_syl,player): # after every changed object
     screen.fill(lila)
-    for syl in range(uptowhichsyl):
+    for syl in range(current_syl):
         surface = allsyls[syl]
-        screen.blit(surface.txt,surface.rect)
+        screen.blit(surface.txt,surface.rect) #draw function?
         surface.rect.y += surface.speed
     screen.blit(player.txt,player.rect)
-    pg.display.flip()
+
+def screen_update_only(allsyls,current_syl,player):
+    screen.fill(lila)
+    for syl in range(current_syl):
+        surface = allsyls[syl]
+        screen.blit(surface.txt,surface.rect) #draw function?
+    screen.blit(player.txt,player.rect)
+
 
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
 

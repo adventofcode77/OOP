@@ -21,19 +21,24 @@ class Game:
 
     def loop1(self):
         syls = self.rects
+        loops = 0
         counter = 0
         index = 0 # NEWEST SYLLABLE INDEX
         while True:
-            setup.screen.blit(self.txt,self.player.rect)
+            #setup.screen.blit(self.txt,self.player.rect)
             setup.clock.tick(setup.fps) #ONE LOOP
             self.player.slide() # PLAYER MOVES ONCE A LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
                 if stuff.type == QUIT:
                     quit()
-            setup.screen_update_and_move(syls,counter,self.player)
-            counter += 1
-            print(len(setup.things_on_screen))
-            time.sleep(0.3)
+            if loops % 30 == 0:
+                setup.screen_update_and_move(syls,counter,self.player)
+                counter += 1 if counter <= len(syls) else 0
+                loops = 0
+            else:
+                setup.screen_update_only(syls,counter,self.player)
+            loops += 1
+            pg.display.flip()
 
 
 

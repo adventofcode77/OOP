@@ -12,13 +12,13 @@ class Silbe:
         self.rect = pg.Rect(x,y,length,20)
         font = pg.font.SysFont("Arial",30)
         self.txt = font.render(silbe,False,setup.black)
-        self.speed = 30
+        self.speed = 100
         self.on = False
 
 
     def add(self):
         setup.things_on_screen.append(self)
 
-    def move(self):
+    def move(self,speed=5):
         self.rect.y += self.speed
 
