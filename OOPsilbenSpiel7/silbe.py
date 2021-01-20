@@ -13,6 +13,7 @@ class Silbe:
         font = pg.font.SysFont("Arial",30)
         self.txt = font.render(silbe,False,setup.black)
         self.speed = 30
+        self.on = False
 
 
     def add(self):

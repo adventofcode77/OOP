@@ -3,6 +3,7 @@ import sys, time, random
 from pygame.locals import *
 import linecache
 from wiktionary_de_parser import Parser
+import numpy
 
 
 
@@ -28,6 +29,15 @@ def screen_update(surface): # after every changed object
         screen.blit(surface.txt,surface.rect)
     pg.display.flip()
 
+def screen_update_and_move(allsyls,uptowhichsyl,player): # after every changed object
+    screen.fill(lila)
+    for syl in range(uptowhichsyl):
+        surface = allsyls[syl]
+        screen.blit(surface.txt,surface.rect)
+        surface.rect.y += surface.speed
+    screen.blit(player.txt,player.rect)
+    pg.display.flip()
+
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
 
 def get_bank():
@@ -41,7 +51,16 @@ def get_bank():
              break
     return random.sample(listesilben,200) # 200 random ones
 
-
+# array = get_bank()
+# flat = list(numpy.concatenate(array).flat)
+#
+# def get_rects():
+#         rects = []
+#         for syl in flat:
+#             x = random.randrange(50,450,50)
+#             syl = silbe.Silbe(syl,x,0)
+#             rects.append(syl)
+#         return rects
 
 
 # def update_screen(): #did not work
