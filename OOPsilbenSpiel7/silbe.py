@@ -3,7 +3,7 @@ import sys, time, random
 from pygame.locals import *
 from OOPsilbenSpiel7 import setup
 
-class Silbe:
+class Silbe: #do with sprites
     def __init__(self,silbe,x,y):
         self.inhalt = silbe
         length = len(silbe)*10
@@ -12,7 +12,7 @@ class Silbe:
         self.rect = pg.Rect(x,y,length,20)
         font = pg.font.SysFont("Arial",30)
         self.txt = font.render(silbe,False,setup.black)
-        self.speed = 100
+        self.speed = 3
         self.on = False
 
 

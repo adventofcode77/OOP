@@ -31,10 +31,12 @@ def screen_update(surface): # after every changed object
 
 def screen_update_and_move(allsyls,current_syl,player): # after every changed object
     screen.fill(lila)
+    counter = 0
     for syl in range(current_syl):
         surface = allsyls[syl]
         screen.blit(surface.txt,surface.rect) #draw function?
         surface.rect.y += surface.speed
+    counter += 1
     screen.blit(player.txt,player.rect)
 
 def screen_update_only(allsyls,current_syl,player):

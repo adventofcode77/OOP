@@ -13,6 +13,7 @@ class Bank:
         self.dict = {} #fehler: saves values to same key for multiple words
         self.flat = list(numpy.concatenate(self.array).flat)
 
+
     def get_rects(self):
         rects = []
         for syl in self.flat:
