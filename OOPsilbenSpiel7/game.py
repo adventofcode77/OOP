@@ -6,6 +6,7 @@ from OOPsilbenSpiel7 import spieler
 from OOPsilbenSpiel7 import setup
 from OOPsilbenSpiel7 import bank
 from OOPsilbenSpiel7 import silbe
+import numpy
 
 class Game:
 
@@ -15,6 +16,8 @@ class Game:
         self.rects = self.bank.get_rects()
         font = pg.font.SysFont("Arial",30)
         self.txt = font.render("player",False,setup.black)
+        # self.allsyls = [[None,None,None,None,None,None,None,None,None,None,a] for a in self.rects]
+        # self.allflat = list(numpy.concatenate(self.allsyls).flat)
 
     def anotherway(self):
         pass
@@ -25,18 +28,15 @@ class Game:
         counter = 0
         index = 0 # NEWEST SYLLABLE INDEX
         while True:
-            #setup.screen.blit(self.txt,self.player.rect)
             setup.clock.tick(setup.fps) #ONE LOOP
             self.player.slide() # PLAYER MOVES ONCE A LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
                 if stuff.type == QUIT:
                     quit()
-            if loops % 30 == 0:
-                setup.screen_update_and_move(syls,counter,self.player)
+            setup.screen_update_and_move(syls,counter,self.player)
+            if loops % 15 == 0:
                 counter += 1 if counter <= len(syls) else 0
                 loops = 0
-            else:
-                setup.screen_update_only(syls,counter,self.player)
             loops += 1
             pg.display.flip()
 
