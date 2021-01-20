@@ -13,6 +13,8 @@ class Game:
         self.player = spieler.Spieler()
         self.bank = bank.Bank()
         self.rects = self.bank.get_rects()
+        font = pg.font.SysFont("Arial",30)
+        self.txt = font.render("player",False,setup.black)
 
     def anotherway(self):
         pass
@@ -20,27 +22,18 @@ class Game:
     def loop1(self):
         syls = self.rects
         counter = 0
+        index = 0 # NEWEST SYLLABLE INDEX
         while True:
-            setup.things_on_screen = []
-            counter += 1
-            print("counter ",counter)
-            setup.clock.tick(setup.fps)
-            self.player.slide()
-
-            for stuff in event.get():
+            setup.screen.blit(self.txt,self.player.rect)
+            setup.clock.tick(setup.fps) #ONE LOOP
+            self.player.slide() # PLAYER MOVES ONCE A LOOP
+            for stuff in event.get(): # CAN QUIT ONCE A LOOP
                 if stuff.type == QUIT:
                     quit()
-
-            for i in range(len(syls)):
-                neu = syls[i]
-                for alt in syls[:i]:
-                    alt.move()
-                    # print("this time ",counter)
-                neu.add()
-                neu.move()
-
-            setup.screen_update(self.player)
+            setup.screen_update_and_move(syls,counter,self.player)
+            counter += 1
             print(len(setup.things_on_screen))
+            time.sleep(0.3)
 
 
 

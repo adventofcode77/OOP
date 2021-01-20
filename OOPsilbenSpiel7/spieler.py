@@ -23,6 +23,7 @@ class Spieler:
     def slide(self):
         keys = key.get_pressed()
         if keys[K_LEFT]:
+            print("left")
             self.rect.x -= self.speed
         elif keys[K_RIGHT]:
             self.rect.x += self.speed
@@ -30,6 +31,8 @@ class Spieler:
             self.rect.y -= self.speed
         elif keys[K_DOWN]:
             self.rect.y += self.speed
+        setup.screen.blit(self.txt,self.rect)
+        print(self.rect)
 
 
 
