@@ -15,12 +15,14 @@ clock = pg.time.Clock()
 fps = 60
 things_on_screen = []
 pause = False
+screenw, screenh = 500,500
+
 
 #pg.init()
 
 
 # global font
-screen = pg.display.set_mode((500,500))
+screen = pg.display.set_mode((screenh,screenw))
 screen.fill(white)
 #font = pg.font.SysFont("Arial",30)
 

@@ -22,15 +22,20 @@ class Game:
 
     def pause(self):
         setup.screen.fill(setup.lila)
-        x,y = 20,0
+        x,y = 20,25
         for each in self.player.my_silben:
-            txt = self.font.render(each.inhalt,False,setup.white)
-            if x > 500-len(each.inhalt):
+            w = each.rect.w
+            if x > setup.screenw-w-20:
+                if y+each.rect.h >= setup.screenh-25:
+                    break
                 y += 50
                 x = 20
-                setup.screen.blit(txt,(x,y))
+                setup.screen.blit(each.image,(x,y))
+                x += w+30
             else:
-                x += len(each.inhalt)*27
+                setup.screen.blit(each.image,(x,y))
+                x += w+50
+
         display.update()
 
 
@@ -44,7 +49,8 @@ class Game:
             setup.clock.tick(setup.fps) #ONE LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
                     if stuff.type == QUIT:
-                        print(self.player.my_silben)
+                        print([each.inhalt for each in self.player.my_silben])
+                        print(len(self.player.my_silben))
                         exit()
                     elif stuff.type == KEYDOWN:
                         if stuff.key == K_SPACE:
