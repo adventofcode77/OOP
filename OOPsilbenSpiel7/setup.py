@@ -9,10 +9,12 @@ import numpy
 
 black = (0,0,0)
 white = (255,255,255)
+zuff = (200,200,200)
 lila = (125,33,200)
 clock = pg.time.Clock()
 fps = 60
 things_on_screen = []
+pause = False
 
 #pg.init()
 
@@ -22,29 +24,14 @@ screen = pg.display.set_mode((500,500))
 screen.fill(white)
 #font = pg.font.SysFont("Arial",30)
 
-def screen_update(surface): # after every changed object
-    screen.fill(lila)
-    things_on_screen.append(surface)
-    for surface in things_on_screen:
-        screen.blit(surface.txt,surface.rect)
-    pg.display.flip()
-
 def screen_update_and_move(allsyls,current_syl,player): # after every changed object
-    screen.fill(lila)
-    counter = 0
+    screen.fill(zuff)
     for syl in range(current_syl):
         surface = allsyls[syl]
-        screen.blit(surface.txt,surface.rect) #draw function?
+        screen.blit(surface.image,surface.rect) #draw function?
         surface.rect.y += surface.speed
-    counter += 1
-    screen.blit(player.txt,player.rect)
-
-def screen_update_only(allsyls,current_syl,player):
-    screen.fill(lila)
-    for syl in range(current_syl):
-        surface = allsyls[syl]
-        screen.blit(surface.txt,surface.rect) #draw function?
-    screen.blit(player.txt,player.rect)
+    screen.blit(player.image,player.rect)
+    pg.display.flip()
 
 
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
