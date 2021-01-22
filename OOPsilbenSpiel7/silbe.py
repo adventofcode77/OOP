@@ -9,9 +9,9 @@ class Silbe: #do with sprites
         length = len(silbe)*10
         if x == 0:
             x = random.randrange(length,500-length,50)
-        self.rect = pg.Rect(x,y,length,20)
-        font = pg.font.SysFont("Arial",30)
-        self.txt = font.render(silbe,False,setup.black)
+        self.rect = pg.Rect(x,y,length,20) # or text.get_rect()?
+        font = pg.font.SysFont("Arial",20)
+        self.image = font.render(silbe,False,setup.black)
         self.speed = 3
         self.on = False
 

@@ -4,10 +4,11 @@ import sys, time, random
 from pygame.locals import *
 import numpy as np
 from OOPsilbenSpiel7 import setup
+from OOPsilbenSpiel7 import bank
 
 class Spieler:
     def __init__(self):
-        l, r, w, h = 200,200,50,20
+        l, r, w, h = 200,200,40,40
         self.rect = pg.Rect(l,r,w,h)
         self.pausiert = True
         self.step = 20
@@ -15,15 +16,15 @@ class Spieler:
         self.auswahl = []
         font = pg.font.SysFont("Arial",30)
         self.txt = font.render("player",False,setup.black)
+        self.image = transform.scale(image.load('Lacrosse_Player.svg'),(self.rect.w,self.rect.h))
         self.speed = 8
 
     def add(self):
         setup.things_on_screen.append(self)
 
-    def slide(self):
+    def act(self):
         keys = key.get_pressed()
         if keys[K_LEFT]:
-            print("left")
             self.rect.x -= self.speed
         elif keys[K_RIGHT]:
             self.rect.x += self.speed
@@ -31,8 +32,8 @@ class Spieler:
             self.rect.y -= self.speed
         elif keys[K_DOWN]:
             self.rect.y += self.speed
-        #setup.screen.blit(self.txt,self.rect)
-        #print(self.rect)
+        elif keys[K_SPACE]:
+            return "composing screen"
 
 
 
@@ -48,10 +49,15 @@ class Spieler:
         elif event.key == K_RIGHT:
             self.rect.x += 40
 
-    def sammeln(self,silbe):
-        self.my_silben.append(silbe)
+    def pick(self,rects):
+        index = self.rect.collidelist(rects)
+        if index is not -1:
+            picked = rects[index]
+            if picked not in self.my_silben:
+                self.my_silben.append(picked)
 
-    def pick(self,silbe):
+    def use(self,silbe):
         self.auswahl.append(silbe)
+
 
 
