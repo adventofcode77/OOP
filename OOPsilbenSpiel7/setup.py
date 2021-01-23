@@ -3,6 +3,7 @@ import sys, time, random
 from pygame.locals import *
 import linecache
 from wiktionary_de_parser import Parser
+import parsewikt3
 import numpy
 
 
@@ -40,45 +41,32 @@ def screen_update_and_move(allsyls,current_syl,player): # after every changed ob
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
 
 def get_bank():
-    listesilben = []
-    for record in Parser(file_path):
-        #if record.has_key('syllables'): # has_key was removed from py3
-        if 'syllables' in record:
-            #print(record['syllables'])
-            listesilben.append(record['syllables'])
-        if len(listesilben) == 1000:
-             break
-    return random.sample(listesilben,200) # 200 random ones
+    bank = parsewikt3.quick_get(100)
+    print(bank)
+    return bank
 
-# array = get_bank()
-# flat = list(numpy.concatenate(array).flat)
-#
-# def get_rects():
-#         rects = []
-#         for syl in flat:
-#             x = random.randrange(50,450,50)
-#             syl = silbe.Silbe(syl,x,0)
-#             rects.append(syl)
-#         return rects
+# def get_bank():
+#     listesilben = []
+#     listdef = []
+#     for record in Parser(file_path):
+#         #if record.has_key('syllables'): # has_key was removed from py3
+#         if 'syllables' in record:
+#             #print(record['wikitext'])
+#             listesilben.append(record['syllables'])
+#             text1 = record["wikitext"].replace("{{","")
+#             text1 = text1.replace("}}","")
+#             text1 = text1.replace("[[","")
+#             text1 = text1.replace("]]","")
+#             text1 = text1.split("\n\n")
+#             print(text1)
+#             for i in range(len(text1)):
+#                 lines = text1[i].split('\n')
+#                 for line in lines:
+#                     print(line)
+#                     if line[0] == "Bedeutungen":
+#                        listdef.append(line[0])
+#         if len(listesilben) == 1000:
+#              break
+#     print(listdef)
+#     return random.sample(listesilben,200) # 200 random ones
 
-
-# def update_screen(): #did not work
-#         time.sleep(2)
-#         pg.display.update()
-#         screen.fill(white)
-
-
-# filename = "parsed_dict"
-# line_number = 1
-# line = "kfgj"
-# line = linecache.getline(filename, line_number)
-# print ("line %i of %s:" % (line_number, filename))
-# print (len(line))
-
-# lines = ('lines_dict','w')
-# listofdictlines = []
-# filename = filename.readlines()
-# for line in filename:
-#     listofdictlines.append(line)
-#     lines.write(line)
-# filename.close()
