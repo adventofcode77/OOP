@@ -14,36 +14,53 @@ class Game:
         self.player = spieler.Spieler()
         self.bank = bank.Bank()
         self.rects = self.bank.get_rects()
+        self.selected = []
         self.font = pg.font.SysFont("Arial",30)
         self.txt = self.font.render("player",False,setup.black)
 
     def draw_desk(self):
         setup.screen.fill(setup.lila)
-        right = setup.screenw//6
-        down = setup.screenh//12
-        x,y = right,down
+        x,y = setup.right,setup.down
         syls = self.player.my_silben
+        desk_syls = []
         index = 0
-        # for syl in self.player.my_silben:
-        #     setup.screen.blit(syl.image,(x,y))
-        #     x += syl.rect.w+right
-        #     if x > setup.screenw - right:
-        #         y += down
-        #         x = right
-
-        for y in range(down,down*4,down):
-            for x in range(right,right*5,right):
+        for y in range(setup.down,setup.down*4,setup.down):
+            for x in range(setup.right,setup.right*5,setup.right):
                 if index < len(syls):
-                    print(index,len(syls))
-                    print(syls[index].inhalt)
                     syl = syls[index]
-                    setup.screen.blit(syl.image,(x,y))
-                    print("got here")
+                    copy = silbe.Silbe(syl.inhalt)
+                    copy.rect.x,copy.rect.y = x,y
+                    setup.screen.blit(copy.image,copy.rect)
+                    desk_syls.append(copy) #copy whole syl
                     index += 1
         display.update()
+        return desk_syls
 
-    def desk(self):
-        self.draw_desk()
+    def desk(self,syls):
+        print("in desk")
+        for e in event.get():
+            print("eventloop?",e.type)
+            if e.type == MOUSEBUTTONDOWN:
+                print("mouse")
+                click = mouse.get_pos()
+                for syl in syls:
+                    print("for syl")
+                    if syl.rect.collidepoint(click):
+                        syl.image.fill(setup.white)
+                        self.selected.append(syl.inhalt)
+                        self.draw_word()
+
+    def draw_word(self):
+        word = ""
+        for syl in self.selected:
+            word += syl
+        print(word)
+        word_image = self.font.render(word,False,setup.black)
+        ww,wh = self.font.size(word)
+        setup.screen.blit(word_image,((setup.right+ww)//2,setup.down*6))
+        display.update()
+
+
 
 
     def gameloop(self):
@@ -52,6 +69,7 @@ class Game:
         loops = 0
         counter = 0
         index = 0 # NEWEST SYLLABLE INDEX
+        copies = []
         while True:
             setup.clock.tick(setup.fps) #ONE LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
@@ -62,7 +80,7 @@ class Game:
                     elif stuff.type == KEYDOWN:
                         if stuff.key == K_SPACE:
                             run = False
-                            self.draw_desk()
+                            copies = self.draw_desk()
                         elif stuff.key == K_a:
                             run = True
             else:
@@ -81,7 +99,7 @@ class Game:
                     loops += 1
                     pg.display.flip()
                 else:
-                    self.desk()
+                    self.desk(copies)
 
 
 
