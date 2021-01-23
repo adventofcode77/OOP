@@ -15,11 +15,10 @@ class Game:
         self.bank = bank.Bank()
         self.rects = self.bank.get_rects()
         self.selected = []
-        self.font = pg.font.SysFont("Arial",30)
+        self.font = pg.font.SysFont("Arial",20)
         self.txt = self.font.render("player",False,setup.black)
 
-    def draw_desk(self):
-        setup.screen.fill(setup.lila)
+    def draw_desk(self): # origs
         x,y = setup.right,setup.down
         syls = self.player.my_silben
         desk_syls = []
@@ -29,36 +28,41 @@ class Game:
                 if index < len(syls):
                     syl = syls[index]
                     copy = silbe.Silbe(syl.inhalt)
+                    if syl.on == True:
+                        #print("syl on")
+                        copy.image = self.font.render(copy.inhalt,False,setup.white)
                     copy.rect.x,copy.rect.y = x,y
                     setup.screen.blit(copy.image,copy.rect)
                     desk_syls.append(copy) #copy whole syl
                     index += 1
-        display.update()
+                    x += copy.rect.w
         return desk_syls
 
-    def desk(self,syls):
-        print("in desk")
-        for e in event.get():
-            print("eventloop?",e.type)
-            if e.type == MOUSEBUTTONDOWN:
-                print("mouse")
-                click = mouse.get_pos()
-                for syl in syls:
-                    print("for syl")
-                    if syl.rect.collidepoint(click):
-                        syl.image.fill(setup.white)
-                        self.selected.append(syl.inhalt)
-                        self.draw_word()
+    def desk(self,click):
+        # the event loop didn't work inside of this function
+        setup.screen.fill(setup.lila)
+        syls = self.draw_desk() # copies
+        if click:
+            x,y = click
+            for syl in syls:
+                if syl.rect.collidepoint(x,y):
+                    for item in self.player.my_silben: #next()?
+                        if item.inhalt == syl.inhalt:
+                            item.on = True
+                            #print(item.inhalt," on")
+                    self.selected.append(syl)
+        self.draw_word()
+        display.update()
 
     def draw_word(self):
         word = ""
         for syl in self.selected:
-            word += syl
-        print(word)
+            word += syl.inhalt
+        #print(word)
         word_image = self.font.render(word,False,setup.black)
         ww,wh = self.font.size(word)
-        setup.screen.blit(word_image,((setup.right+ww)//2,setup.down*6))
-        display.update()
+        setup.screen.blit(word_image,((setup.screenw-ww)//2,setup.down*6))
+        #display.update()
 
 
 
@@ -70,6 +74,7 @@ class Game:
         counter = 0
         index = 0 # NEWEST SYLLABLE INDEX
         copies = []
+        click = False
         while True:
             setup.clock.tick(setup.fps) #ONE LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
@@ -80,9 +85,11 @@ class Game:
                     elif stuff.type == KEYDOWN:
                         if stuff.key == K_SPACE:
                             run = False
-                            copies = self.draw_desk()
+                            setup.screen.fill(setup.lila)
                         elif stuff.key == K_a:
                             run = True
+                    elif stuff.type == MOUSEBUTTONDOWN:
+                        click = mouse.get_pos()
             else:
                 if run == True:
                     action = self.player.act() # PLAYER MOVES ONCE A LOOP
@@ -99,7 +106,8 @@ class Game:
                     loops += 1
                     pg.display.flip()
                 else:
-                    self.desk(copies)
+                    self.desk(click)
+                    click = False
 
 
 

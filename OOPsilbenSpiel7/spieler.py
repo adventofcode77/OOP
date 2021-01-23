@@ -38,7 +38,7 @@ class Spieler:
 
     def pick(self,rects):
         if len(self.my_silben) == 12:
-            print("you can only pick 12 at a time!")
+            pass #print("you can only pick 12 at a time!")
         else:
             index = self.rect.collidelist(rects)
             if index is not -1:
