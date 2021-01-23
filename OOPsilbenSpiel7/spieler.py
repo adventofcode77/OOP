@@ -34,18 +34,20 @@ class Spieler:
         elif keys[K_DOWN] and self.rect.y <= 500-self.speed-self.rect.w:
             self.rect.y += self.speed
         elif keys[K_SPACE]:
-            return "composing screen"
+            return False
 
     def pick(self,rects):
         index = self.rect.collidelist(rects)
         if index is not -1:
             picked = rects[index]
-            if picked.rect.w + self.mysyllen <= (setup.screenw - 20)*setup.screenh/9:
+            print(picked.rect.w + self.mysyllen,(setup.screenw - 50)*9)
+            if picked.rect.w + self.mysyllen <= (setup.screenw - 50)*9:
                 if picked not in self.my_silben:
                     self.my_silben.append(picked)
-                    self.mysyllen += picked.rect.w
+                    self.mysyllen += picked.rect.w + 50
             else:
                 print("too many!")
+                print(picked.rect.w + self.mysyllen,(setup.screenw - 50)*9)
 
 
     def use(self,silbe):
