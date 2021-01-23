@@ -16,7 +16,8 @@ fps = 60
 things_on_screen = []
 pause = False
 screenw, screenh = 500,500
-
+right = screenw//6
+down = screenh//12
 
 #pg.init()
 
