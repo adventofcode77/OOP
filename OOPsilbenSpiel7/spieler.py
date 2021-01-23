@@ -37,17 +37,14 @@ class Spieler:
             return False
 
     def pick(self,rects):
-        index = self.rect.collidelist(rects)
-        if index is not -1:
-            picked = rects[index]
-            print(picked.rect.w + self.mysyllen,(setup.screenw - 50)*9)
-            if picked.rect.w + self.mysyllen <= (setup.screenw - 50)*9:
+        if len(self.my_silben) == 12:
+            print("you can only pick 12 at a time!")
+        else:
+            index = self.rect.collidelist(rects)
+            if index is not -1:
+                picked = rects[index]
                 if picked not in self.my_silben:
                     self.my_silben.append(picked)
-                    self.mysyllen += picked.rect.w + 50
-            else:
-                print("too many!")
-                print(picked.rect.w + self.mysyllen,(setup.screenw - 50)*9)
 
 
     def use(self,silbe):
