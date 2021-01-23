@@ -19,20 +19,31 @@ class Game:
 
     def draw_desk(self):
         setup.screen.fill(setup.lila)
-        x,y = 25,25
-        for each in self.player.my_silben:
-            w = each.rect.w
-            if x > setup.screenw-w-25:
-                if y+each.rect.h >= setup.screenh-25:
-                    break
-                y += 50
-                x = 25
-            setup.screen.blit(each.image,(x,y))
-            x += w+50
+        right = setup.screenw//6
+        down = setup.screenh//12
+        x,y = right,down
+        syls = self.player.my_silben
+        index = 0
+        # for syl in self.player.my_silben:
+        #     setup.screen.blit(syl.image,(x,y))
+        #     x += syl.rect.w+right
+        #     if x > setup.screenw - right:
+        #         y += down
+        #         x = right
+
+        for y in range(down,down*4,down):
+            for x in range(right,right*5,right):
+                if index < len(syls):
+                    print(index,len(syls))
+                    print(syls[index].inhalt)
+                    syl = syls[index]
+                    setup.screen.blit(syl.image,(x,y))
+                    print("got here")
+                    index += 1
         display.update()
 
     def desk(self):
-        pass
+        self.draw_desk()
 
 
     def gameloop(self):
