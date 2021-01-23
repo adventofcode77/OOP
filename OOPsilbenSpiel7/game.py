@@ -17,29 +17,25 @@ class Game:
         self.font = pg.font.SysFont("Arial",30)
         self.txt = self.font.render("player",False,setup.black)
 
-    def anotherway(self):
-        pass
-
-    def pause(self):
+    def draw_desk(self):
         setup.screen.fill(setup.lila)
-        x,y = 20,25
+        x,y = 25,25
         for each in self.player.my_silben:
             w = each.rect.w
-            if x > setup.screenw-w-20:
+            if x > setup.screenw-w-25:
                 if y+each.rect.h >= setup.screenh-25:
                     break
                 y += 50
-                x = 20
-                setup.screen.blit(each.image,(x,y))
-                x += w+30
-            else:
-                setup.screen.blit(each.image,(x,y))
-                x += w+50
-
+                x = 25
+            setup.screen.blit(each.image,(x,y))
+            x += w+50
         display.update()
 
+    def desk(self):
+        pass
 
-    def loop1(self):
+
+    def gameloop(self):
         run = True
         syls = self.rects
         loops = 0
@@ -55,14 +51,14 @@ class Game:
                     elif stuff.type == KEYDOWN:
                         if stuff.key == K_SPACE:
                             run = False
+                            self.draw_desk()
                         elif stuff.key == K_a:
                             run = True
             else:
                 if run == True:
                     action = self.player.act() # PLAYER MOVES ONCE A LOOP
-                    if action == "composing screen":
+                    if action == 1:
                         run = False
-                        self.pause()
                     self.player.pick(syls)
                     if loops % 15 == 0:
                         if counter + 1 == len(syls):
@@ -74,7 +70,7 @@ class Game:
                     loops += 1
                     pg.display.flip()
                 else:
-                    self.pause()
+                    self.desk()
 
 
 
