@@ -6,6 +6,7 @@ from OOPsilbenSpiel7 import spieler
 from OOPsilbenSpiel7 import setup
 from OOPsilbenSpiel7 import bank
 from OOPsilbenSpiel7 import silbe
+from OOPsilbenSpiel7 import word
 import numpy
 
 class Game:
@@ -13,10 +14,12 @@ class Game:
     def __init__(self):
         self.player = spieler.Spieler()
         self.bank = bank.Bank()
-        self.rects = self.bank.get_rects()
+        self.words = self.bank.get_words()
+        self.txt_syls = self.bank.listofsyls
         self.selected = []
         self.font = pg.font.SysFont("Arial",20)
         self.txt = self.font.render("player",False,setup.black)
+        self.sprites = sprite.Group()
 
     def draw_desk(self): # origs
         x,y = setup.right,setup.down
@@ -53,6 +56,7 @@ class Game:
                     self.selected.append(syl)
         self.draw_word()
         display.update()
+        self.check_word()
 
     def draw_word(self):
         word = ""
@@ -62,14 +66,19 @@ class Game:
         word_image = self.font.render(word,False,setup.black)
         ww,wh = self.font.size(word)
         setup.screen.blit(word_image,((setup.screenw-ww)//2,setup.down*6))
-        #display.update()
+        self.player.word = word
 
+    def check_word(self):
+        if all(a.word == self.selected[0].word for a in self.selected):
+            print("correct")
 
 
 
     def gameloop(self):
+        self.sprites.add(self.bank.words)
         run = True
-        syls = self.rects
+        words = self.words
+        syls = self.bank.listofsyls
         loops = 0
         counter = 0
         index = 0 # NEWEST SYLLABLE INDEX
