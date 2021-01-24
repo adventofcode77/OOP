@@ -19,6 +19,7 @@ class Spieler:
         self.txt = font.render("player",False,setup.black)
         self.image = transform.scale(image.load('Lacrosse_Player.svg'),(self.rect.w,self.rect.h))
         self.speed = 8
+        self.word = ""
 
     def add(self):
         setup.things_on_screen.append(self)
