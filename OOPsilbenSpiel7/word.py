@@ -6,12 +6,13 @@ from OOPsilbenSpiel7 import setup
 from OOPsilbenSpiel7 import silbe
 
 class Word(sprite.Sprite):
-    def __init__(self, key, meaning,silben):
+    def __init__(self, key, meaning,txtsilben):
         super().__init__()
 
         font = pg.font.SysFont("Arial",20)
+        self.txtsilben = txtsilben
         self.name = key
-        self.syls = [silbe.Silbe(a, self.name) for a in silben]
+        self.syls = [silbe.Silbe("it","word","def inition")] #[silbe.Silbe(a, self.name) for a in silben]
         self.meaning = meaning.split(" ")
         self.bits = self.get_bits()
         self.image = font.render(self.name,False,setup.black)
