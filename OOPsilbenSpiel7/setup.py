@@ -41,7 +41,7 @@ def screen_update_and_move(allsyls,current_syl,player): # after every changed ob
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
 
 def get_bank():
-    bank = parsewikt3.quick_get(100)
+    bank = parsewikt3.quick_get(10)
     print(bank)
     return bank
 

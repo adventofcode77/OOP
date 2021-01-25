@@ -37,14 +37,11 @@ class Spieler:
             self.rect.y += self.speed
         elif keys[K_SPACE]:
             return False
-        elif keys[K_1]:
-            self.selected = []
-            print("cleared selected")
         elif keys[K_2]:
             self.my_silben = []
             self.word = ""
             self.selected = []
-            print("cleared my silben and word and selected")
+            print("cleared desk")
 
     def pick(self,sylobjects):
         #print(sylobjects)
