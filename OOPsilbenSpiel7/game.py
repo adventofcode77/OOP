@@ -18,6 +18,7 @@ class Game:
         self.txt_syls = self.bank.txtsyls
         self.selected = []
         self.font = pg.font.SysFont("Arial",20)
+        self.bigfont = pg.font.SysFont("Arial",30)
         self.txt = self.font.render("player",False,setup.black)
         self.sprites = sprite.Group()
 
@@ -63,7 +64,7 @@ class Game:
         word = ""
         definition = ""
         for syl in self.player.selected:
-            word += syl.inhalt
+            word += " " + syl.inhalt
             definition += syl.bit
         #print(word)
         word_image = self.font.render(word,False,setup.black)
@@ -94,6 +95,8 @@ class Game:
         index = 0 # NEWEST SYLLABLE INDEX
         copies = []
         click = False
+        bool = False
+        boolcounter = 0
         while True:
             setup.clock.tick(setup.fps) #ONE LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
@@ -111,24 +114,47 @@ class Game:
                         click = mouse.get_pos()
             else:
                 if run == True:
-                    action = self.player.act() # PLAYER MOVES ONCE A LOOP
-                    if action == 1:
-                        run = False
-                    self.player.pick(sylobjects)
-                    if loops % 15 == 0:
-                        if counter + 1 == len(sylobjects):
-                            counter = 0
-                            for syl in sylobjects:
-                                if syl.rect.y >500:
-                                    syl.rect.y = 0
-                                syl.rect.x = random.randrange(0,500-syl.rect.w,50)
-
+                    if bool == True:
+                        if boolcounter == 30:
+                            bool = False
+                            boolcounter = 0
                         else:
+                            setup.screen.fill(setup.black)
+                            boolcounter += 1
+                            print("boolcounter:",boolcounter)
+                            setup.screen.blit(self.bigfont.render("new loop",False,setup.white),(200,250))
+                            display.update()
+                            continue
+
+                    else:
+
+                        #print("allsyls len:",len(self.bank.silben))
+                        action = self.player.act() # PLAYER MOVES ONCE A LOOP
+                        if action == 1: #how does this work again? return is false
+                            run = False
+                        elif action == 5:
+                            sylobjects = self.player.syls_for_game + sylobjects
+                            counter += len(self.player.syls_for_game)
+                        picked = self.player.pick(sylobjects)
+                        if picked is not None:
+                            print("pick is not none",len(sylobjects))
+                            sylobjects.remove(picked)
+                            counter -= 1
+                        if loops % 15 == 0:
+                            if counter + 1 == len(sylobjects):
+                                print("counter resets")
+                                for syl in sylobjects:
+                                    syl.rect.y = 0
+                                counter = 0
+                                display.update()
+                                bool = True
+                            #
+                            # else:
                             counter += 1
-                        loops = 0
-                    setup.screen_update_and_move(sylobjects,counter,self.player)
-                    loops += 1
-                    pg.display.flip()
+                            loops = 0
+                        setup.screen_update_and_move(sylobjects,counter,self.player)
+                        loops += 1
+                        pg.display.flip()
                 else:
                     self.desk(click)
                     click = False
