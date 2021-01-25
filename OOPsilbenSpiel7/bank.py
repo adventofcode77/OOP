@@ -10,10 +10,11 @@ class Bank:
     def __init__(self):
         self.rect = pg.Rect(0,0,20,20)
         self.dictwithkeyname = setup.get_bank()
-        self.listofsyls = self.randomize_syls()
+        self.txtsyls = self.randomize_syls()
         self.flat = []
         self.font = pg.font.SysFont("Arial",30)
         self.words = self.get_words()
+        self.silben = self.get_silben()
 
 
     def get_words(self):
@@ -26,6 +27,15 @@ class Bank:
             words.append(aword)
         print("get  ",[a.name for a in words])
         return words
+
+    def get_silben(self):
+        sylobjects = []
+        for aword in self.words:
+            print(aword.syls)
+            for asyl in aword.syls:
+                sylobjects.append(asyl)
+        print([a.inhalt for a in sylobjects])
+        return sylobjects
 
     def randomize_syls(self):
         all_syls = []

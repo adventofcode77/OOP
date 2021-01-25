@@ -37,13 +37,14 @@ class Spieler:
         elif keys[K_SPACE]:
             return False
 
-    def pick(self,rects):
+    def pick(self,sylobjects):
+        print(sylobjects)
         if len(self.my_silben) == 12:
             pass #print("you can only pick 12 at a time!")
         else:
-            index = self.rect.collidelist(rects)
+            index = self.rect.collidelist([a.rect for a in sylobjects])
             if index is not -1:
-                picked = rects[index]
+                picked = sylobjects[index]
                 if picked not in self.my_silben:
                     self.my_silben.append(picked)
 
