@@ -5,8 +5,8 @@ import random
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
 
 def iterate(record):
-    print(record)
-    print(record.keys())
+    #print(record)
+    #print(record.keys())
     meaning = ""
     if 'syllables' in record.keys():
         text1 = record["wikitext"].replace("{{","")
@@ -23,7 +23,7 @@ def iterate(record):
                 newline = line[i]
                 #print("here2 ",newline)
                 if newline == "Bedeutungen":
-                    print("plus one ", line[i+1])
+                    #print("plus one ", line[i+1])
                     meaning = line[i+1]
     else:
         return False
@@ -48,7 +48,7 @@ def getaword():
     if iterate(record):
         bedeutung, syls = iterate(record)
         simplelistforaword = [record["title"],bedeutung, syls]
-        print("returning the right thing ",simplelistforaword)
+        #print("returning the right thing ",simplelistforaword)
         return simplelistforaword
     else:
         return getaword()
@@ -58,13 +58,13 @@ def getaword():
 def quick_get(num):
     dictwords = {}
     for i in range(num):
-        print("what about me ",num,i)
+        #print("what about me ",num,i)
         list = getaword()
         list[1] = list[1][4:]
-        print("the list ",list)
-        print("0th ",list[0])  #word
-        print("1st ",list[1]) #meaning string
-        print("2nd ",list[2]) # syls
+        # print("the list ",list)
+        # print("0th ",list[0])  #word
+        # print("1st ",list[1]) #meaning string
+        # print("2nd ",list[2]) # syls
         dictwords[list[0]] = [list[1],list[2]]
     return dictwords
 
