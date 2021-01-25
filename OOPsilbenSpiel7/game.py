@@ -60,17 +60,23 @@ class Game:
 
     def draw_word(self):
         word = ""
+        definition = ""
         for syl in self.selected:
             word += syl.inhalt
+            definition += syl.bit
         #print(word)
         word_image = self.font.render(word,False,setup.black)
+        def_image = self.font.render(definition,False,setup.black)
         ww,wh = self.font.size(word)
+        dw,dh = self.font.size(definition)
         setup.screen.blit(word_image,((setup.screenw-ww)//2,setup.down*6))
+        setup.screen.blit(def_image,((setup.screenw-dw)//2,setup.down*7))
         self.player.word = word
 
     def check_word(self):
         if all(a.word == self.selected[0].word for a in self.selected):
-            print("correct")
+            pass
+            #print("correct")
 
 
 

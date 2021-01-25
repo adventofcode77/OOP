@@ -13,7 +13,7 @@ class Silbe: #do with sprites
         self.rect.x = random.randrange(0,500-self.rect.w,50)
         self.speed = 3
         self.on = False
-        self.bit = bit
+        self.bit = bit #giving it a list of lists sometimes
 
     def move(self,speed=5):
         self.rect.y += self.speed
