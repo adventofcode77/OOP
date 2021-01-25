@@ -30,7 +30,7 @@ class Game:
             for x in range(setup.right,setup.right*5,setup.right):
                 if index < len(sylobjects):
                     syl = sylobjects[index]
-                    copy = silbe.Silbe(syl.inhalt, syl.)
+                    copy = silbe.Silbe(syl.inhalt,syl.word,syl.bit)
                     if syl.on == True:
                         #print("syl on")
                         copy.image = self.font.render(copy.inhalt,False,setup.white)
