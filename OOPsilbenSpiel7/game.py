@@ -55,8 +55,9 @@ class Game:
                             #print(item.inhalt," on")
                     self.player.selected.append(syl)
         self.draw_word()
-        display.update()
         self.check_word()
+        display.update()
+
 
     def draw_word(self):
         word = ""
@@ -76,6 +77,9 @@ class Game:
     def check_word(self):
         if self.player.word in self.words:
             if all(a.word == self.player.selected[0].word for a in self.player.selected):
+                correct_image = self.font.render("correct",False,setup.white)
+                cw,ch = self.font.size("correct")
+                setup.screen.blit(correct_image,((setup.screenw-cw)//2,setup.down*7))
                 print("correct")
 
 
@@ -114,6 +118,11 @@ class Game:
                     if loops % 15 == 0:
                         if counter + 1 == len(sylobjects):
                             counter = 0
+                            for syl in sylobjects:
+                                if syl.rect.y >500:
+                                    syl.rect.y = 0
+                                syl.rect.x = random.randrange(0,500-syl.rect.w,50)
+
                         else:
                             counter += 1
                         loops = 0
