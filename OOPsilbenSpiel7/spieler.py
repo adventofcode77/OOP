@@ -39,12 +39,12 @@ class Spieler:
         elif keys[K_SPACE]:
             return False
         elif keys[K_2]:
-            self.syls_for_game = self.my_silben[:]
+            for syl in self.my_silben:
+                syl.visible = True
             self.my_silben = []
             self.word = ""
             self.selected = []
             print("cleared desk")
-            return 5
 
     def pick(self,sylobjects):
         #print(sylobjects)

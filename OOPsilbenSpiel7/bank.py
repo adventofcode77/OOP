@@ -45,7 +45,8 @@ class Bank:
             meaning, syls = value[0], value[1]
             for syl in syls:
                 all_syls += [syl]
-        print(random.sample(all_syls, len(all_syls)))
+        #print(random.sample(all_syls, len(all_syls)))
         return random.sample(all_syls, len(all_syls)) #sample returns new list
+        #return all_syls
 
 

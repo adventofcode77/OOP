@@ -17,7 +17,7 @@ class Word(sprite.Sprite):
         font = pg.font.SysFont("Arial",20)
         self.image = font.render(self.name,False,setup.black)
         self.rect = self.image.get_rect() # draw_rect()?
-        self.rect.x = random.randrange(0,500-self.rect.w,50)
+        self.rect.x = 0 #random.randrange(0,500-self.rect.w,50)
 
     def too_few_def_words(self,list,n):
         listoflists = []

@@ -64,7 +64,7 @@ class Game:
         word = ""
         definition = ""
         for syl in self.player.selected:
-            word += " " + syl.inhalt
+            word += f' {syl.inhalt}'
             definition += syl.bit
         #print(word)
         word_image = self.font.render(word,False,setup.black)
@@ -88,12 +88,10 @@ class Game:
     def gameloop(self):
         self.sprites.add(self.bank.words)
         run = True
-        words = self.words
+        print([each.name for each in self.words])
         sylobjects = self.bank.silben
         loops = 0
         counter = 0
-        index = 0 # NEWEST SYLLABLE INDEX
-        copies = []
         click = False
         bool = False
         boolcounter = 0
@@ -101,7 +99,6 @@ class Game:
             setup.clock.tick(setup.fps) #ONE LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
                     if stuff.type == QUIT:
-                        print([each.name for each in self.words])
                         print(len(self.player.my_silben))
                         exit()
                     elif stuff.type == KEYDOWN:
@@ -121,38 +118,26 @@ class Game:
                         else:
                             setup.screen.fill(setup.black)
                             boolcounter += 1
-                            print("boolcounter:",boolcounter)
                             setup.screen.blit(self.bigfont.render("new loop",False,setup.white),(200,250))
                             display.update()
                             continue
 
                     else:
-
-                        #print("allsyls len:",len(self.bank.silben))
                         action = self.player.act() # PLAYER MOVES ONCE A LOOP
                         if action == 1: #how does this work again? return is false
                             run = False
-                        elif action == 5:
-                            for syl in self.player.syls_for_game:
-                                syl.visible = True
-                            #sylobjects = self.player.syls_for_game + sylobjects
-                            #counter += len(self.player.syls_for_game)
                         picked = self.player.pick(sylobjects)
                         if loops % 15 == 0:
-                            if counter + 1 == len(sylobjects):
+                            if counter+1 == len(sylobjects):
                                 print("counter resets")
                                 for syl in sylobjects:
-                                    syl.rect.y = 0 # doesn't work for small word banks
+                                    syl.rect.y = 0
                                 counter = 0
-                                display.update()
                                 bool = True
-                            #
-                            # else:
                             counter += 1
                             loops = 0
-                        setup.screen_update_and_move(sylobjects,counter,self.player)
                         loops += 1
-                        pg.display.flip()
+                        setup.screen_update_and_move(sylobjects,counter,self.player)
                 else:
                     self.desk(click)
                     click = False
