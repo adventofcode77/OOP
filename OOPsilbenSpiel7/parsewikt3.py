@@ -24,7 +24,7 @@ def iterate(record):
                 #print("here2 ",newline)
                 if newline == "Bedeutungen":
                     print("plus one ", line[i+1])
-                    meaning = line[i+1].split(",")[0] #only the first meaning
+                    meaning = line[i+1]
     else:
         return False
     return meaning,record['syllables']

@@ -20,6 +20,7 @@ class Spieler:
         self.image = transform.scale(image.load('Lacrosse_Player.svg'),(self.rect.w,self.rect.h))
         self.speed = 8
         self.word = ""
+        self.selected = []
 
     def add(self):
         setup.things_on_screen.append(self)
@@ -36,9 +37,17 @@ class Spieler:
             self.rect.y += self.speed
         elif keys[K_SPACE]:
             return False
+        elif keys[K_1]:
+            self.selected = []
+            print("cleared selected")
+        elif keys[K_2]:
+            self.my_silben = []
+            self.word = ""
+            self.selected = []
+            print("cleared my silben and word and selected")
 
     def pick(self,sylobjects):
-        print(sylobjects)
+        #print(sylobjects)
         if len(self.my_silben) == 12:
             pass #print("you can only pick 12 at a time!")
         else:
