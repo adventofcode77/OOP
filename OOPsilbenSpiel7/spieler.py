@@ -56,7 +56,7 @@ class Spieler:
                 picked = sylobjects[index]
                 if picked not in self.my_silben:
                     self.my_silben.append(picked)
-                    return picked
+                    picked.visible = False
             else:
                 self.picked = None
 

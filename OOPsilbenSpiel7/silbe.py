@@ -14,6 +14,7 @@ class Silbe: #do with sprites
         self.speed = 3
         self.on = False
         self.bit = bit #giving it a list of lists sometimes
+        self.visible = True
 
     def move(self,speed=5):
         self.rect.y += self.speed

@@ -20,6 +20,7 @@ screenw, screenh = 500,500
 right = screenw//6
 down = screenh//12
 
+
 #pg.init()
 
 
@@ -30,10 +31,11 @@ screen.fill(white)
 
 def screen_update_and_move(allsyls,current_syl,player): # after every changed object
     screen.fill(zuff)
-    for syl in range(current_syl):
-        surface = allsyls[syl]
-        screen.blit(surface.image,surface.rect) #draw function?
-        surface.rect.y += surface.speed
+    for i in range(current_syl):
+        syllable = allsyls[i]
+        if syllable.visible == True:
+            screen.blit(syllable.image,syllable.rect) #draw function?
+        syllable.rect.y += syllable.speed
     screen.blit(player.image,player.rect)
     pg.display.flip()
 
@@ -41,7 +43,7 @@ def screen_update_and_move(allsyls,current_syl,player): # after every changed ob
 file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
 
 def get_bank():
-    bank = parsewikt3.quick_get(30)
+    bank = parsewikt3.quick_get(1)
     print(bank)
     return bank
 
