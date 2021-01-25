@@ -15,6 +15,7 @@ class Bank:
         self.font = pg.font.SysFont("Arial",30)
         self.words = self.get_words()
         self.silben = self.get_silben()
+        self.test = 3
 
 
     def get_words(self):
@@ -25,16 +26,16 @@ class Bank:
             syls = self.dictwithkeyname[entry][1]
             aword = word.Word(name,meaning,syls)
             words.append(aword)
-        print("get  ",[a.name for a in words])
+        #print("get  ",[a.name for a in words])
         return words
 
     def get_silben(self):
         sylobjects = []
         for aword in self.words:
-            print(aword.syls)
+            #print(aword.syls)
             for asyl in aword.syls:
                 sylobjects.append(asyl)
-        print([a.inhalt for a in sylobjects])
+        #print([a.inhalt for a in sylobjects])
         return sylobjects
 
     def randomize_syls(self):

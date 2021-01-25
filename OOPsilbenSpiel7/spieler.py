@@ -21,6 +21,7 @@ class Spieler:
         self.speed = 8
         self.word = ""
         self.selected = []
+        self.syls_for_game = [] # to return to the pool
 
     def add(self):
         setup.things_on_screen.append(self)
@@ -38,10 +39,12 @@ class Spieler:
         elif keys[K_SPACE]:
             return False
         elif keys[K_2]:
+            self.syls_for_game = self.my_silben[:]
             self.my_silben = []
             self.word = ""
             self.selected = []
             print("cleared desk")
+            return 5
 
     def pick(self,sylobjects):
         #print(sylobjects)
@@ -53,6 +56,9 @@ class Spieler:
                 picked = sylobjects[index]
                 if picked not in self.my_silben:
                     self.my_silben.append(picked)
+                    return picked
+            else:
+                self.picked = None
 
 
     def use(self,silbe):
