@@ -15,7 +15,7 @@ class Game:
         self.player = spieler.Spieler()
         self.bank = bank.Bank()
         self.words = self.bank.get_words()
-        self.txt_syls = self.bank.listofsyls
+        self.txt_syls = self.bank.txtsyls
         self.selected = []
         self.font = pg.font.SysFont("Arial",20)
         self.txt = self.font.render("player",False,setup.black)
@@ -23,14 +23,14 @@ class Game:
 
     def draw_desk(self): # origs
         x,y = setup.right,setup.down
-        syls = self.player.my_silben
+        sylobjects = self.player.my_silben
         desk_syls = []
         index = 0
         for y in range(setup.down,setup.down*4,setup.down):
             for x in range(setup.right,setup.right*5,setup.right):
-                if index < len(syls):
-                    syl = syls[index]
-                    copy = silbe.Silbe(syl.inhalt)
+                if index < len(sylobjects):
+                    syl = sylobjects[index]
+                    copy = silbe.Silbe(syl.inhalt, syl.)
                     if syl.on == True:
                         #print("syl on")
                         copy.image = self.font.render(copy.inhalt,False,setup.white)
@@ -78,7 +78,7 @@ class Game:
         self.sprites.add(self.bank.words)
         run = True
         words = self.words
-        syls = self.bank.listofsyls
+        sylobjects = self.bank.silben
         loops = 0
         counter = 0
         index = 0 # NEWEST SYLLABLE INDEX
@@ -104,14 +104,14 @@ class Game:
                     action = self.player.act() # PLAYER MOVES ONCE A LOOP
                     if action == 1:
                         run = False
-                    self.player.pick(syls)
+                    self.player.pick(sylobjects)
                     if loops % 15 == 0:
-                        if counter + 1 == len(syls):
+                        if counter + 1 == len(sylobjects):
                             counter = 0
                         else:
                             counter += 1
                         loops = 0
-                    setup.screen_update_and_move(syls,counter,self.player)
+                    setup.screen_update_and_move(sylobjects,counter,self.player)
                     loops += 1
                     pg.display.flip()
                 else:
