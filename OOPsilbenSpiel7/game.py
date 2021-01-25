@@ -53,7 +53,7 @@ class Game:
                         if item.inhalt == syl.inhalt:
                             item.on = True
                             #print(item.inhalt," on")
-                    self.selected.append(syl)
+                    self.player.selected.append(syl)
         self.draw_word()
         display.update()
         self.check_word()
@@ -61,7 +61,7 @@ class Game:
     def draw_word(self):
         word = ""
         definition = ""
-        for syl in self.selected:
+        for syl in self.player.selected:
             word += syl.inhalt
             definition += syl.bit
         #print(word)
@@ -74,9 +74,9 @@ class Game:
         self.player.word = word
 
     def check_word(self):
-        if all(a.word == self.selected[0].word for a in self.selected):
-            pass
-            #print("correct")
+        if self.player.word in self.words:
+            if all(a.word == self.player.selected[0].word for a in self.player.selected):
+                print("correct")
 
 
 
