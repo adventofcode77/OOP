@@ -101,7 +101,7 @@ class Game:
             setup.clock.tick(setup.fps) #ONE LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
                     if stuff.type == QUIT:
-                        print([each.inhalt for each in self.player.my_silben])
+                        print([each.name for each in self.words])
                         print(len(self.player.my_silben))
                         exit()
                     elif stuff.type == KEYDOWN:
@@ -133,18 +133,16 @@ class Game:
                         if action == 1: #how does this work again? return is false
                             run = False
                         elif action == 5:
-                            sylobjects = self.player.syls_for_game + sylobjects
-                            counter += len(self.player.syls_for_game)
+                            for syl in self.player.syls_for_game:
+                                syl.visible = True
+                            #sylobjects = self.player.syls_for_game + sylobjects
+                            #counter += len(self.player.syls_for_game)
                         picked = self.player.pick(sylobjects)
-                        if picked is not None:
-                            print("pick is not none",len(sylobjects))
-                            sylobjects.remove(picked)
-                            counter -= 1
                         if loops % 15 == 0:
                             if counter + 1 == len(sylobjects):
                                 print("counter resets")
                                 for syl in sylobjects:
-                                    syl.rect.y = 0
+                                    syl.rect.y = 0 # doesn't work for small word banks
                                 counter = 0
                                 display.update()
                                 bool = True
