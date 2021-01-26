@@ -23,7 +23,9 @@ class Settings:
         self.screen = pg.display.set_mode((self.screenh,self.screenw))
         self.font = pg.font.SysFont("Arial",30)
         self.file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
-        self.parse = parsewikt3.Parse()
+        self.parser = parsewikt.Parse()
+        self.parsed2 = self.parser.parsed
+        print(self.parsed2, "\n\nnext\n\n")
 
     def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
         self.screen.fill(self.zuff)
@@ -36,8 +38,7 @@ class Settings:
         pg.display.flip()
 
     def get_bank(self):
-        bank = parsewikt.quick_get(100)
-        print(bank)
+        bank = self.parsed2
         return bank
 
 

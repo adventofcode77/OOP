@@ -4,7 +4,6 @@ import sys, time, random
 from pygame.locals import *
 import numpy as np
 from OOPsilbenSpiel7 import setup
-from OOPsilbenSpiel7 import bank
 
 class Spieler:
     def __init__(self):

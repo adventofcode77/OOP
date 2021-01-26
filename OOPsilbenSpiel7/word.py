@@ -4,11 +4,13 @@ import sys, time, random
 from pygame.locals import *
 from OOPsilbenSpiel7 import setup
 from OOPsilbenSpiel7 import silbe
+from OOPsilbenSpiel7 import spieler
 
 class Word(sprite.Sprite):
     def __init__(self, key, meaning,txtsilben):
         super().__init__()
-        self.base = setup.Settings()
+        self.spieler = spieler.Spieler()
+        #self.spieler.base = setup.Settings()
         self.meaning = meaning.split(" ")
         #del self.meaning[0]
         self.name = key
@@ -16,7 +18,7 @@ class Word(sprite.Sprite):
         self.bits = self.get_bits()
         self.syls = self.make_silben() #[silbe.Silbe("it","word","def inition")] #[silbe.Silbe(a, self.name) for a in silben]
         font = pg.font.SysFont("Arial",20)
-        self.image = font.render(self.name,False,self.base.black)
+        self.image = font.render(self.name,False,self.spieler.base.black)
         self.rect = self.image.get_rect() # draw_rect()?
         self.rect.x = 0 #random.randrange(0,500-self.rect.w,50)
 
