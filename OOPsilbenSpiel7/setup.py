@@ -4,71 +4,41 @@ from pygame.locals import *
 import linecache
 from wiktionary_de_parser import Parser
 import parsewikt3
+import parsewikt
 import numpy
 
+class Settings:
+    def __init__(self):
+        self.black = (0,0,0)
+        self.white = (255,255,255)
+        self.zuff = (200,200,200)
+        self.lila = (125,33,200)
+        self.clock = pg.time.Clock()
+        self.fps = 60
+        self.things_on_screen = []
+        self.pause = False
+        self.screenw, self.screenh = 500,500
+        self.right = self.screenw//6
+        self.down = self.screenh//12
+        self.screen = pg.display.set_mode((self.screenh,self.screenw))
+        self.font = pg.font.SysFont("Arial",30)
+        self.file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
+        self.parse = parsewikt3.Parse()
+
+    def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
+        self.screen.fill(self.zuff)
+        for i in range(current_syl):
+            syllable = allsyls[i]
+            if syllable.visible == True:
+                self.screen.blit(syllable.image,syllable.rect) #draw function?
+            syllable.rect.y += syllable.speed
+        self.screen.blit(player.image,player.rect)
+        pg.display.flip()
+
+    def get_bank(self):
+        bank = parsewikt.quick_get(100)
+        print(bank)
+        return bank
 
 
-black = (0,0,0)
-white = (255,255,255)
-zuff = (200,200,200)
-lila = (125,33,200)
-clock = pg.time.Clock()
-fps = 60
-things_on_screen = []
-pause = False
-screenw, screenh = 500,500
-right = screenw//6
-down = screenh//12
-
-
-#pg.init()
-
-
-# global font
-screen = pg.display.set_mode((screenh,screenw))
-screen.fill(white)
-#font = pg.font.SysFont("Arial",30)
-
-def screen_update_and_move(allsyls,current_syl,player): # after every changed object
-    screen.fill(zuff)
-    for i in range(current_syl):
-        syllable = allsyls[i]
-        if syllable.visible == True:
-            screen.blit(syllable.image,syllable.rect) #draw function?
-        syllable.rect.y += syllable.speed
-    screen.blit(player.image,player.rect)
-    pg.display.flip()
-
-
-file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
-
-def get_bank():
-    bank = parsewikt3.quick_get(100)
-    print(bank)
-    return bank
-
-# def get_bank():
-#     listesilben = []
-#     listdef = []
-#     for record in Parser(file_path):
-#         #if record.has_key('syllables'): # has_key was removed from py3
-#         if 'syllables' in record:
-#             #print(record['wikitext'])
-#             listesilben.append(record['syllables'])
-#             text1 = record["wikitext"].replace("{{","")
-#             text1 = text1.replace("}}","")
-#             text1 = text1.replace("[[","")
-#             text1 = text1.replace("]]","")
-#             text1 = text1.split("\n\n")
-#             print(text1)
-#             for i in range(len(text1)):
-#                 lines = text1[i].split('\n')
-#                 for line in lines:
-#                     print(line)
-#                     if line[0] == "Bedeutungen":
-#                        listdef.append(line[0])
-#         if len(listesilben) == 1000:
-#              break
-#     print(listdef)
-#     return random.sample(listesilben,200) # 200 random ones
 

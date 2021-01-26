@@ -8,8 +8,9 @@ from OOPsilbenSpiel7 import word
 
 class Bank:
     def __init__(self):
+        self.base = setup.Settings()
         self.rect = pg.Rect(0,0,20,20)
-        self.dictwithkeyname = setup.get_bank()
+        self.dictwithkeyname = self.base.get_bank()
         self.txtsyls = self.randomize_syls()
         self.flat = []
         self.font = pg.font.SysFont("Arial",30)

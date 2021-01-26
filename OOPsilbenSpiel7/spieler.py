@@ -8,6 +8,7 @@ from OOPsilbenSpiel7 import bank
 
 class Spieler:
     def __init__(self):
+        self.base = setup.Settings()
         l, r, w, h = 200,200,40,40
         self.rect = pg.Rect(l,r,w,h)
         self.pausiert = True
@@ -16,7 +17,7 @@ class Spieler:
         self.mysyllen = 0
         self.auswahl = []
         font = pg.font.SysFont("Arial",30)
-        self.txt = font.render("player",False,setup.black)
+        self.txt = font.render("player",False,self.base.black)
         self.image = transform.scale(image.load('Lacrosse_Player.svg'),(self.rect.w,self.rect.h))
         self.speed = 8
         self.word = ""
@@ -24,7 +25,7 @@ class Spieler:
         self.syls_for_game = [] # to return to the pool
 
     def add(self):
-        setup.things_on_screen.append(self)
+        self.base.things_on_screen.append(self)
 
     def act(self):
         keys = key.get_pressed()
