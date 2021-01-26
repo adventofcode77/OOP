@@ -23,8 +23,6 @@ class Spieler:
         self.selected = []
         self.syls_for_game = [] # to return to the pool
 
-    def add(self):
-        self.base.things_on_screen.append(self)
 
     def act(self):
         keys = key.get_pressed()

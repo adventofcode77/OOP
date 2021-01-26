@@ -1,43 +1,45 @@
 import pygame as pg
 from pygame import *
-import sys, time, random
 from pygame.locals import *
-from OOPsilbenSpiel7 import spieler
-from OOPsilbenSpiel7 import setup
+
 from OOPsilbenSpiel7 import bank
+from OOPsilbenSpiel7 import setup
 from OOPsilbenSpiel7 import silbe
-from OOPsilbenSpiel7 import word
-import numpy
+from OOPsilbenSpiel7 import spieler
+
 
 class Game:
 
     def __init__(self):
-        #self.player.base = setup.Settings()
+        self.settings = setup.Settings()
         self.player = spieler.Spieler()
+        print("works before bank init")
         self.bank = bank.Bank()
         self.words = self.bank.get_words()
         self.txt_syls = self.bank.txtsyls
         self.selected = []
         self.font = pg.font.SysFont("Arial",20)
         self.bigfont = pg.font.SysFont("Arial",30)
-        self.txt = self.font.render("player",False,self.player.base.black)
+        self.txt = self.font.render("player",False,self.settings.black)
         self.sprites = sprite.Group()
+        self.screen = pg.display.set_mode((self.settings.screenh,self.settings.screenw))
+
 
     def draw_desk(self): # origs
-        x,y = self.player.base.right,self.player.base.down
+        x,y = self.settings.right,self.settings.down
         sylobjects = self.player.my_silben
         desk_syls = []
         index = 0
-        for y in range(self.player.base.down,self.player.base.down*4,self.player.base.down):
-            for x in range(self.player.base.right,self.player.base.right*5,self.player.base.right):
+        for y in range(self.settings.down,self.settings.down*4,self.settings.down):
+            for x in range(self.settings.right,self.settings.right*5,self.settings.right):
                 if index < len(sylobjects):
                     syl = sylobjects[index]
                     copy = silbe.Silbe(syl.inhalt,syl.word,syl.bit)
                     if syl.on == True:
                         #print("syl on")
-                        copy.image = self.font.render(copy.inhalt,False,self.player.base.white)
+                        copy.image = self.font.render(copy.inhalt,False,self.settings.white)
                     copy.rect.x,copy.rect.y = x,y
-                    self.player.base.screen.blit(copy.image,copy.rect)
+                    self.screen.blit(copy.image,copy.rect)
                     desk_syls.append(copy) #copy whole syl
                     index += 1
                     x += copy.rect.w
@@ -45,7 +47,7 @@ class Game:
 
     def desk(self,click):
         # the event loop didn't work inside of this function
-        self.player.base.screen.fill(self.player.base.lila)
+        self.screen.fill(self.settings.lila)
         syls = self.draw_desk() # copies
         if click:
             x,y = click
@@ -68,26 +70,36 @@ class Game:
             word += f' {syl.inhalt}'
             definition += syl.bit
         #print(word)
-        word_image = self.font.render(word,False,self.player.base.black)
-        def_image = self.font.render(definition,False,self.player.base.black)
+        word_image = self.font.render(word,False,self.settings.black)
+        def_image = self.font.render(definition,False,self.settings.black)
         ww,wh = self.font.size(word)
         dw,dh = self.font.size(definition)
-        self.player.base.screen.blit(word_image,((self.player.base.screenw-ww)//2,self.player.base.down*6))
-        self.player.base.screen.blit(def_image,((self.player.base.screenw-dw)//2,self.player.base.down*7))
+        self.screen.blit(word_image,((self.settings.screenw-ww)//2,self.settings.down*6))
+        self.screen.blit(def_image,((self.settings.screenw-dw)//2,self.settings.down*7))
         self.player.word = word
 
     def check_word(self):
         if self.player.word in self.words:
             if all(a.word == self.player.selected[0].word for a in self.player.selected):
-                correct_image = self.font.render("correct",False,self.player.base.white)
+                correct_image = self.font.render("correct",False,self.settings.white)
                 cw,ch = self.font.size("correct")
-                self.player.base.screen.blit(correct_image,((self.player.base.screenw-cw)//2,self.player.base.down*7))
+                self.screen.blit(correct_image,((self.settings.screenw-cw)//2,self.settings.down*7))
                 print("correct")
 
 
+    def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
+        self.screen.fill(self.settings.zuff)
+        for i in range(current_syl):
+            syllable = allsyls[i]
+            if syllable.visible == True:
+                self.screen.blit(syllable.image,syllable.rect) #draw function?
+            syllable.rect.y += syllable.speed
+        self.screen.blit(player.image,player.rect)
+        pg.display.flip()
 
     def gameloop(self):
         self.sprites.add(self.bank.words)
+        clock = pg.time.Clock()
         run = True
         print([each.name for each in self.words])
         sylobjects = self.bank.silben
@@ -97,7 +109,7 @@ class Game:
         bool = False
         boolcounter = 0
         while True:
-            self.player.base.clock.tick(self.player.base.fps) #ONE LOOP
+            clock.tick(self.settings.fps) #ONE LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
                     if stuff.type == QUIT:
                         print(len(self.player.my_silben))
@@ -116,9 +128,9 @@ class Game:
                             bool = False
                             boolcounter = 0
                         else:
-                            self.player.base.screen.fill(self.player.base.black)
+                            self.screen.fill(self.settings.black)
                             boolcounter += 1
-                            self.player.base.screen.blit(self.bigfont.render("new loop",False,self.player.base.white),(200,250))
+                            self.screen.blit(self.bigfont.render("new loop",False,self.settings.white),(200,250))
                             display.update()
                             continue
 
@@ -137,12 +149,7 @@ class Game:
                             counter += 1
                             loops = 0
                         loops += 1
-                        self.player.base.screen_update_and_move(sylobjects,counter,self.player)
+                        self.screen_update_and_move(sylobjects,counter,self.player)
                 else:
                     self.desk(click)
                     click = False
-
-
-
-
-

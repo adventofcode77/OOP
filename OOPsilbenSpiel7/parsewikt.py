@@ -3,11 +3,11 @@ from wiktionary_de_parser import Parser
 import random
 
 class Parse:
-    def __init__(self):
-        self.file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
+    def __init__(self, file_path):
+        self.file_path = file_path
         self.listofrecords = []
         self.list_records()
-        self.parsed = self.quick_get(100)
+        self.parsed = self.quick_get(50)
 
     def iterate(self,record):
         #print(record)
