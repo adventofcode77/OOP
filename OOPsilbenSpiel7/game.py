@@ -12,6 +12,7 @@ import numpy
 class Game:
 
     def __init__(self):
+        self.base = setup.Settings()
         self.player = spieler.Spieler()
         self.bank = bank.Bank()
         self.words = self.bank.get_words()
@@ -19,24 +20,24 @@ class Game:
         self.selected = []
         self.font = pg.font.SysFont("Arial",20)
         self.bigfont = pg.font.SysFont("Arial",30)
-        self.txt = self.font.render("player",False,setup.black)
+        self.txt = self.font.render("player",False,self.base.black)
         self.sprites = sprite.Group()
 
     def draw_desk(self): # origs
-        x,y = setup.right,setup.down
+        x,y = self.base.right,self.base.down
         sylobjects = self.player.my_silben
         desk_syls = []
         index = 0
-        for y in range(setup.down,setup.down*4,setup.down):
-            for x in range(setup.right,setup.right*5,setup.right):
+        for y in range(self.base.down,self.base.down*4,self.base.down):
+            for x in range(self.base.right,self.base.right*5,self.base.right):
                 if index < len(sylobjects):
                     syl = sylobjects[index]
                     copy = silbe.Silbe(syl.inhalt,syl.word,syl.bit)
                     if syl.on == True:
                         #print("syl on")
-                        copy.image = self.font.render(copy.inhalt,False,setup.white)
+                        copy.image = self.font.render(copy.inhalt,False,self.base.white)
                     copy.rect.x,copy.rect.y = x,y
-                    setup.screen.blit(copy.image,copy.rect)
+                    self.base.screen.blit(copy.image,copy.rect)
                     desk_syls.append(copy) #copy whole syl
                     index += 1
                     x += copy.rect.w
@@ -44,7 +45,7 @@ class Game:
 
     def desk(self,click):
         # the event loop didn't work inside of this function
-        setup.screen.fill(setup.lila)
+        self.base.screen.fill(self.base.lila)
         syls = self.draw_desk() # copies
         if click:
             x,y = click
@@ -67,20 +68,20 @@ class Game:
             word += f' {syl.inhalt}'
             definition += syl.bit
         #print(word)
-        word_image = self.font.render(word,False,setup.black)
-        def_image = self.font.render(definition,False,setup.black)
+        word_image = self.font.render(word,False,self.base.black)
+        def_image = self.font.render(definition,False,self.base.black)
         ww,wh = self.font.size(word)
         dw,dh = self.font.size(definition)
-        setup.screen.blit(word_image,((setup.screenw-ww)//2,setup.down*6))
-        setup.screen.blit(def_image,((setup.screenw-dw)//2,setup.down*7))
+        self.base.screen.blit(word_image,((self.base.screenw-ww)//2,self.base.down*6))
+        self.base.screen.blit(def_image,((self.base.screenw-dw)//2,self.base.down*7))
         self.player.word = word
 
     def check_word(self):
         if self.player.word in self.words:
             if all(a.word == self.player.selected[0].word for a in self.player.selected):
-                correct_image = self.font.render("correct",False,setup.white)
+                correct_image = self.font.render("correct",False,self.base.white)
                 cw,ch = self.font.size("correct")
-                setup.screen.blit(correct_image,((setup.screenw-cw)//2,setup.down*7))
+                self.base.screen.blit(correct_image,((self.base.screenw-cw)//2,self.base.down*7))
                 print("correct")
 
 
@@ -96,7 +97,7 @@ class Game:
         bool = False
         boolcounter = 0
         while True:
-            setup.clock.tick(setup.fps) #ONE LOOP
+            self.base.clock.tick(self.base.fps) #ONE LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
                     if stuff.type == QUIT:
                         print(len(self.player.my_silben))
@@ -104,7 +105,6 @@ class Game:
                     elif stuff.type == KEYDOWN:
                         if stuff.key == K_SPACE:
                             run = False
-                            setup.screen.fill(setup.lila)
                         elif stuff.key == K_a:
                             run = True
                     elif stuff.type == MOUSEBUTTONDOWN:
@@ -116,9 +116,9 @@ class Game:
                             bool = False
                             boolcounter = 0
                         else:
-                            setup.screen.fill(setup.black)
+                            self.base.screen.fill(self.base.black)
                             boolcounter += 1
-                            setup.screen.blit(self.bigfont.render("new loop",False,setup.white),(200,250))
+                            self.base.screen.blit(self.bigfont.render("new loop",False,self.base.white),(200,250))
                             display.update()
                             continue
 
@@ -137,7 +137,7 @@ class Game:
                             counter += 1
                             loops = 0
                         loops += 1
-                        setup.screen_update_and_move(sylobjects,counter,self.player)
+                        self.base.screen_update_and_move(sylobjects,counter,self.player)
                 else:
                     self.desk(click)
                     click = False
