@@ -5,12 +5,13 @@ from pygame.locals import *
 from OOPsilbenSpiel7 import silbe
 from OOPsilbenSpiel7 import setup
 from OOPsilbenSpiel7 import word
+from OOPsilbenSpiel7 import spieler
 
 class Bank:
     def __init__(self):
-        self.base = setup.Settings()
+        self.spieler = spieler.Spieler()
         self.rect = pg.Rect(0,0,20,20)
-        self.dictwithkeyname = self.base.get_bank()
+        self.dictwithkeyname = self.spieler.base.get_bank()
         self.txtsyls = self.randomize_syls()
         self.flat = []
         self.font = pg.font.SysFont("Arial",30)
