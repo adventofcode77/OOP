@@ -1,22 +1,16 @@
 import pygame as pg
 from pygame import *
-import sys, time, random
 from pygame.locals import *
-import numpy as np
-from OOPsilbenSpiel7 import setup
+from OOPsilbenSpiel7 import globale_variablen
 
-class Spieler:
+class Spieler(globale_variablen.Settings):
     def __init__(self):
-        self.base = setup.Settings()
+        super().__init__()
         l, r, w, h = 200,200,40,40
         self.rect = pg.Rect(l,r,w,h)
-        self.pausiert = True
-        self.step = 20
         self.my_silben = []
-        self.mysyllen = 0
-        self.auswahl = []
         font = pg.font.SysFont("Arial",30)
-        self.txt = font.render("player",False,self.base.black)
+        self.txt = font.render("player", False, self.black)
         self.image = transform.scale(image.load('Lacrosse_Player.svg'),(self.rect.w,self.rect.h))
         self.speed = 8
         self.word = ""
@@ -58,20 +52,5 @@ class Spieler:
             else:
                 self.picked = None
 
-
-    def use(self,silbe):
-        self.auswahl.append(silbe)
-
-    def onemove(self,event):
-        if event.key == K_n: #exit game
-            exit()
-        elif event.key == K_UP:
-            self.rect.y -= 40
-        elif event.key == K_DOWN:
-            self.rect.y += 40
-        elif event.key == K_LEFT:
-            self.rect.x -= 40
-        elif event.key == K_RIGHT:
-            self.rect.x += 40
 
 

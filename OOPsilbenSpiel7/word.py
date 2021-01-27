@@ -1,24 +1,19 @@
 import pygame as pg
 from pygame import *
-import sys, time, random
-from pygame.locals import *
-from OOPsilbenSpiel7 import setup
 from OOPsilbenSpiel7 import silbe
 from OOPsilbenSpiel7 import spieler
+import globale_variablen
 
-class Word(sprite.Sprite):
+class Word(globale_variablen.Settings):
     def __init__(self, key, meaning,txtsilben):
         super().__init__()
         self.spieler = spieler.Spieler()
-        #self.spieler.base = setup.Settings()
         self.meaning = meaning.split(" ")
-        #del self.meaning[0]
         self.name = key
         self.txtsilben = txtsilben
         self.bits = self.get_bits()
         self.syls = self.make_silben() #[silbe.Silbe("it","word","def inition")] #[silbe.Silbe(a, self.name) for a in silben]
-        font = pg.font.SysFont("Arial",20)
-        self.image = font.render(self.name,False,self.spieler.base.black)
+        self.image = self.font.render(self.name, False, self.spieler.black)
         self.rect = self.image.get_rect() # draw_rect()?
         self.rect.x = 0 #random.randrange(0,500-self.rect.w,50)
 
@@ -84,10 +79,8 @@ class Word(sprite.Sprite):
         for i in range(len(self.txtsilben)-1):
             it = self.txtsilben[i]
             word = self.name
-            #print("MAKE SILBEN EXECUTES. word:",word,"meaning:",self.meaning,"SYLLABLES!",self.txtsilben,"bits:",self.bits,i)
             if i >= len(self.bits):
                 bit = ""
-
             else:
                 bit = self.bits[i]
                 if isinstance(bit, list):

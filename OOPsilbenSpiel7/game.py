@@ -2,42 +2,41 @@ import pygame as pg
 from pygame import *
 from pygame.locals import *
 
-from OOPsilbenSpiel7 import bank
-from OOPsilbenSpiel7 import setup
+from OOPsilbenSpiel7 import woerter
+from OOPsilbenSpiel7 import globale_variablen
 from OOPsilbenSpiel7 import silbe
 from OOPsilbenSpiel7 import spieler
 
 
-class Game:
+class Game(globale_variablen.Settings):
 
     def __init__(self):
-        self.settings = setup.Settings()
+        super().__init__()
         self.player = spieler.Spieler()
-        print("works before bank init")
-        self.bank = bank.Bank()
+        self.bank = woerter.Woerter()
         self.words = self.bank.get_words()
         self.txt_syls = self.bank.txtsyls
         self.selected = []
         self.font = pg.font.SysFont("Arial",20)
         self.bigfont = pg.font.SysFont("Arial",30)
-        self.txt = self.font.render("player",False,self.settings.black)
-        self.sprites = sprite.Group()
-        self.screen = pg.display.set_mode((self.settings.screenh,self.settings.screenw))
+        self.txt = self.font.render("player",False,self.black)
+        #self.sprites = sprite.Group()
+        self.screen = pg.display.set_mode((self.screenh,self.screenw))
 
 
     def draw_desk(self): # origs
-        x,y = self.settings.right,self.settings.down
+        x,y = self.right,self.down
         sylobjects = self.player.my_silben
         desk_syls = []
         index = 0
-        for y in range(self.settings.down,self.settings.down*4,self.settings.down):
-            for x in range(self.settings.right,self.settings.right*5,self.settings.right):
+        for y in range(self.down,self.down*4,self.down):
+            for x in range(self.right,self.right*5,self.right):
                 if index < len(sylobjects):
                     syl = sylobjects[index]
                     copy = silbe.Silbe(syl.inhalt,syl.word,syl.bit)
                     if syl.on == True:
                         #print("syl on")
-                        copy.image = self.font.render(copy.inhalt,False,self.settings.white)
+                        copy.image = self.font.render(copy.inhalt,False,self.white)
                     copy.rect.x,copy.rect.y = x,y
                     self.screen.blit(copy.image,copy.rect)
                     desk_syls.append(copy) #copy whole syl
@@ -47,7 +46,7 @@ class Game:
 
     def desk(self,click):
         # the event loop didn't work inside of this function
-        self.screen.fill(self.settings.lila)
+        self.screen.fill(self.lila)
         syls = self.draw_desk() # copies
         if click:
             x,y = click
@@ -70,25 +69,25 @@ class Game:
             word += f' {syl.inhalt}'
             definition += syl.bit
         #print(word)
-        word_image = self.font.render(word,False,self.settings.black)
-        def_image = self.font.render(definition,False,self.settings.black)
+        word_image = self.font.render(word,False,self.black)
+        def_image = self.font.render(definition,False,self.black)
         ww,wh = self.font.size(word)
         dw,dh = self.font.size(definition)
-        self.screen.blit(word_image,((self.settings.screenw-ww)//2,self.settings.down*6))
-        self.screen.blit(def_image,((self.settings.screenw-dw)//2,self.settings.down*7))
+        self.screen.blit(word_image,((self.screenw-ww)//2,self.down*6))
+        self.screen.blit(def_image,((self.screenw-dw)//2,self.down*7))
         self.player.word = word
 
     def check_word(self):
         if self.player.word in self.words:
             if all(a.word == self.player.selected[0].word for a in self.player.selected):
-                correct_image = self.font.render("correct",False,self.settings.white)
+                correct_image = self.font.render("correct",False,self.white)
                 cw,ch = self.font.size("correct")
-                self.screen.blit(correct_image,((self.settings.screenw-cw)//2,self.settings.down*7))
+                self.screen.blit(correct_image,((self.screenw-cw)//2,self.down*7))
                 print("correct")
 
 
     def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
-        self.screen.fill(self.settings.zuff)
+        self.screen.fill(self.zuff)
         for i in range(current_syl):
             syllable = allsyls[i]
             if syllable.visible == True:
@@ -98,7 +97,6 @@ class Game:
         pg.display.flip()
 
     def gameloop(self):
-        self.sprites.add(self.bank.words)
         clock = pg.time.Clock()
         run = True
         print([each.name for each in self.words])
@@ -109,11 +107,17 @@ class Game:
         bool = False
         boolcounter = 0
         while True:
-            clock.tick(self.settings.fps) #ONE LOOP
+            clock.tick(self.fps) #ONE LOOP
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
                     if stuff.type == QUIT:
+                        self.screen.fill(self.black)
+                        image_end = self.font.render("GAME OVER",False,self.white)
+                        x,y,image_w,h = image_end.get_rect()
+                        self.screen.blit(image_end,(self.screenw//2-image_w//2,self.screenh//2))
+                        display.flip()
                         print(len(self.player.my_silben))
-                        exit()
+                        return 5
+                        quit()
                     elif stuff.type == KEYDOWN:
                         if stuff.key == K_SPACE:
                             run = False
@@ -128,9 +132,9 @@ class Game:
                             bool = False
                             boolcounter = 0
                         else:
-                            self.screen.fill(self.settings.black)
+                            self.screen.fill(self.black)
                             boolcounter += 1
-                            self.screen.blit(self.bigfont.render("new loop",False,self.settings.white),(200,250))
+                            self.screen.blit(self.bigfont.render("new loop",False,self.white),(200,250))
                             display.update()
                             continue
 

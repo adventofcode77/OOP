@@ -1,16 +1,16 @@
 import wiktionary_de_parser
 from wiktionary_de_parser import Parser
 import random
+import globale_variablen
 
-class Parse:
-    def __init__(self):
-        self.file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
+class Woerterbuch(globale_variablen.Settings):
+    def __init__(self, file_path):
+        self.file_path = file_path
         self.listofrecords = []
         self.list_records()
+        self.parsed = self.quick_get(50)
 
     def iterate(self,record):
-        #print(record)
-        #print(record.keys())
         meaning = ""
         if 'syllables' in record.keys():
             text1 = record["wikitext"].replace("{{","")
@@ -18,41 +18,32 @@ class Parse:
             text1 = text1.replace("[[","")
             text1 = text1.replace("]]","")
             text1 = text1.split("\n\n")
-            #print(text1)
             for i in range(len(text1)):
                 line = text1[i]
-                #print("line ", line)
                 line = line.split('\n')
                 for i in range (len(line)):
                     newline = line[i]
-                    #print("here2 ",newline)
                     if newline == "Bedeutungen":
-                        #print("plus one ", line[i+1])
                         meaning = line[i+1]
         else:
             return False
         return meaning,record['syllables']
 
+
     def list_records(self):
         for record in Parser(self.file_path):
-            #print(record)
             self.listofrecords.append(record)
             if len(self.listofrecords) == 1000:
                 break
 
     def getaword(self):
         j = random.randrange(0,1000)
-        #print(j)
         record = self.listofrecords[j]
-        #print(record["title"])
-        #print(record)
         if 'langCode' not in record or record['langCode'] != 'de':
             return self.getaword()
-        # do stuff with 'record'
         if self.iterate(record):
             bedeutung, syls = self.iterate(record)
             simplelistforaword = [record["title"],bedeutung, syls]
-            #print("returning the right thing ",simplelistforaword)
             return simplelistforaword
         else:
             return self.getaword()
