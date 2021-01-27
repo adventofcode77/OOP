@@ -28,7 +28,6 @@ class Woerter(globale_variablen.Settings):
             syls = self.dictwithkeyname[entry][1]
             aword = word.Word(name,meaning,syls)
             words.append(aword)
-            print(self.test, name, meaning)
         return words
 
     def get_silben(self):

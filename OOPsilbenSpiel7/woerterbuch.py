@@ -9,7 +9,7 @@ class Woerterbuch(globale_variablen.Settings):
         self.file_path = file_path
         self.listofrecords = []
         self.list_records()
-        self.parsed = self.quick_get(50)
+        self.parsed = self.quick_get(10)
 
     def iterate(self,record):
         meaning = ""
