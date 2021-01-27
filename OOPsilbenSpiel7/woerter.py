@@ -7,13 +7,13 @@ import globale_variablen
 
 class Woerter(globale_variablen.Settings):
     def __init__(self):
-        self.spieler = spieler.Spieler()
+        super().__init__()
         self.rect = pg.Rect(0,0,20,20)
-        self.dictwithkeyname = self.get_bank2()
+        self.dictwithkeyname = self.get_bank()
         self.txtsyls = self.randomize_syls()
         self.flat = []
         self.font = pg.font.SysFont("Arial",30)
-        self.test = 3
+        self.test = 0
         self.words = self.get_words()
         self.silben = self.get_silben()
 
@@ -28,7 +28,7 @@ class Woerter(globale_variablen.Settings):
             syls = self.dictwithkeyname[entry][1]
             aword = word.Word(name,meaning,syls)
             words.append(aword)
-            print(self.test, name)
+            print(self.test, name, meaning)
         return words
 
     def get_silben(self):
@@ -48,9 +48,9 @@ class Woerter(globale_variablen.Settings):
         return random.sample(all_syls, len(all_syls)) #sample returns new list
 
 
-    def get_bank2(self):
+    def get_bank(self):
+        print("get bank")
         file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
         parser = woerterbuch.Woerterbuch(file_path)
-        bank2 = parser.parsed
-        print(bank2, "\n\nnext\n\n")
-        return bank2
+        bank = parser.parsed
+        return bank

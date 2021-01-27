@@ -17,10 +17,7 @@ class Game(globale_variablen.Settings):
         self.words = self.bank.get_words()
         self.txt_syls = self.bank.txtsyls
         self.selected = []
-        self.font = pg.font.SysFont("Arial",20)
-        self.bigfont = pg.font.SysFont("Arial",30)
         self.txt = self.font.render("player",False,self.black)
-        #self.sprites = sprite.Group()
         self.screen = pg.display.set_mode((self.screenh,self.screenw))
 
 

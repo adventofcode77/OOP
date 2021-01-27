@@ -9,13 +9,11 @@ class Spieler(globale_variablen.Settings):
         l, r, w, h = 200,200,40,40
         self.rect = pg.Rect(l,r,w,h)
         self.my_silben = []
-        font = pg.font.SysFont("Arial",30)
-        self.txt = font.render("player", False, self.black)
+        self.txt = self.font.render("player", False, self.black)
         self.image = transform.scale(image.load('Lacrosse_Player.svg'),(self.rect.w,self.rect.h))
         self.speed = 8
         self.word = ""
         self.selected = []
-        self.syls_for_game = [] # to return to the pool
 
 
     def act(self):
@@ -36,10 +34,8 @@ class Spieler(globale_variablen.Settings):
             self.my_silben = []
             self.word = ""
             self.selected = []
-            print("cleared desk")
 
     def pick(self,sylobjects):
-        #print(sylobjects)
         if len(self.my_silben) == 12:
             pass #print("you can only pick 12 at a time!")
         else:

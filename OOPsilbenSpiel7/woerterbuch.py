@@ -5,6 +5,7 @@ import globale_variablen
 
 class Woerterbuch(globale_variablen.Settings):
     def __init__(self, file_path):
+        super().__init__()
         self.file_path = file_path
         self.listofrecords = []
         self.list_records()
@@ -56,9 +57,9 @@ class Woerterbuch(globale_variablen.Settings):
             #print("what about me ",num,i)
             list = self.getaword()
             list[1] = list[1][4:]
-            # print("the list ",list)
+            #print("the list ",list)
             # print("0th ",list[0])  #word
-            # print("1st ",list[1]) #meaning string
+            #print("1st ",list[1]) #meaning string
             # print("2nd ",list[2]) # syls
             dictwords[list[0]] = [list[1],list[2]]
         return dictwords
