@@ -12,7 +12,7 @@ class Silbe(globale_variablen.Settings): #do with sprites
         self.rect = self.image.get_rect() # or text.get_rect()?
         self.rect.x = random.randrange(0,500-self.rect.w,50)
         self.speed = 3
-        self.on = True
+        self.clicked_on = False
         self.bit = " ".join(bit) #giving it a list of lists sometimes
         self.visible = True
 

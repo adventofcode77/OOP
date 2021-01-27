@@ -2,11 +2,13 @@ import pygame as pg
 from pygame import *
 from OOPsilbenSpiel7 import silbe
 import globale_variablen
+import math
 
 class Word(globale_variablen.Settings):
     def __init__(self, key, meaning,txtsilben):
         super().__init__()
         self.meaning = meaning.split(" ")
+        self.meaning = list(filter(None,self.meaning))
         print("word init",key,len(txtsilben),self.meaning)
         self.name = key
         self.txtsilben = txtsilben
@@ -25,16 +27,16 @@ class Word(globale_variablen.Settings):
     def get_bits(self):
         definition = self.meaning
         list_of_lists = []
-        num_syls = 5
-        advancement = len(definition)//num_syls
+        num_syls = len(self.txtsilben)
+        advancement = math.ceil(len(definition)/num_syls)
         if advancement == 0:
             advancement = 1
         for i in range(0,len(definition),advancement):
-            if i+advancement*2 >= len(definition):
-                list_of_lists.append(definition[i:])
-                break
-            else:
-                list_of_lists.append(definition[i:(i+advancement)])
+            # if i+advancement*2 >= len(definition):
+            #     list_of_lists.append(definition[i:])
+            #     break
+            # else:
+            list_of_lists.append(definition[i:(i+advancement)])
         return list_of_lists # DO NOT FORGET RETURN
 
 
@@ -48,7 +50,7 @@ class Word(globale_variablen.Settings):
             bigger = len(self.txtsilben)
         for i in range(smaller):
             print(i, self.bits)
-            bit = self.bits[i] + [" "]
+            bit = self.bits[i]
             it = self.txtsilben[i]
             word = self.name
             silbe1 = silbe.Silbe(it,word,bit)

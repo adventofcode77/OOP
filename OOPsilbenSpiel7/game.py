@@ -31,7 +31,7 @@ class Game(globale_variablen.Settings):
                 if index < len(sylobjects):
                     syl = sylobjects[index]
                     copy = silbe.Silbe(syl.inhalt,syl.word,syl.bit)
-                    if syl.on == True:
+                    if syl.clicked_on == True:
                         #print("syl on")
                         copy.image = self.font.render(copy.inhalt,False,self.white)
                     copy.rect.x,copy.rect.y = x,y
@@ -51,7 +51,7 @@ class Game(globale_variablen.Settings):
                 if syl.rect.collidepoint(x,y):
                     for item in self.player.my_silben: #next()?
                         if item.inhalt == syl.inhalt:
-                            item.on = True
+                            item.clicked_on = True
                             #print(item.inhalt," on")
                     self.player.selected.append(syl)
         self.draw_word()
