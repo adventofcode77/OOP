@@ -64,7 +64,7 @@ class Game(globale_variablen.Settings):
         definition = ""
         for syl in self.player.selected:
             word += f' {syl.inhalt}'
-            definition += syl.bit
+            definition += " ".join(syl.bit)
         print(definition)
         word_image = self.font.render(word,False,self.black)
         def_image = self.font.render(definition,False,self.black)
@@ -77,6 +77,11 @@ class Game(globale_variablen.Settings):
     def check_word(self):
         if self.player.word in [a.name for a in self.words]:
             print("correct")
+            exit()
+        else:
+            print("here",len(self.player.word))
+            self.player.word += " "
+            print(len(self.player.word))
 
 
     def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
