@@ -10,4 +10,5 @@ class Settings:
         self.screenw, self.screenh = 500,500
         self.right = self.screenw//6
         self.down = self.screenh//12
-        self.font = pg.font.SysFont("Arial",30)
+        self.font = pg.font.SysFont("Arial",20)
+        self.bigfont = pg.font.SysFont("Arial", 0)
