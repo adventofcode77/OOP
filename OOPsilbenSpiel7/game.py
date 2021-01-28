@@ -21,6 +21,7 @@ class Game(globale_variablen.Settings):
         self.txt = self.font.render("player",False,self.black)
         self.screen = pg.display.set_mode((self.screenh,self.screenw))
         self.score = 0
+        self.syls = self.bank.silben
 
 
     def draw_desk(self): # origs
@@ -81,24 +82,32 @@ class Game(globale_variablen.Settings):
 
     def check_word(self):
         if self.player.definition.split() in [a.meaning for a in self.words]:
-            print("tickcheck")
+            print("tick1")
             self.score += 5
             nurdefs = [a.meaning for a in self.words]
             indexword = nurdefs.index(self.player.definition.split()) #same place as in words but def only
-            print("nurdefs",nurdefs)
-            print("player definition",self.player.definition.split())
-            print("indexword",indexword)
-            del self.words[indexword]
+            guessedword =  self.words[indexword]
+            for syl in guessedword.syls:
+                print(syl)
+                print(syl.inhalt)
+                print([a.inhalt for a in self.syls])
+                print([a for a in self.syls])
+                self.syls.remove(syl)
+                exit()
         elif self.player.definition[:-1] == " ":
             if self.player.definition[:-1].split() in [a.meaning for a in self.words]:
-                print("tickcheck")
+                print("tick2")
                 self.score += 5
                 nurdefs = [a.meaning for a in self.words]
                 indexword = nurdefs.index(self.player.definition.split())  # same place as in words but def only
-                print("nurdefs", nurdefs)
-                print("player definition", self.player.definition.split())
-                print("indexword", indexword)
-                del self.words[indexword]
+                guessedword = self.words[indexword]
+                for syl in guessedword.syls:
+                    print(syl)
+                    print(syl.inhalt)
+                    print([a.inhalt for a in self.syls])
+                    print([a for a in self.syls])
+                    self.syls.remove(syl)
+                    exit()
         else:
             print(f'incorrect,{self.player.definition.split()} is not in any of:\n {[a.meaning for a in self.words]}\n')
 
@@ -117,7 +126,7 @@ class Game(globale_variablen.Settings):
         clock = pg.time.Clock()
         run = True
         print([each.name for each in self.words])
-        sylobjects = self.bank.silben
+        sylobjects = self.syls
         loops = 0
         counter = 0
         click = False
@@ -159,7 +168,7 @@ class Game(globale_variablen.Settings):
                         action = self.player.act() # PLAYER MOVES ONCE A LOOP
                         if action == 1: #how does this work again? return is false
                             run = False
-                        picked = self.player.pick(sylobjects)
+                        self.player.pick(sylobjects)
                         if loops % 15 == 0:
                             if counter+1 == len(sylobjects):
                                 print("counter resets")
