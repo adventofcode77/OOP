@@ -49,18 +49,15 @@ class Word(globale_variablen.Settings):
             smaller = len(self.txtsilben)
             bigger = len(self.txtsilben)
         for i in range(smaller):
-            print(i, self.bits)
             bit = self.bits[i]
             it = self.txtsilben[i]
             word = self.name
             silbe1 = silbe.Silbe(it,word,bit)
             syls.append(silbe1)
-            print(it, word, bit)
         for i in range(smaller,bigger):
             bit = "."
             it = self.txtsilben[i]
             word = self.name
             silbe1 = silbe.Silbe(it, word, bit)
             syls.append(silbe1)
-            print(it,word,bit)
         return syls

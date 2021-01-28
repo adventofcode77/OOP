@@ -14,7 +14,6 @@ class Silbe(globale_variablen.Settings): #do with sprites
         self.speed = 3
         self.clicked_on = False
         self.bit = bit # ['einer', 'Aktiengesellschaft']
-        print("bit",bit)
         self.visible = True
 
     def move(self,speed=5):
