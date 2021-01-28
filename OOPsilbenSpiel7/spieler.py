@@ -12,6 +12,7 @@ class Spieler(globale_variablen.Settings):
         self.txt = self.font.render("player", False, self.black)
         self.image = transform.scale(image.load('Lacrosse_Player.svg'),(self.rect.w,self.rect.h))
         self.speed = 8
+        self.definition = ""
         self.word = ""
         self.selected = []
 
@@ -32,7 +33,7 @@ class Spieler(globale_variablen.Settings):
             for syl in self.my_silben:
                 syl.visible = True
             self.my_silben = []
-            self.word = ""
+            self.definition = ""
             self.selected = []
 
     def pick(self,sylobjects):

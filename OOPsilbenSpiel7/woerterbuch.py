@@ -57,6 +57,8 @@ class Woerterbuch(globale_variablen.Settings):
             #print("what about me ",num,i)
             list = self.getaword()
             list[1] = list[1][4:]
+            if list[1] == "" or list[1] == " ":
+                list[1] = "easter egg"
             #print("the list ",list)
             # print("0th ",list[0])  #word
             #print("1st ",list[1]) #meaning string

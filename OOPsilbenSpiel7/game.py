@@ -15,10 +15,12 @@ class Game(globale_variablen.Settings):
         self.player = spieler.Spieler()
         self.bank = woerter.Woerter()
         self.words = self.bank.get_words()
+        self.defs = [a.meaning for a in self.words]
         self.txt_syls = self.bank.txtsyls
         self.selected = []
         self.txt = self.font.render("player",False,self.black)
         self.screen = pg.display.set_mode((self.screenh,self.screenw))
+        self.score = 0
 
 
     def draw_desk(self): # origs
@@ -42,6 +44,7 @@ class Game(globale_variablen.Settings):
         return desk_syls
 
     def desk(self,click):
+        current_selected = ""
         # the event loop didn't work inside of this function
         self.screen.fill(self.lila)
         syls = self.draw_desk() # copies
@@ -49,39 +52,55 @@ class Game(globale_variablen.Settings):
             x,y = click
             for syl in syls:
                 if syl.rect.collidepoint(x,y):
+                    print("player collides with syl")
                     for item in self.player.my_silben: #next()?
                         if item.inhalt == syl.inhalt:
                             item.clicked_on = True
                             #print(item.inhalt," on")
                     self.player.selected.append(syl)
-        self.draw_word()
+                    current_selected = syl
+                    print("selected takes that syl",len(self.player.selected))
+        if current_selected:
+            self.draw_word(current_selected)
         self.check_word()
         display.update()
 
 
-    def draw_word(self):
-        word = ""
-        definition = ""
-        for syl in self.player.selected:
-            word += f' {syl.inhalt}'
-            definition += " ".join(syl.bit)
-        print(definition)
-        word_image = self.font.render(word,False,self.black)
-        def_image = self.font.render(definition,False,self.black)
-        ww,wh = self.font.size(word)
-        dw,dh = self.font.size(definition)
+    def draw_word(self,syl):
+        print("self player selected arrives at draw word",self.player.selected)
+        self.player.word += f' {syl.inhalt}'
+        self.player.definition += " ".join(syl.bit) + " "
+        print("player def after adding all syls",self.player.definition)
+        word_image = self.font.render(self.player.word,False,self.black)
+        def_image = self.font.render(self.player.definition,False,self.black)
+        ww,wh = self.font.size(self.player.word)
+        dw,dh = self.font.size(self.player.definition)
         self.screen.blit(word_image,((self.screenw-ww)//2,self.down*6))
         self.screen.blit(def_image,((self.screenw-dw)//2,self.down*7))
-        self.player.word = definition
+
 
     def check_word(self):
-        if self.player.word in [a.name for a in self.words]:
-            print("correct")
-            exit()
+        if self.player.definition.split() in [a.meaning for a in self.words]:
+            print("tickcheck")
+            self.score += 5
+            nurdefs = [a.meaning for a in self.words]
+            indexword = nurdefs.index(self.player.definition.split()) #same place as in words but def only
+            print("nurdefs",nurdefs)
+            print("player definition",self.player.definition.split())
+            print("indexword",indexword)
+            del self.words[indexword]
+        elif self.player.definition[:-1] == " ":
+            if self.player.definition[:-1].split() in [a.meaning for a in self.words]:
+                print("tickcheck")
+                self.score += 5
+                nurdefs = [a.meaning for a in self.words]
+                indexword = nurdefs.index(self.player.definition.split())  # same place as in words but def only
+                print("nurdefs", nurdefs)
+                print("player definition", self.player.definition.split())
+                print("indexword", indexword)
+                del self.words[indexword]
         else:
-            print("here",len(self.player.word))
-            self.player.word += " "
-            print(len(self.player.word))
+            print(f'incorrect,{self.player.definition.split()} is not in any of:\n {[a.meaning for a in self.words]}\n')
 
 
     def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
@@ -114,7 +133,7 @@ class Game(globale_variablen.Settings):
                         self.screen.blit(image_end,(self.screenw//2-image_w//2,self.screenh//2))
                         display.flip()
                         print(len(self.player.my_silben))
-                        return 5
+                        return self.score
                         quit()
                     elif stuff.type == KEYDOWN:
                         if stuff.key == K_SPACE:
