@@ -14,7 +14,6 @@ class Spieler(globale_variablen.Settings):
         self.speed = 8
         self.definition = ""
         self.word = ""
-        self.selected = []
 
 
     def act(self):
@@ -34,7 +33,6 @@ class Spieler(globale_variablen.Settings):
                 syl.visible = True
             self.my_silben = []
             self.definition = ""
-            self.selected = []
 
     def pick(self,sylobjects):
         if len(self.my_silben) == 12:
