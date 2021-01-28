@@ -43,11 +43,9 @@ class Spieler(globale_variablen.Settings):
             index = self.rect.collidelist([a.rect for a in sylobjects])
             if index is not -1:
                 picked = sylobjects[index]
-                if picked not in self.my_silben:
+                if picked.visible == True:
                     self.my_silben.append(picked)
                     picked.visible = False
-            else:
-                self.picked = None #not used
 
 
 

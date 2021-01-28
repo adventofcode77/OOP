@@ -35,7 +35,6 @@ class Game(globale_variablen.Settings):
                     syl = sylobjects[index]
                     copy = silbe.Silbe(syl.inhalt,syl.word,syl.bit)
                     if syl.clicked_on == True:
-                        #print("syl on")
                         copy.image = self.font.render(copy.inhalt,False,self.white)
                     copy.rect.x,copy.rect.y = x,y
                     self.screen.blit(copy.image,copy.rect)
@@ -79,41 +78,28 @@ class Game(globale_variablen.Settings):
         self.screen.blit(word_image,((self.screenw-ww)//2,self.down*6))
         self.screen.blit(def_image,((self.screenw-dw)//2,self.down*7))
 
+    def delete_word(self): #same syl is actually different objects in different lists, why?
+        self.score += 5
+        nurdefs = [a.meaning for a in self.words]
+        indexword = nurdefs.index(self.player.definition.split())  # same place as in words but def only
+        guessedword = self.words[indexword]
+        indexinmysyls = self.player.my_silben.index(guessedword)
+        print("len before",len(self.player.my_silben))
+        del self.player.my_silben[indexinmysyls]
+        print("len after", len(self.player.my_silben))
+        for syl in guessedword.syls:
+            print(syl)
+            print(syl.inhalt)
+            onlythebits = [a.bit for a in self.syls]
+            if syl.bit in onlythebits:
+                indexsyl = onlythebits.index(syl.bit)
+                del self.syls[indexsyl]
 
     def check_word(self):
         if self.player.definition.split() in [a.meaning for a in self.words]:
-            print("tick1")
-            self.score += 5
-            nurdefs = [a.meaning for a in self.words]
-            indexword = nurdefs.index(self.player.definition.split()) #same place as in words but def only
-            guessedword =  self.words[indexword]
-            for syl in guessedword.syls:
-                print(syl)
-                print(syl.inhalt)
-                onlythebits = [a.bit for a in self.syls]
-                if syl.bit in onlythebits:
-                    indexsyl = onlythebits.index(syl.bit)
-                    print(len(self.syls))
-                    del self.syls[indexsyl]
-                    print(len(self.syls))
-                exit()
+            self.delete_word()
         elif self.player.definition[:-1] == " ":
-            if self.player.definition[:-1].split() in [a.meaning for a in self.words]:
-                print("tick2")
-                self.score += 5
-                nurdefs = [a.meaning for a in self.words]
-                indexword = nurdefs.index(self.player.definition.split())  # same place as in words but def only
-                guessedword = self.words[indexword]
-                for syl in guessedword.syls:
-                    print(syl)
-                    print(syl.inhalt)
-                    onlythebits = [a.bit for a in self.syls]
-                    if syl.bit in onlythebits:
-                        indexsyl = onlythebits.index(syl.bit)
-                        print(len(self.syls))
-                        del self.syls[indexsyl]
-                        print(len(self.syls))
-                    exit()
+            self.delete_word()
         else:
             print(f'incorrect,{self.player.definition.split()} is not in any of:\n {[a.meaning for a in self.words]}\n')
 
@@ -132,7 +118,6 @@ class Game(globale_variablen.Settings):
         clock = pg.time.Clock()
         run = True
         print([each.name for each in self.words])
-        sylobjects = self.syls
         loops = 0
         counter = 0
         click = False
@@ -166,7 +151,9 @@ class Game(globale_variablen.Settings):
                         else:
                             self.screen.fill(self.black)
                             boolcounter += 1
-                            self.screen.blit(self.bigfont.render("new loop",False,self.white),(200,250))
+                            image_newloop = self.bigfont.render("NEW LOOP", False, self.white)
+                            x, y, image_w, h = image_newloop.get_rect()
+                            self.screen.blit(image_newloop, (self.screenw//2-image_w//2,self.screenh//2))
                             display.update()
                             continue
 
@@ -174,18 +161,23 @@ class Game(globale_variablen.Settings):
                         action = self.player.act() # PLAYER MOVES ONCE A LOOP
                         if action == 1: #how does this work again? return is false
                             run = False
-                        self.player.pick(sylobjects)
+                        self.player.pick(self.syls)
                         if loops % 15 == 0:
-                            if counter+1 == len(sylobjects):
+                            if counter+1 == len(self.syls):
                                 print("counter resets")
-                                for syl in sylobjects:
+                                for syl in self.syls:
                                     syl.rect.y = 0
                                 counter = 0
                                 bool = True
                             counter += 1
                             loops = 0
                         loops += 1
-                        self.screen_update_and_move(sylobjects,counter,self.player)
+                        try:
+                            self.screen_update_and_move(self.syls,counter,self.player)
+                        except:
+                            print("list index out of range")
+                            print("length of list",len(self.syls))
+                            print("index",counter)
                 else:
                     self.desk(click)
                     click = False
