@@ -90,9 +90,12 @@ class Game(globale_variablen.Settings):
             for syl in guessedword.syls:
                 print(syl)
                 print(syl.inhalt)
-                print([a.inhalt for a in self.syls])
-                print([a for a in self.syls])
-                self.syls.remove(syl)
+                onlythebits = [a.bit for a in self.syls]
+                if syl.bit in onlythebits:
+                    indexsyl = onlythebits.index(syl.bit)
+                    print(len(self.syls))
+                    del self.syls[indexsyl]
+                    print(len(self.syls))
                 exit()
         elif self.player.definition[:-1] == " ":
             if self.player.definition[:-1].split() in [a.meaning for a in self.words]:
@@ -104,9 +107,12 @@ class Game(globale_variablen.Settings):
                 for syl in guessedword.syls:
                     print(syl)
                     print(syl.inhalt)
-                    print([a.inhalt for a in self.syls])
-                    print([a for a in self.syls])
-                    self.syls.remove(syl)
+                    onlythebits = [a.bit for a in self.syls]
+                    if syl.bit in onlythebits:
+                        indexsyl = onlythebits.index(syl.bit)
+                        print(len(self.syls))
+                        del self.syls[indexsyl]
+                        print(len(self.syls))
                     exit()
         else:
             print(f'incorrect,{self.player.definition.split()} is not in any of:\n {[a.meaning for a in self.words]}\n')
