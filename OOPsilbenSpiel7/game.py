@@ -65,11 +65,13 @@ class Game(globale_variablen.Settings):
 
 
     def draw_word(self,syl=None):
-        if self.player.definition == "guessed":
-            self.player.definition = ""
         if syl:
             self.player.word += f'{syl.inhalt}'
-            self.player.definition += " ".join(syl.bit) + " "
+            def_append = " ".join(syl.bit) + " "
+            if self.deleted_word_bool:
+                self.player.definition = def_append
+            else:
+                self.player.definition += def_append
         word_image = self.font.render(self.player.word,False,self.black)
         def_image = self.font.render(self.player.definition,False,self.black)
         ww,wh = self.font.size(self.player.word)
@@ -98,6 +100,7 @@ class Game(globale_variablen.Settings):
                 del self.player.my_silben[indexsyl]
                 print("mysilben:",[a.inhalt for a in self.player.my_silben])
         self.player.word = ""
+        self.deleted_word_bool = True
 
     def check_word(self):
         selfwordsname = [a.name for a in self.words]
