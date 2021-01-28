@@ -23,6 +23,7 @@ class Game(globale_variablen.Settings):
         self.score = 0
         self.syls = self.bank.silben
         self.counter = 0
+        self.deleted_word_bool = False
 
 
     def draw_desk(self): # origs
@@ -58,17 +59,17 @@ class Game(globale_variablen.Settings):
                         if item.inhalt == syl.inhalt:
                             item.clicked_on = True
                     current_selected = syl
-        if current_selected:
-            self.draw_word(current_selected)
+        self.draw_word(current_selected)
         self.check_word()
         display.update()
 
 
-    def draw_word(self,syl):
-        self.player.word += f'{syl.inhalt}'
-        self.player.definition += " ".join(syl.bit) + " "
-        print("player def after adding all syls",self.player.definition)
-        print("and player word",self.player.word)
+    def draw_word(self,syl=None):
+        if self.player.definition == "guessed":
+            self.player.definition = ""
+        if syl:
+            self.player.word += f'{syl.inhalt}'
+            self.player.definition += " ".join(syl.bit) + " "
         word_image = self.font.render(self.player.word,False,self.black)
         def_image = self.font.render(self.player.definition,False,self.black)
         ww,wh = self.font.size(self.player.word)
@@ -97,7 +98,6 @@ class Game(globale_variablen.Settings):
                 del self.player.my_silben[indexsyl]
                 print("mysilben:",[a.inhalt for a in self.player.my_silben])
         self.player.word = ""
-        self.player.definition = ""
 
     def check_word(self):
         selfwordsname = [a.name for a in self.words]
@@ -111,13 +111,6 @@ class Game(globale_variablen.Settings):
                 maybits += liste
             if self.player.definition[:-1].split() == maybits:
                 self.delete_word()
-            else:
-                pass
-                #print(f' game 114: {self.player.definition.split()} is not {maybits}')
-        else:
-            pass
-            #print(f'either {self.player.word} is not in any of {[a.name for a in self.words]} or')
-            #print(f'incorrect,{self.player.definition.split()} is not in any of:\n {[a.meaning for a in self.words]}\n')
 
 
     def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
@@ -140,7 +133,7 @@ class Game(globale_variablen.Settings):
         boolcounter = 0
         while True:
             clock.tick(self.fps) #ONE LOOP
-            self.score -= 0.01 #quicker play wins more
+            self.score -= 0.005 #quicker play wins more
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
                     if stuff.type == QUIT:
                         self.screen.fill(self.black)
@@ -198,7 +191,6 @@ class Game(globale_variablen.Settings):
                             print("list index out of range")
                             print("length of list",len(self.syls))
                             print("index",self.counter)
-                        finally:
                             if len(self.syls) == 0:
                                 image_win = self.bigfont.render(f'YOU WON! YOUR SCORE IS {self.score}', False, self.white)
                                 x, y, image_w, h = image_newloop.get_rect()
