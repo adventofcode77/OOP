@@ -22,6 +22,7 @@ class Game(globale_variablen.Settings):
         self.screen = pg.display.set_mode((self.screenh,self.screenw))
         self.score = 0
         self.syls = self.bank.silben
+        self.counter = 0
 
 
     def draw_desk(self): # origs
@@ -79,29 +80,34 @@ class Game(globale_variablen.Settings):
         self.screen.blit(def_image,((self.screenw-dw)//2,self.down*7))
 
     def delete_word(self): #same syl is actually different objects in different lists, why?
+        self. counter += 1
+        print(self.counter)
         self.score += 5
         nurdefs = [a.meaning for a in self.words]
         indexword = nurdefs.index(self.player.definition.split())  # same place as in words but def only
         guessedword = self.words[indexword]
-        indexinmysyls = self.player.my_silben.index(guessedword)
-        print("len before",len(self.player.my_silben))
-        del self.player.my_silben[indexinmysyls]
-        print("len after", len(self.player.my_silben))
         for syl in guessedword.syls:
             print(syl)
             print(syl.inhalt)
-            onlythebits = [a.bit for a in self.syls]
-            if syl.bit in onlythebits:
-                indexsyl = onlythebits.index(syl.bit)
+            selfsylsbits = [a.bit for a in self.syls]
+            if syl.bit in selfsylsbits:
+                indexsyl = selfsylsbits.index(syl.bit)
                 del self.syls[indexsyl]
+            mysilbenbits = [a.bit for a in self.player.my_silben]
+            if syl.bit in mysilbenbits:
+                indexsyl = mysilbenbits.index(syl.bit)
+                del self.player.my_silben[indexsyl]
 
     def check_word(self):
-        if self.player.definition.split() in [a.meaning for a in self.words]:
-            self.delete_word()
-        elif self.player.definition[:-1] == " ":
-            self.delete_word()
+        if self.player.word.split() in self.words:
+            if self.player.word.bits in [a.meaning for a in self.words]:
+                self.delete_word()
+        elif self.player.word.split()[:-1] in self.words:
+            if self.player.word.bits in [a.meaning for a in self.words]:
+                self.delete_word()
         else:
-            print(f'incorrect,{self.player.definition.split()} is not in any of:\n {[a.meaning for a in self.words]}\n')
+            print(f'either {self.player.word.split()} is not in any of {[a.name for a in self.words]} or')
+            print(f'incorrect,{self.player.word.bits()} is not in any of:\n {[a.meaning for a in self.words]}\n')
 
 
     def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
