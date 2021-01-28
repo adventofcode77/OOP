@@ -18,11 +18,6 @@ class Word(globale_variablen.Settings):
         self.rect = self.image.get_rect() # draw_rect()?
         self.rect.x = 0 #random.randrange(0,500-self.rect.w,50)
 
-    def too_few_def_words(self,list,n):
-        listoflists = []
-        for i in range(len(list)):
-            listoflists.append(list[i])
-        return listoflists
 
     def get_bits(self):
         definition = self.meaning
@@ -31,12 +26,9 @@ class Word(globale_variablen.Settings):
         advancement = math.ceil(len(definition)/num_syls)
         if advancement == 0:
             advancement = 1
-        for i in range(0,len(definition),advancement):
-            # if i+advancement*2 >= len(definition):
-            #     list_of_lists.append(definition[i:])
-            #     break
-            # else:
-            list_of_lists.append(definition[i:(i+advancement)])
+        while definition:
+            list_of_lists.append(definition[:advancement])
+            definition = definition[advancement:]
         return list_of_lists # DO NOT FORGET RETURN
 
 
