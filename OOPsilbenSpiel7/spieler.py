@@ -47,7 +47,7 @@ class Spieler(globale_variablen.Settings):
                     self.my_silben.append(picked)
                     picked.visible = False
             else:
-                self.picked = None
+                self.picked = None #not used
 
 
 
