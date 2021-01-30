@@ -5,6 +5,7 @@ class Settings:
         self.black = (0,0,0)
         self.white = (255,255,255)
         self.zuff = (200,200,200)
+        self.gold = (212,175,55)
         self.lila = (125,33,200)
         self.fps = 60
         self.screenw, self.screenh = 500,500

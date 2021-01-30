@@ -35,7 +35,7 @@ class Game(globale_variablen.Settings):
             for x in range(self.right,self.right*5,self.right):
                 if index < len(sylobjects):
                     syl = sylobjects[index]
-                    copy = silbe.Silbe(syl.inhalt,syl.word,syl.bit)
+                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit)
                     if syl.clicked_on == True:
                         copy.image = self.font.render(copy.inhalt,False,self.white)
                     copy.rect.x,copy.rect.y = x,y
@@ -58,70 +58,70 @@ class Game(globale_variablen.Settings):
                     for item in self.player.my_silben: #next()?
                         if item.inhalt == syl.inhalt:
                             if item.clicked_on:
+                                print("clicked off", item.inhalt)
                                 item.clicked_on = False
-                                for each in self.player.appendall:
+                                for i in range(len(self.player.appendlist)-1):
+                                    each = self.player.appendlist[i]
                                     if each.bit == item.bit:
-                                        self.player.appendall.remove(each)
+                                        del self.player.appendlist[i]
                             else:
                                 item.clicked_on = True
+                                print("clicked on",item.inhalt)
                                 self.draw_word(syl)
-                                display.update()
-
-        self.check_word()
         display.update()
 
 
     def draw_word(self,syl):
-        self.player.appendall.append(syl)
-        indexsyl = self.player.appendall.index(syl)
-        self.player.word += f'{syl.inhalt}'
-        def_append = " ".join(syl.bit) + " "
         if self.deleted_word_bool:
-            self.player.definition = def_append
+            self.player.appendlist = []
+            print("a word has just been deleted")
         else:
-            self.player.definition += def_append
-        word_image = self.font.render(self.player.word,False,self.black)
-        def_image = self.font.render(self.player.definition,False,self.black)
-        ww,wh = self.font.size(self.player.word)
-        dw,dh = self.font.size(self.player.definition)
-        self.screen.blit(word_image,((self.screenw-ww)//2,self.down*6))
-        self.screen.blit(def_image,((self.screenw-dw)//2,self.down*7))
+            self.player.appendlist.append(syl)
+            for syl in self.player.appendlist:
+                print(syl.inhalt)
+        print(len(self.player.appendlist))
+        self.blitword(self.black)
+        self.blitword(self.black)
+        defstring = self.makedefstring()
+        self.check_word(defstring)
 
-    def delete_word(self): #same syl is actually different objects in different lists, why?
+    def makedefstring(self):
+        liste = []
+        bitlists = [a.bit for a in self.player.appendlist]
+        bitstrings = map(" ".join, bitlists)
+        defstring = " ".join(bitstrings)
+        return defstring
+
+    def blitword(self,farbe):
+        wordstring = "".join([a.inhalt for a in self.player.appendlist])
+        defstring = self.makedefstring()
+        word_image = self.font.render(wordstring, False, farbe)
+        def_image = self.font.render(defstring, False, farbe)
+        ww, wh = self.font.size(self.player.wordlist)
+        dw, dh = self.font.size(self.player.deflist)
+        self.screen.blit(word_image, ((self.screenw - ww) // 2, self.down * 6))
+        self.screen.blit(def_image, ((self.screenw - dw) // 2, self.down * 7))
+
+    def check_word(self, defstring):
+        selfwordsdef = [a.meaning for a in self.words]
+        if defstring in selfwordsdef or defstring[:-1] in selfwordsdef:
+            indexword = selfwordsdef.index(defstring)
+            self.delete_word(indexword)
+
+    def delete_word(self,indexword): #same syl is actually different objects in different lists, why?
         self.score += 5
-        nurdefs = [a.meaning for a in self.words]
-        indexword = nurdefs.index(self.player.definition.split())  # same place as in words but def only
-        guessedword = self.words[indexword]
-        for syl in guessedword.syls:
-            print(syl)
-            print(syl.inhalt)
-            selfsylsbits = [a.bit for a in self.syls]
-            if syl.bit in selfsylsbits:
-                indexsyl = selfsylsbits.index(syl.bit)
-                del self.syls[indexsyl]
-                self.counter -= 1
-            mysilbenbits = [a.bit for a in self.player.my_silben]
-            #print("mysilbenbits and the sylbit for deletion",mysilbenbits,syl.bit)
-            #print("the bit for deletion in mysilben",self.player.my_silben[mysilbenbits.index(syl.bit)])
-            if syl.bit in mysilbenbits:
-                indexsyl = mysilbenbits.index(syl.bit)
-                del self.player.my_silben[indexsyl]
-                print("mysilben:",[a.inhalt for a in self.player.my_silben])
-        self.player.word = ""
+        self.counter -= 1
+        for silbe in self.player.appendlist:
+            for syl in self.syls:
+                if silbe.name == syl.name and silbe.bit == syl.bit:
+                    indexsyl = self.syls.index(syl)
+                    del self.syls[indexsyl]
+            for syl in self.player.my_silben:
+                if silbe.name == syl.name and silbe.bit == syl.bit:
+                    indexsyl = self.syls.index(syl)
+                    del self.syls[indexsyl]
+        self.blitword(self.gold)
         self.deleted_word_bool = True
-
-    def check_word(self):
-        selfwordsname = [a.name for a in self.words]
-        if self.player.word in selfwordsname:
-            indexword = selfwordsname.index(self.player.word)
-            maybeguessed = self.words[indexword]
-            if [self.player.definition.split()] == maybeguessed.bits:
-                self.delete_word()
-            maybits = []
-            for liste in maybeguessed.bits:
-                maybits += liste
-            if self.player.definition[:-1].split() == maybits:
-                self.delete_word()
 
 
     def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
@@ -159,8 +159,8 @@ class Game(globale_variablen.Settings):
                         if stuff.key == K_SPACE:
                             run = False
                         elif stuff.key == K_a:
-                            self.player.word = ""
-                            self.player.definition = ""
+                            self.player.wordlist = ""
+                            self.player.deflist = ""
                             for item in self.player.my_silben:
                                 item.clicked_on = False
                             run = True
