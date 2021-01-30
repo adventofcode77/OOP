@@ -11,7 +11,7 @@ class Spieler(globale_variablen.Settings):
         self.my_silben = []
         self.txt = self.font.render("player", False, self.black)
         self.image = transform.scale(image.load('Lacrosse_Player.svg'),(self.rect.w,self.rect.h))
-        self.speed = 8
+        self.speed = 15
         self.appendlist = []
 
 
