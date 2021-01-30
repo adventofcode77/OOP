@@ -68,19 +68,19 @@ class Game(globale_variablen.Settings):
                                 item.clicked_on = True
                                 print("clicked on",item.inhalt)
                                 self.draw_word(syl)
-        display.update()
+        self.draw_word()
+        display.flip()
 
 
-    def draw_word(self,syl):
+    def draw_word(self,syl=None):
+        self.blitword(self.lila)
         if self.deleted_word_bool:
             self.player.appendlist = []
             print("a word has just been deleted")
-        else:
+        if syl:
             self.player.appendlist.append(syl)
             for syl in self.player.appendlist:
                 print(syl.inhalt)
-        print(len(self.player.appendlist))
-        self.blitword(self.black)
         self.blitword(self.black)
         defstring = self.makedefstring()
         self.check_word(defstring)
