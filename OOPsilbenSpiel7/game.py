@@ -37,9 +37,7 @@ class Game(globale_variablen.Settings):
                     syl = sylobjects[index]
                     copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0],syl.tuple[1])
                     if syl.clicked_on == True:
-                        print(syl.inhalt,syl.tuple)
                         copy.image = self.font.render(copy.inhalt,False,self.white)
-                        print(copy.inhalt, copy.tuple)
                     copy.rect.x,copy.rect.y = x,y
                     self.screen.blit(copy.image,copy.rect)
                     desk_syls.append(copy) #copy whole syl
@@ -61,10 +59,17 @@ class Game(globale_variablen.Settings):
                             if item.clicked_on:
                                 print("clicked off", item.inhalt,",taking it off the list")
                                 item.clicked_on = False
-                                for i in range(len(self.player.appendlist)-1):
+                                print("len appendlist",len(self.player.appendlist))
+                                for i in range(len(self.player.appendlist)):
+                                    print(" in the for loop")
                                     off = self.player.appendlist[i]
                                     if item.tuple == off.tuple:
+                                        print("item and off have equal tuples")
                                         del self.player.appendlist[i]
+                                        break
+                                    else:
+                                        print("item and off have different tuples:")
+                                        print(item.inhalt,item.tuple,"for item;",off.inhalt,off.tuple,"for tuple")
                             else:
                                 item.clicked_on = True
                                 print("clicked on",item.inhalt)
