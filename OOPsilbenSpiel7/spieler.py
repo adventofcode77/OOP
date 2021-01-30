@@ -33,7 +33,7 @@ class Spieler(globale_variablen.Settings):
             for syl in self.my_silben:
                 syl.visible = True
             self.my_silben = []
-            self.deflist = ""
+            self.appendlist = []
 
     def pick(self,sylobjects):
         if len(self.my_silben) == 12:

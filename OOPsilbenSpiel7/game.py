@@ -24,17 +24,19 @@ class Game(globale_variablen.Settings):
         self.syls = self.bank.silben
         self.counter = 0
         self.deleted_word_bool = False
+        self.deletedlist = []
 
 
     def draw_desk(self): # origs
         x,y = self.right,self.down
-        sylobjects = self.player.my_silben
+        mysilben = self.player.my_silben
+        print("len mysyls:",len(mysilben))
         desk_syls = []
         index = 0
         for y in range(self.down,self.down*4,self.down):
             for x in range(self.right,self.right*5,self.right):
-                if index < len(sylobjects):
-                    syl = sylobjects[index]
+                if index < len(mysilben):
+                    syl = mysilben[index]
                     copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0],syl.tuple[1])
                     if syl.clicked_on == True:
                         copy.image = self.font.render(copy.inhalt,False,self.white)
@@ -57,22 +59,16 @@ class Game(globale_variablen.Settings):
                     for item in self.player.my_silben: #next()?
                         if item.tuple == syl.tuple:
                             if item.clicked_on:
-                                print("clicked off", item.inhalt,",taking it off the list")
                                 item.clicked_on = False
-                                print("len appendlist",len(self.player.appendlist))
                                 for i in range(len(self.player.appendlist)):
-                                    print(" in the for loop")
                                     off = self.player.appendlist[i]
                                     if item.tuple == off.tuple:
-                                        print("item and off have equal tuples")
                                         del self.player.appendlist[i]
                                         break
                                     else:
-                                        print("item and off have different tuples:")
                                         print(item.inhalt,item.tuple,"for item;",off.inhalt,off.tuple,"for tuple")
                             else:
                                 item.clicked_on = True
-                                print("clicked on",item.inhalt)
                                 self.draw_word(syl)
         self.draw_word()
         display.flip()
@@ -80,15 +76,18 @@ class Game(globale_variablen.Settings):
 
     def draw_word(self,syl=None):
         self.blitword(self.lila) #draws over word and def
-        if self.deleted_word_bool:
-            self.player.appendlist = []
-            print("a word has just been deleted")
         if syl:
             self.player.appendlist.append(syl)
-            print(syl.inhalt,"is added to the list")
-        self.blitword(self.black)
-        defstring = self.makedefstring()
-        self.check_word(defstring)
+            print(syl.inhalt, "is added to the list")
+            if self.deleted_word_bool:
+                print("in bool and syl loop")
+                self.deleted_word_bool = False
+        elif self.deleted_word_bool:
+            print("in bool loop")
+            self.blitword(self.gold)
+        else:
+            self.blitword(self.black)
+        self.check_word()
 
     def makedefstring(self):
         liste = []
@@ -98,34 +97,45 @@ class Game(globale_variablen.Settings):
         return defstring
 
     def blitword(self,farbe):
-        wordstring = "".join([a.inhalt for a in self.player.appendlist])
+        if self.deletedlist:
+            liste = self.deletedlist
+            print("dellist wasn't empty, len",len(self.deletedlist))
+        else:
+            liste = self.player.appendlist
+        wordstring = "".join([a.inhalt for a in liste])
+        print("wordstring is",wordstring)
         defstring = self.makedefstring()
         word_image = self.font.render(wordstring, False, farbe)
         def_image = self.font.render(defstring, False, farbe)
-        ww, wh = self.font.size(self.player.wordlist)
-        dw, dh = self.font.size(self.player.deflist)
+        ww, wh = self.font.size(wordstring)
+        dw, dh = self.font.size(defstring)
         self.screen.blit(word_image, ((self.screenw - ww) // 2, self.down * 6))
         self.screen.blit(def_image, ((self.screenw - dw) // 2, self.down * 7))
 
-    def check_word(self, defstring):
-        selfwordsdef = [a.meaning for a in self.words]
-        if defstring in selfwordsdef or defstring[:-1] in selfwordsdef:
-            indexword = selfwordsdef.index(defstring)
-            self.delete_word(indexword)
+    def check_word(self):
+        print("len applist", len(self.player.appendlist))
+        appendlisttuples = [a.tuple for a in self.player.appendlist]
+        for word in self.words:
+            wordtuples = [a.tuple for a in word.syls]
+            if appendlisttuples == wordtuples:
+                self.delete_word()
 
-    def delete_word(self,indexword): #same syl is actually different objects in different lists, why?
+    def delete_word(self): #same syl is actually different objects in different lists, why?
         self.score += 5
-        self.counter -= 1
+        self.counter -= len(self.player.appendlist) # check if working
         for silbe in self.player.appendlist:
             for syl in self.syls:
-                if silbe.name == syl.name and silbe.bit == syl.bit:
-                    indexsyl = self.syls.index(syl)
-                    del self.syls[indexsyl]
+                if silbe.tuple == syl.tuple:
+                    print(len(self.syls))
+                    print("removed selfsyls",syl.inhalt)
             for syl in self.player.my_silben:
-                if silbe.name == syl.name and silbe.bit == syl.bit:
-                    indexsyl = self.syls.index(syl)
-                    del self.syls[indexsyl]
-        self.blitword(self.gold)
+                if silbe.tuple == syl.tuple:
+                    print(len(self.syls))
+                    print("removed mysyls",syl.inhalt)
+        print("in del")
+        self.deletedlist = self.player.appendlist
+        print("just made dellist, len",len(self.deletedlist))
+        self.player.appendlist = []
         self.deleted_word_bool = True
 
 
@@ -165,7 +175,6 @@ class Game(globale_variablen.Settings):
                             run = False
                         elif stuff.key == K_a:
                             self.player.wordlist = ""
-                            self.player.deflist = ""
                             for item in self.player.my_silben:
                                 item.clicked_on = False
                             run = True
