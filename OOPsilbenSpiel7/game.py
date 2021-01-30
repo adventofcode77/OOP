@@ -73,7 +73,7 @@ class Game(globale_variablen.Settings):
 
 
     def draw_word(self,syl=None):
-        self.blitword(self.lila)
+        self.blitword(self.lila) #draws over word and def
         if self.deleted_word_bool:
             self.player.appendlist = []
             print("a word has just been deleted")
