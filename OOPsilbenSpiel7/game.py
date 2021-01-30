@@ -57,21 +57,29 @@ class Game(globale_variablen.Settings):
                     print("player collides with syl")
                     for item in self.player.my_silben: #next()?
                         if item.inhalt == syl.inhalt:
-                            item.clicked_on = True
-                    current_selected = syl
-        self.draw_word(current_selected)
+                            if item.clicked_on:
+                                item.clicked_on = False
+                                for each in self.player.appendall:
+                                    if each.bit == item.bit:
+                                        self.player.appendall.remove(each)
+                            else:
+                                item.clicked_on = True
+                                self.draw_word(syl)
+                                display.update()
+
         self.check_word()
         display.update()
 
 
-    def draw_word(self,syl=None):
-        if syl:
-            self.player.word += f'{syl.inhalt}'
-            def_append = " ".join(syl.bit) + " "
-            if self.deleted_word_bool:
-                self.player.definition = def_append
-            else:
-                self.player.definition += def_append
+    def draw_word(self,syl):
+        self.player.appendall.append(syl)
+        indexsyl = self.player.appendall.index(syl)
+        self.player.word += f'{syl.inhalt}'
+        def_append = " ".join(syl.bit) + " "
+        if self.deleted_word_bool:
+            self.player.definition = def_append
+        else:
+            self.player.definition += def_append
         word_image = self.font.render(self.player.word,False,self.black)
         def_image = self.font.render(self.player.definition,False,self.black)
         ww,wh = self.font.size(self.player.word)
