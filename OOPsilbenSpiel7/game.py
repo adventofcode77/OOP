@@ -1,6 +1,7 @@
 import pygame as pg
 from pygame import *
 from pygame.locals import *
+import math
 
 from OOPsilbenSpiel7 import woerter
 from OOPsilbenSpiel7 import globale_variablen
@@ -110,10 +111,20 @@ class Game(globale_variablen.Settings):
         defstring = self.makedefstring()
         word_image = self.font.render(wordstring, False, farbe)
         def_image = self.font.render(defstring, False, farbe)
-        ww, wh = self.font.size(wordstring)
-        dw, dh = self.font.size(defstring)
-        self.screen.blit(word_image, ((self.screenw - ww) // 2, self.down * 6))
-        self.screen.blit(def_image, ((self.screenw - dw) // 2, self.down * 7))
+        wordrect = word_image.get_rect()
+        defrect = def_image.get_rect()
+        percentofscreen = defrect.w/self.screenw
+        self.deflines = 0
+        def split_def(percent):
+            if percent >= 0.8:
+                self.deflines += split_def(1-percent)
+                return self.deflines
+            numlines = math.ceil(len(defstring)/math.ceil(self.deflines))
+            return word.get_bits()
+        screen_rect = Rect(0,0,self.screenh,self.screenw)
+        wordrect.center = screen_rect.center
+        self.screen.blit(word_image, (wordrect.centerx,wordrect.centery))
+        self.screen.blit(def_image, (wordrect.centerx,wordrect.y+defrect.h*4))
 
     def check_word(self):
         print("len applist", len(self.player.appendlist))
@@ -213,18 +224,11 @@ class Game(globale_variablen.Settings):
                         loops += 1
                         try:
                             self.screen_update_and_move(self.syls,self.counter,self.player)
-                        except:
-                            print("list index out of range")
-                            print("length of list",len(self.syls))
-                            print("index",self.counter)
-                            print("len syls",len(self.syls))
-                        finally:
-                            if len(self.syls) == 0:
-                                image_win = self.bigfont.render(f'YOU WON! YOUR SCORE IS {self.score}', False, self.white)
-                                x, y, image_w, h = image_newloop.get_rect()
-                                self.screen.blit(image_win, (self.screenw // 2 - image_w // 2, self.screenh // 2))
-                            else:
-                                print("syls werent 0")
+                        except: # if len(self.syls) == 0
+                            image_win = self.bigfont.render(f'YOU WON! \n YOUR SCORE IS {self.score}', False, self.white)
+                            x, y, image_w, h = image_newloop.get_rect()
+                            self.screen.blit(image_win, (self.screenw // 2 - image_w // 2, self.screenh // 2))
+                            display.flip()
                 else:
                     self.desk(click)
                     click = False

@@ -12,24 +12,12 @@ class Word(globale_variablen.Settings):
         self.meaning = list(filter(None,self.meaning))
         self.name = key
         self.txtsilben = txtsilben
-        self.bits = self.get_bits()
+        self.bits = self.get_bits(self.meaning, len(self.txtsilben))
         self.syls = self.make_silben() #[silbe.Silbe("it","word","def inition")] #[silbe.Silbe(a, self.name) for a in silben]
         self.image = self.font.render(self.name, False, self.black)
         self.rect = self.image.get_rect() # draw_rect()?
         self.rect.x = 0 #random.randrange(0,500-self.rect.w,50)
 
-
-    def get_bits(self):
-        definition = self.meaning
-        list_of_lists = []
-        num_syls = len(self.txtsilben)
-        advancement = math.ceil(len(definition)/num_syls)
-        if advancement == 0:
-            advancement = 1
-        while definition:
-            list_of_lists.append(definition[:advancement])
-            definition = definition[advancement:]
-        return list_of_lists # DO NOT FORGET RETURN
 
 
     def make_silben(self):
