@@ -48,7 +48,6 @@ class Game(globale_variablen.Settings):
         return desk_syls
 
     def desk(self,click):
-        current_selected = ""
         # the event loop didn't work inside of this function
         self.screen.fill(self.lila)
         syls = self.draw_desk() # copies
@@ -82,6 +81,7 @@ class Game(globale_variablen.Settings):
             if self.deleted_word_bool:
                 print("in bool and syl loop")
                 self.deleted_word_bool = False
+                self.deletedlist = []
         elif self.deleted_word_bool:
             print("in bool loop")
             self.blitword(self.gold)
@@ -91,7 +91,10 @@ class Game(globale_variablen.Settings):
 
     def makedefstring(self):
         liste = []
-        bitlists = [a.bit for a in self.player.appendlist]
+        if self.deleted_word_bool:
+            bitlists = [a.bit for a in self.deletedlist]
+        else:
+            bitlists = [a.bit for a in self.player.appendlist]
         bitstrings = map(" ".join, bitlists)
         defstring = " ".join(bitstrings)
         return defstring
@@ -119,6 +122,7 @@ class Game(globale_variablen.Settings):
             wordtuples = [a.tuple for a in word.syls]
             if appendlisttuples == wordtuples:
                 self.delete_word()
+                self.words.remove(word)
 
     def delete_word(self): #same syl is actually different objects in different lists, why?
         self.score += 5
@@ -126,14 +130,12 @@ class Game(globale_variablen.Settings):
         for silbe in self.player.appendlist:
             for syl in self.syls:
                 if silbe.tuple == syl.tuple:
-                    print(len(self.syls))
-                    print("removed selfsyls",syl.inhalt)
+                    self.syls.remove(syl)
             for syl in self.player.my_silben:
                 if silbe.tuple == syl.tuple:
-                    print(len(self.syls))
-                    print("removed mysyls",syl.inhalt)
+                    self.player.my_silben.remove(syl)
         print("in del")
-        self.deletedlist = self.player.appendlist
+        self.deletedlist = self.player.appendlist[:]
         print("just made dellist, len",len(self.deletedlist))
         self.player.appendlist = []
         self.deleted_word_bool = True
@@ -174,7 +176,6 @@ class Game(globale_variablen.Settings):
                         if stuff.key == K_SPACE:
                             run = False
                         elif stuff.key == K_a:
-                            self.player.wordlist = ""
                             for item in self.player.my_silben:
                                 item.clicked_on = False
                             run = True
@@ -216,10 +217,14 @@ class Game(globale_variablen.Settings):
                             print("list index out of range")
                             print("length of list",len(self.syls))
                             print("index",self.counter)
+                            print("len syls",len(self.syls))
+                        finally:
                             if len(self.syls) == 0:
                                 image_win = self.bigfont.render(f'YOU WON! YOUR SCORE IS {self.score}', False, self.white)
                                 x, y, image_w, h = image_newloop.get_rect()
                                 self.screen.blit(image_win, (self.screenw // 2 - image_w // 2, self.screenh // 2))
+                            else:
+                                print("syls werent 0")
                 else:
                     self.desk(click)
                     click = False
