@@ -4,7 +4,7 @@ from OOPsilbenSpiel7 import spieler
 import globale_variablen
 
 class Silbe(globale_variablen.Settings): #do with sprites
-    def __init__(self,it,word,bit): #or make it inherit from word
+    def __init__(self,it,word,bit,order,worder): #or make it inherit from word
         super().__init__()
         self.inhalt = it
         self.word = word
@@ -15,6 +15,7 @@ class Silbe(globale_variablen.Settings): #do with sprites
         self.clicked_on = False
         self.bit = bit # ['einer', 'Aktiengesellschaft']
         self.visible = True
+        self.tuple = (order,worder)
 
     def move(self,speed=5):
         self.rect.y += self.speed

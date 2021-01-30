@@ -35,9 +35,11 @@ class Game(globale_variablen.Settings):
             for x in range(self.right,self.right*5,self.right):
                 if index < len(sylobjects):
                     syl = sylobjects[index]
-                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit)
+                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0],syl.tuple[1])
                     if syl.clicked_on == True:
+                        print(syl.inhalt,syl.tuple)
                         copy.image = self.font.render(copy.inhalt,False,self.white)
+                        print(copy.inhalt, copy.tuple)
                     copy.rect.x,copy.rect.y = x,y
                     self.screen.blit(copy.image,copy.rect)
                     desk_syls.append(copy) #copy whole syl
@@ -54,15 +56,14 @@ class Game(globale_variablen.Settings):
             x,y = click
             for syl in syls:
                 if syl.rect.collidepoint(x,y):
-                    print("player collides with syl")
                     for item in self.player.my_silben: #next()?
-                        if item.inhalt == syl.inhalt:
+                        if item.tuple == syl.tuple:
                             if item.clicked_on:
-                                print("clicked off", item.inhalt)
+                                print("clicked off", item.inhalt,",taking it off the list")
                                 item.clicked_on = False
                                 for i in range(len(self.player.appendlist)-1):
-                                    each = self.player.appendlist[i]
-                                    if each.bit == item.bit:
+                                    off = self.player.appendlist[i]
+                                    if item.tuple == off.tuple:
                                         del self.player.appendlist[i]
                             else:
                                 item.clicked_on = True
@@ -79,8 +80,7 @@ class Game(globale_variablen.Settings):
             print("a word has just been deleted")
         if syl:
             self.player.appendlist.append(syl)
-            for syl in self.player.appendlist:
-                print(syl.inhalt)
+            print(syl.inhalt,"is added to the list")
         self.blitword(self.black)
         defstring = self.makedefstring()
         self.check_word(defstring)

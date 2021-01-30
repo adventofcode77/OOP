@@ -21,12 +21,14 @@ class Woerter(globale_variablen.Settings):
     def get_words(self):
         words = []
         c = 0
+        worder = 0
         for entry in self.dictwithkeyname:
+            worder += 1
             self.test += 1
             name = entry
             meaning = self.dictwithkeyname[entry][0]
             syls = self.dictwithkeyname[entry][1]
-            aword = word.Word(name,meaning,syls)
+            aword = word.Word(name,meaning,syls,worder)
             words.append(aword)
         return words
 
