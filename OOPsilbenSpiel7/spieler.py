@@ -14,6 +14,7 @@ class Spieler(globale_variablen.Settings):
         self.speed = 8
         self.definition = ""
         self.word = ""
+        self.appendall = []
 
 
     def act(self):

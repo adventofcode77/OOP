@@ -9,7 +9,6 @@ class Word(globale_variablen.Settings):
         super().__init__()
         self.meaning = meaning.split(" ")
         self.meaning = list(filter(None,self.meaning))
-        print("word init",key,len(txtsilben),self.meaning)
         self.name = key
         self.txtsilben = txtsilben
         self.bits = self.get_bits()

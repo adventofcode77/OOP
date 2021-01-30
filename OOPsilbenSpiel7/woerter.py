@@ -48,7 +48,6 @@ class Woerter(globale_variablen.Settings):
 
 
     def get_bank(self):
-        print("get bank")
         file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
         parser = woerterbuch.Woerterbuch(file_path)
         bank = parser.parsed
