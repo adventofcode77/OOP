@@ -10,6 +10,8 @@ class Settings:
         self.zuff = (200,200,200)
         self.gold = (212,175,55)
         self.lila = (125,33,200)
+        self.lime = (0,255,0)
+        self.cyan = (0,255,255)
         self.fps = 30
         self.screenw, self.screenh = 500,500
         self.right = self.screenw//6

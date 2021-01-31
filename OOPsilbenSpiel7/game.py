@@ -19,7 +19,6 @@ class Game(globale_variablen.Settings):
         self.defs = [a.meaning for a in self.words]
         self.txt_syls = self.bank.txtsyls
         self.selected = []
-        self.txt = self.font.render("player",False,self.black)
         self.screen = pg.display.set_mode((self.screenh,self.screenw))
         self.score = 0
         self.syls = self.bank.silben
@@ -40,7 +39,9 @@ class Game(globale_variablen.Settings):
                     syl = mysilben[index]
                     copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0],syl.tuple[1])
                     if syl.clicked_on == True:
-                        copy.image = self.font.render(copy.inhalt,False,self.white)
+                        copy.image = self.font.render(copy.inhalt,False,self.lime)
+                    else:
+                        copy.image = self.font.render(copy.inhalt, False, self.white)
                     copy.rect.x,copy.rect.y = x,y
                     self.screen.blit(copy.image,copy.rect)
                     desk_syls.append(copy) #copy whole syl
@@ -75,7 +76,7 @@ class Game(globale_variablen.Settings):
 
 
     def draw_word(self,syl=None):
-        self.blitword(self.lila) #draws over word and def
+        self.blitword(farbe=(self.lila,self.lila)) #draws over word and def
         if syl:
             self.player.appendlist.append(syl)
             print(syl.inhalt, "is added to the list")
@@ -83,11 +84,7 @@ class Game(globale_variablen.Settings):
                 print("in bool and syl loop")
                 self.deleted_word_bool = False
                 self.deletedlist = []
-        elif self.deleted_word_bool:
-            print("in bool loop")
-            self.blitword(self.gold)
-        else:
-            self.blitword(self.black)
+        self.blitword()
         self.check_word()
 
     def makedefstring(self):
@@ -100,33 +97,37 @@ class Game(globale_variablen.Settings):
         defstring = " ".join(bitstrings)
         return defstring
 
-    def blitword(self,farbe):
-        if self.deletedlist:
-            liste = self.deletedlist
-            print("dellist wasn't empty, len",len(self.deletedlist))
-        else:
-            liste = self.player.appendlist
+    def blitword(self,farbe=None):
+        if farbe is not (self.lila,self.lila):
+            farbe = (self.gold,self.gold) if self.deleted_word_bool else (self.lime,self.cyan)
+        liste = self.player.appendlist
         wordstring = "".join([a.inhalt for a in liste])
         print("wordstring is",wordstring)
         defstring = self.makedefstring()
-        word_image = self.deffont.render(wordstring, False, farbe)
-        def_image = self.deffont.render(defstring, False, farbe)
+        print(f'len defstring: {len(defstring)}')
+        word_image = self.font.render(wordstring, False, farbe[0])
+        def_image = self.deffont.render(defstring, False, self.black)
         wordrect = word_image.get_rect()
         defrect = def_image.get_rect()
+        print("def image size:",defrect.w)
         def split_def():
-            lines = math.ceil(defrect.w/self.screenw)
+            lines = defrect.w/(self.screenw//2) #why does half of screen work instead of whole?
             return self.get_bits(defstring,lines)
         print(defrect.w)
         print(self.screenw)
         print(defrect.w/self.screenw)
         listoflists = split_def()
+        print(f'len listoflists: {len(listoflists)}')
+        for el in listoflists:
+            print(el)
         screen_rect = Rect(0, 0, self.screenh, self.screenw)
         for i in range(len(listoflists)):
             list = listoflists[i]
-            bitimg = self.deffont.render(" ".join(list),False,self.black)
+            bitimg = self.deffont.render(" ".join(list),False,farbe[1])
             bitrect = bitimg.get_rect()
+            print(f'bitrect image {i} size: {bitrect.w}')
             bitrect.center = screen_rect.center
-            self.screen.blit(bitimg, (bitrect.x, bitrect.y+bitrect.h*2 +i*bitrect.h*2))
+            self.screen.blit(bitimg, (bitrect.x, bitrect.y+(i+1)*bitrect.h*2))
         wordrect.center = screen_rect.center
         self.screen.blit(word_image, (wordrect.x,wordrect.y))
 
@@ -157,7 +158,7 @@ class Game(globale_variablen.Settings):
 
 
     def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
-        self.screen.fill(self.zuff)
+        self.screen.fill(self.black)
         for i in range(current_syl):
             syllable = allsyls[i]
             if syllable.visible == True:
