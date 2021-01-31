@@ -113,18 +113,22 @@ class Game(globale_variablen.Settings):
         def_image = self.font.render(defstring, False, farbe)
         wordrect = word_image.get_rect()
         defrect = def_image.get_rect()
-        percentofscreen = defrect.w/self.screenw
-        self.deflines = 0
-        def split_def(percent):
-            if percent >= 0.8:
-                self.deflines += split_def(1-percent)
-                return self.deflines
-            numlines = math.ceil(len(defstring)/math.ceil(self.deflines))
-            return word.get_bits()
-        screen_rect = Rect(0,0,self.screenh,self.screenw)
+        def split_def():
+            lines = math.ceil(defrect.w/self.screenw)
+            return self.get_bits(defstring,lines)
+        print(defrect.w)
+        print(self.screenw)
+        print(defrect.w/self.screenw)
+        listoflists = split_def()
+        screen_rect = Rect(0, 0, self.screenh, self.screenw)
+        for i in range(len(listoflists)):
+            list = listoflists[i]
+            bitimg = self.font.render(" ".join(list),False,self.black)
+            bitrect = bitimg.get_rect()
+            bitrect.center = screen_rect.center
+            self.screen.blit(bitimg, (bitrect.centerx, bitrect.centery+i*(bitrect.h*2)))
         wordrect.center = screen_rect.center
         self.screen.blit(word_image, (wordrect.centerx,wordrect.centery))
-        self.screen.blit(def_image, (wordrect.centerx,wordrect.y+defrect.h*4))
 
     def check_word(self):
         print("len applist", len(self.player.appendlist))
