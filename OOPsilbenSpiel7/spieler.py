@@ -10,7 +10,7 @@ class Spieler(globale_variablen.Settings):
         self.rect = pg.Rect(l,r,w,h)
         self.my_silben = []
         self.txt = self.font.render("player", False, self.black)
-        self.image = transform.scale(image.load('Lacrosse_Player.svg'),(self.rect.w,self.rect.h))
+        self.image = transform.scale(image.load('blue_player3.svg'),(self.rect.w,self.rect.h))
         self.speed = 15
         self.appendlist = []
 
