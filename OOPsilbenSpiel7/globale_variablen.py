@@ -18,7 +18,7 @@ class Settings:
     def get_bits(self,string,length):
         definition = string
         list_of_lists = []
-        num_syls = length
+        num_syls = length if length>0 else 1
         advancement = math.ceil(len(definition)/num_syls)
         if advancement == 0:
             advancement = 1
