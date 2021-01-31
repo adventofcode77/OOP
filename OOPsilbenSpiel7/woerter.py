@@ -12,7 +12,6 @@ class Woerter(globale_variablen.Settings):
         self.dictwithkeyname = self.get_bank()
         self.txtsyls = self.randomize_syls()
         self.flat = []
-        self.font = pg.font.SysFont("Arial",30)
         self.test = 0
         self.words = self.get_words()
         self.silben = self.get_silben()

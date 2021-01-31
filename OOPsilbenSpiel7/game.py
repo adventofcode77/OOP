@@ -109,8 +109,8 @@ class Game(globale_variablen.Settings):
         wordstring = "".join([a.inhalt for a in liste])
         print("wordstring is",wordstring)
         defstring = self.makedefstring()
-        word_image = self.font.render(wordstring, False, farbe)
-        def_image = self.font.render(defstring, False, farbe)
+        word_image = self.deffont.render(wordstring, False, farbe)
+        def_image = self.deffont.render(defstring, False, farbe)
         wordrect = word_image.get_rect()
         defrect = def_image.get_rect()
         def split_def():
@@ -123,12 +123,12 @@ class Game(globale_variablen.Settings):
         screen_rect = Rect(0, 0, self.screenh, self.screenw)
         for i in range(len(listoflists)):
             list = listoflists[i]
-            bitimg = self.font.render(" ".join(list),False,self.black)
+            bitimg = self.deffont.render(" ".join(list),False,self.black)
             bitrect = bitimg.get_rect()
             bitrect.center = screen_rect.center
-            self.screen.blit(bitimg, (bitrect.centerx, bitrect.centery+i*(bitrect.h*2)))
+            self.screen.blit(bitimg, (bitrect.x, bitrect.y+bitrect.h*2 +i*bitrect.h*2))
         wordrect.center = screen_rect.center
-        self.screen.blit(word_image, (wordrect.centerx,wordrect.centery))
+        self.screen.blit(word_image, (wordrect.x,wordrect.y))
 
     def check_word(self):
         print("len applist", len(self.player.appendlist))
