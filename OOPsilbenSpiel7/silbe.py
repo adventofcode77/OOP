@@ -8,6 +8,7 @@ import math
 class Silbe(globale_variablen.Settings): #do with sprites
     def __init__(self,it,word,bit,order,worder): #or make it inherit from word
         super().__init__()
+        self.order = order
         self.inhalt = it
         self.word = word
         self.image = self.make_image()

@@ -5,11 +5,12 @@ import globale_variablen
 import math
 
 class Word(globale_variablen.Settings):
-    def __init__(self, key, meaning,txtsilben,worder):
+    def __init__(self, key, meaning,txtsilben,worder,totalsyls):
         super().__init__()
+        self.totalsyls = totalsyls
         self.worder = worder
-        self.meaning = meaning.split(" ")
-        self.meaning = list(filter(None,self.meaning))
+        meaning = meaning.split(" ")
+        self.meaning = list(filter(None,meaning))
         self.name = key
         self.txtsilben = txtsilben
         self.bits = self.get_bits(self.meaning, len(self.txtsilben))
@@ -21,7 +22,7 @@ class Word(globale_variablen.Settings):
 
 
     def make_silben(self):
-        order = 0
+        order = self.totalsyls
         syls = []
         if len(self.txtsilben)>len(self.bits):
             smaller = len(self.bits)

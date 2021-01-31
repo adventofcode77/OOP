@@ -12,6 +12,7 @@ class Settings:
         self.lila = (125,33,200)
         self.lime = (0,255,0)
         self.cyan = (0,255,255)
+        self.yellow = (255,255,0)
         self.fps = 30
         self.screenw, self.screenh = 500,500
         self.right = self.screenw//6

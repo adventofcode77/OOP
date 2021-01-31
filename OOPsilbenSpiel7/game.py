@@ -97,25 +97,27 @@ class Game(globale_variablen.Settings):
         defstring = " ".join(bitstrings)
         return defstring
 
-    def blitword(self,farbe=None):
-        if farbe is not (self.lila,self.lila):
-            farbe = (self.gold,self.gold) if self.deleted_word_bool else (self.lime,self.cyan)
+    def blitword(self, farbe=None):
+        if farbe is not (self.lila, self.lila):
+            farbe = (self.yellow, self.yellow) if self.deleted_word_bool else (self.lime, self.cyan)
         liste = self.player.appendlist
         wordstring = "".join([a.inhalt for a in liste])
-        print("wordstring is",wordstring)
+        print("wordstring is", wordstring)
         defstring = self.makedefstring()
         print(f'len defstring: {len(defstring)}')
         word_image = self.font.render(wordstring, False, farbe[0])
         def_image = self.deffont.render(defstring, False, self.black)
         wordrect = word_image.get_rect()
         defrect = def_image.get_rect()
-        print("def image size:",defrect.w)
+        print("def image size:", defrect.w)
+
         def split_def():
-            lines = defrect.w/(self.screenw//2) #why does half of screen work instead of whole?
-            return self.get_bits(defstring,lines)
+            lines = defrect.w / (self.screenw // 2)  # why does half of screen work instead of whole?
+            return self.get_bits(defstring, lines)
+
         print(defrect.w)
         print(self.screenw)
-        print(defrect.w/self.screenw)
+        print(defrect.w / self.screenw)
         listoflists = split_def()
         print(f'len listoflists: {len(listoflists)}')
         for el in listoflists:
@@ -123,13 +125,13 @@ class Game(globale_variablen.Settings):
         screen_rect = Rect(0, 0, self.screenh, self.screenw)
         for i in range(len(listoflists)):
             list = listoflists[i]
-            bitimg = self.deffont.render(" ".join(list),False,farbe[1])
+            bitimg = self.deffont.render(" ".join(list), False, farbe[1])
             bitrect = bitimg.get_rect()
             print(f'bitrect image {i} size: {bitrect.w}')
             bitrect.center = screen_rect.center
-            self.screen.blit(bitimg, (bitrect.x, bitrect.y+(i+1)*bitrect.h*2))
+            self.screen.blit(bitimg, (bitrect.x, bitrect.y + (i + 1) * bitrect.h))
         wordrect.center = screen_rect.center
-        self.screen.blit(word_image, (wordrect.x,wordrect.y))
+        self.screen.blit(word_image, (wordrect.x, wordrect.y))
 
     def check_word(self):
         print("len applist", len(self.player.appendlist))
@@ -179,38 +181,42 @@ class Game(globale_variablen.Settings):
             clock.tick(self.fps) #ONE LOOP
             self.score -= 0.005 #quicker play wins more
             for stuff in event.get(): # CAN QUIT ONCE A LOOP
-                    if stuff.type == QUIT:
-                        self.screen.fill(self.black)
-                        image_end = self.font.render("GAME OVER",False,self.white)
-                        x,y,image_w,h = image_end.get_rect()
-                        self.screen.blit(image_end,(self.screenw//2-image_w//2,self.screenh//2))
-                        display.flip()
-                        print(len(self.player.my_silben))
-                        return self.score
-                        quit()
-                    elif stuff.type == KEYDOWN:
-                        if stuff.key == K_SPACE:
-                            run = False
-                        elif stuff.key == K_a:
-                            for item in self.player.my_silben:
-                                item.clicked_on = False
-                            run = True
-                    elif stuff.type == MOUSEBUTTONDOWN:
-                        click = mouse.get_pos()
+                if stuff.type == QUIT:
+                    self.screen.fill(self.black)
+                    image_end = self.font.render("GAME OVER", False, self.white)
+                    image_end_rect = image_end.get_rect()
+                    image_end_rect.center = self.screen.get_rect().center
+                    self.screen.blit(image_end, image_end_rect)
+                    display.flip()
+                    print(len(self.player.my_silben))
+                    return self.score
+                    quit()
+                elif stuff.type == KEYDOWN:
+                    if stuff.key == K_SPACE:
+                        run = False
+                    elif stuff.key == K_a:
+                        for item in self.player.my_silben:
+                            item.clicked_on = False
+                        run = True
+                elif stuff.type == MOUSEBUTTONDOWN:
+                    click = mouse.get_pos()
             else:
                 if run == True:
-                    if bool == True:
-                        if boolcounter == 30:
-                            bool = False
-                            boolcounter = 0
-                        else:
-                            self.screen.fill(self.black)
-                            boolcounter += 1
-                            image_newloop = self.bigfont.render("NEW LOOP", False, self.white)
-                            x, y, image_w, h = image_newloop.get_rect()
-                            self.screen.blit(image_newloop, (self.screenw//2-image_w//2,self.screenh//2))
-                            display.update()
-                            continue
+                    if len(self.syls)==0: # including the invisible ones
+                        print("len self syls was zero")
+                        self.screen.fill(self.black)
+                        image_win = self.bigfont.render(f'YOU WON!', False, self.white)
+                        image_score = self.bigfont.render(f'YOUR SCORE IS {round(self.score, 3)}', False, self.white)
+                        image_win_rect = image_win.get_rect()
+                        image_score_rect = image_score.get_rect()
+                        image_win_rect.center = self.screen.get_rect().center
+                        image_score_rect.center = self.screen.get_rect().center
+                        image_score_rect.y += image_win_rect.h * 1.5
+                        self.screen.blit(image_win, image_win_rect)
+                        self.screen.blit(image_score, image_score_rect)
+                        display.flip()
+                        time.wait(3)
+                        exit()
 
                     else:
                         action = self.player.act() # PLAYER MOVES ONCE A LOOP
@@ -223,17 +229,11 @@ class Game(globale_variablen.Settings):
                                 for syl in self.syls:
                                     syl.rect.y = 0
                                 self.counter = 0
-                                bool = True
                             self.counter += 1
                             loops = 0
                         loops += 1
-                        try:
-                            self.screen_update_and_move(self.syls,self.counter,self.player)
-                        except: # if len(self.syls) == 0
-                            image_win = self.bigfont.render(f'YOU WON! \n YOUR SCORE IS {self.score}', False, self.white)
-                            x, y, image_w, h = image_newloop.get_rect()
-                            self.screen.blit(image_win, (self.screenw // 2 - image_w // 2, self.screenh // 2))
-                            display.flip()
+                        self.screen_update_and_move(self.syls,self.counter,self.player)
+
                 else:
                     self.desk(click)
                     click = False
