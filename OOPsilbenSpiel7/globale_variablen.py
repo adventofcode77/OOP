@@ -1,6 +1,7 @@
 import pygame as pg
 import math as m
 from pygame import *
+from pygame import freetype
 
 class Settings:
     def __init__(self):
