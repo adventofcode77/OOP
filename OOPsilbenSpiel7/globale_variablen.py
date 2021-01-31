@@ -1,5 +1,6 @@
 import pygame as pg
-import math
+import math as m
+from pygame import *
 
 class Settings:
     def __init__(self):
@@ -12,17 +13,19 @@ class Settings:
         self.screenw, self.screenh = 500,500
         self.right = self.screenw//6
         self.down = self.screenh//12
-        self.font = pg.font.SysFont("Arial",20)
-        self.bigfont = pg.font.SysFont("Arial", 30)
+        self.font = font.SysFont("Arial",20)
+        self.bigfont = font.SysFont("Arial", 30)
+        self.deffont = font.SysFont("Arial",15)
 
     def get_bits(self,string,length):
         definition = string
         list_of_lists = []
         num_syls = length if length>0 else 1
-        advancement = math.ceil(len(definition)/num_syls)
+        advancement = m.ceil(len(definition)/num_syls)
         if advancement == 0:
             advancement = 1
         while definition:
             list_of_lists.append(definition[:advancement])
             definition = definition[advancement:]
         return list_of_lists # DO NOT FORGET RETURN
+
