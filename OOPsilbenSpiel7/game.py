@@ -140,7 +140,7 @@ class Game(globale_variablen.Settings):
 
     def delete_word(self): #same syl is actually different objects in different lists, why?
         self.score += 5
-        self.counter -= len(self.player.appendlist) # check if working
+        #self.counter -= len(self.player.appendlist) # currently false
         for silbe in self.player.appendlist:
             for syl in self.syls:
                 if silbe.tuple == syl.tuple:
@@ -168,6 +168,7 @@ class Game(globale_variablen.Settings):
 
     def blitloop(self):
         self.screensyls = self.get_screensyls()
+        print(self.counter, self.cs, len(self.screensyls), len(self.syls))
         self.screen.fill(self.black)
         for i in range(len(self.poslist)):
             if self.screensyls:
@@ -179,6 +180,7 @@ class Game(globale_variablen.Settings):
                 syl.rect.y = self.poslist[i] + self.counter
             else:
                 self.screen.blit(self.tokensyl.image, (self.tokensyl.rect.x,self.poslist[i]+self.counter))
+                self.tokensyl.rect.y = self.poslist[i] + self.counter
         self.counter += 5
         if self.counter == self.screenh // 10:
             self.counter = 0
