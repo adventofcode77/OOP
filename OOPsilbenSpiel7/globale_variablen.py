@@ -20,7 +20,7 @@ class Settings:
         self.font = font.SysFont("Arial",20)
         self.bigfont = font.SysFont("Arial", 30)
         self.deffont = font.SysFont("Arial",15)
-        self.invisible = self.font.render("shh", False, self.white)
+        self.invisible = self.font.render("o", False, self.gold)
 
     def get_bits(self,string,length):
         definition = string
