@@ -38,6 +38,7 @@ class Spieler(globale_variablen.Settings):
             pass #print("you can only pick 12 at a time!")
         else:
             index = self.rect.collidelist([a.rect for a in sylobjects])
+            print("index",index)
             if index is not -1:
                 picked = sylobjects[index]
                 if picked.visible == True:
