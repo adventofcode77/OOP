@@ -182,22 +182,43 @@ class Game(globale_variablen.Settings):
         print(poslist)
         return poslist
 
-    def blitloop(self,loops):
+    def get_screensyls(self):
+        screensyls = []
+        infinitesyls = self.syls + self.syls + self.syls + self.syls + self.syls
+        for i in range(self.cs,self.cs+len(self.poslist)):
+            screensyls.append(infinitesyls[i])
+        # needed = len(self.poslist)
+        # available_from_cs = len(self.syls)-1-self.cs
+        # if available_from_cs >= needed:
+        #     for i in range(self.cs,self.cs+needed):
+        #         screensyls.append(self.syls[i])
+        #     print("screensyls after if clause", len(screensyls))
+        # else:
+        #     rest = needed - available_from_cs
+        #     for i in range(self.cs,len(self.syls)):
+        #         screensyls.append(self.syls[i])
+        #     for j in range(0,rest):
+        #         screensyls.append(self.syls[j])
+        #     print("screensyls after else clause",len(screensyls))
+        return screensyls
+
+
+    def blitloop(self):
+        print(f'cs {self.cs}')
         self.screen.fill(self.black)
-        if self.cs >= len(self.syls)-len(self.poslist):
-            self.cs = 0
-        end = self.cs + len(self.poslist)
-        screensyls = self.syls[self.cs:end]
+        screensyls = self.get_screensyls()
         for i in range(len(self.poslist)):
             if screensyls:
                 syl = screensyls.pop(0)
                 self.screen.blit(syl.image, (syl.rect.x, self.poslist[i]+self.counter))
             else:
                 self.screen.blit(self.tokensyl.image, (self.tokensyl.rect.x,self.poslist[i]+self.counter))
-        self.counter += 1
-        if self.counter == self.screenh // 15:
+        self.counter += 10
+        if self.counter in range(self.screenh // 15 - 5, self.screenh // 15 + 5):
             self.counter = 0
             self.cs += 1
+            if self.cs >= len(self.syls)+len(self.poslist):
+                self.cs = 0
         self.screen.blit(self.player.image, self.player.rect)
         pg.display.flip()
 
@@ -252,7 +273,7 @@ class Game(globale_variablen.Settings):
                         if action == 1: #how does this work again? return is false
                             run = False
                         self.player.pick(self.syls)
-                        self.blitloop(loops)
+                        self.blitloop()
                 else:
                     self.desk(click)
                     click = False
