@@ -25,6 +25,10 @@ class Game(globale_variablen.Settings):
         self.counter = 0
         self.deleted_word_bool = False
         self.deletedlist = []
+        self.tokensyl = silbe.Silbe("syl","word",["def"],1,1)
+        self.cs = 0
+        self.poslist = self.get_poslist()
+        self.ce = self.cs + len(self.poslist)
 
 
     def draw_desk(self): # origs
@@ -169,14 +173,40 @@ class Game(globale_variablen.Settings):
         self.screen.blit(player.image,player.rect)
         pg.display.flip()
 
+    def get_poslist(self):
+        poslist = []
+        pos = self.screenh
+        while pos >0:
+            poslist.append(pos)
+            pos -= self.screenh // 15
+        print(poslist)
+        return poslist
+
+    def blitloop(self,loops):
+        self.screen.fill(self.black)
+        if self.cs >= len(self.syls)-len(self.poslist):
+            self.cs = 0
+        end = self.cs + len(self.poslist)
+        screensyls = self.syls[self.cs:end]
+        for i in range(len(self.poslist)):
+            if screensyls:
+                syl = screensyls.pop(0)
+                self.screen.blit(syl.image, (syl.rect.x, self.poslist[i]+self.counter))
+            else:
+                self.screen.blit(self.tokensyl.image, (self.tokensyl.rect.x,self.poslist[i]+self.counter))
+        self.counter += 1
+        if self.counter == self.screenh // 15:
+            self.counter = 0
+            self.cs += 1
+        self.screen.blit(self.player.image, self.player.rect)
+        pg.display.flip()
+
     def gameloop(self):
         clock = pg.time.Clock()
         run = True
         print([each.name for each in self.words])
         loops = 0
         click = False
-        bool = False
-        boolcounter = 0
         while True:
             clock.tick(self.fps) #ONE LOOP
             self.score -= 0.005 #quicker play wins more
@@ -217,23 +247,12 @@ class Game(globale_variablen.Settings):
                         display.flip()
                         time.wait(3)
                         exit()
-
                     else:
                         action = self.player.act() # PLAYER MOVES ONCE A LOOP
                         if action == 1: #how does this work again? return is false
                             run = False
                         self.player.pick(self.syls)
-                        if loops % 15 == 0:
-                            if self.counter+1 == len(self.syls):
-                                print("counter resets")
-                                for syl in self.syls:
-                                    syl.rect.y = 0
-                                self.counter = 0
-                            self.counter += 1
-                            loops = 0
-                        loops += 1
-                        self.screen_update_and_move(self.syls,self.counter,self.player)
-
+                        self.blitloop(loops)
                 else:
                     self.desk(click)
                     click = False

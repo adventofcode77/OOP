@@ -32,3 +32,13 @@ class Silbe(globale_variablen.Settings): #do with sprites
         print(sylcolor)
         return self.font.render(self.inhalt, False, sylcolor)
 
+
+
+
+
+
+
+
+
+
+
