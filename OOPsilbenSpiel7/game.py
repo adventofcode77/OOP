@@ -83,9 +83,7 @@ class Game(globale_variablen.Settings):
         self.blitword(farbe=(self.lila,self.lila)) #draws over word and def
         if syl:
             self.player.appendlist.append(syl)
-            print(syl.inhalt, "is added to the list")
             if self.deleted_word_bool:
-                print("in bool and syl loop")
                 self.deleted_word_bool = False
                 self.deletedlist = []
         self.blitword()
@@ -106,14 +104,11 @@ class Game(globale_variablen.Settings):
             farbe = (self.yellow, self.yellow) if self.deleted_word_bool else (self.lime, self.cyan)
         liste = self.player.appendlist
         wordstring = "".join([a.inhalt for a in liste])
-        print("wordstring is", wordstring)
         defstring = self.makedefstring()
-        print(f'len defstring: {len(defstring)}')
         word_image = self.font.render(wordstring, False, farbe[0])
         def_image = self.deffont.render(defstring, False, self.black)
         wordrect = word_image.get_rect()
         defrect = def_image.get_rect()
-        print("def image size:", defrect.w)
 
         def split_def():
             lines = defrect.w / (self.screenw // 2)  # why does half of screen work instead of whole?
@@ -123,7 +118,6 @@ class Game(globale_variablen.Settings):
         print(self.screenw)
         print(defrect.w / self.screenw)
         listoflists = split_def()
-        print(f'len listoflists: {len(listoflists)}')
         for el in listoflists:
             print(el)
         screen_rect = Rect(0, 0, self.screenh, self.screenw)
@@ -131,14 +125,12 @@ class Game(globale_variablen.Settings):
             list = listoflists[i]
             bitimg = self.deffont.render(" ".join(list), False, farbe[1])
             bitrect = bitimg.get_rect()
-            print(f'bitrect image {i} size: {bitrect.w}')
             bitrect.center = screen_rect.center
             self.screen.blit(bitimg, (bitrect.x, bitrect.y + (i + 1) * bitrect.h))
         wordrect.center = screen_rect.center
         self.screen.blit(word_image, (wordrect.x, wordrect.y))
 
     def check_word(self):
-        print("len applist", len(self.player.appendlist))
         appendlisttuples = [a.tuple for a in self.player.appendlist]
         for word in self.words:
             wordtuples = [a.tuple for a in word.syls]
@@ -156,9 +148,7 @@ class Game(globale_variablen.Settings):
             for syl in self.player.my_silben:
                 if silbe.tuple == syl.tuple:
                     self.player.my_silben.remove(syl)
-        print("in del")
         self.deletedlist = self.player.appendlist[:]
-        print("just made dellist, len",len(self.deletedlist))
         self.player.appendlist = []
         self.deleted_word_bool = True
 
@@ -172,17 +162,21 @@ class Game(globale_variablen.Settings):
         return poslist
 
     def get_screensyls(self):
+        #selfsyls = list(map(lambda a: a if a.visible == True else self.tempsyl(a.rect), self.syls))
         syls = self.syls[self.cs:] + self.syls[:self.cs]
         return syls[:len(self.poslist)] # takes however much is left if under the need
 
     def blitloop(self):
         self.screensyls = self.get_screensyls()
-        # print(f'cs {self.cs}')
         self.screen.fill(self.black)
         for i in range(len(self.poslist)):
             if self.screensyls:
                 syl = self.screensyls.pop(0)
-                self.screen.blit(syl.image, (syl.rect.x, self.poslist[i]+self.counter))
+                if syl.visible == True:
+                    self.screen.blit(syl.image, (syl.rect.x, self.poslist[i]+self.counter))
+                else:
+                    self.screen.blit(self.invisible,(syl.rect.x, self.poslist[i]+self.counter))
+                syl.rect.y = self.poslist[i] + self.counter
             else:
                 self.screen.blit(self.tokensyl.image, (self.tokensyl.rect.x,self.poslist[i]+self.counter))
         self.counter += 5
