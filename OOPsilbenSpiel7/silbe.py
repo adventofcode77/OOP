@@ -25,11 +25,10 @@ class Silbe(globale_variablen.Settings): #do with sprites
         self.rect.y += self.speed
 
     def make_image(self):
-        r = random.randint(0,255)
-        g = random.randint(0, 255)
-        b = random.randint(0, 255)
+        r = random.randint(100,255)
+        g = random.randint(100, 255)
+        b = random.randint(100, 255)
         sylcolor = (r,g,b)
-        print(sylcolor)
         return self.font.render(self.inhalt, False, sylcolor)
 
 

@@ -28,7 +28,7 @@ class Game(globale_variablen.Settings):
         self.tokensyl = silbe.Silbe("syl","word",["def"],1,1)
         self.cs = 0
         self.poslist = self.get_poslist()
-        self.ce = self.cs + len(self.poslist)
+        self.screensyls = self.get_screensyls()
 
 
     def draw_desk(self): # origs
@@ -162,63 +162,35 @@ class Game(globale_variablen.Settings):
         self.player.appendlist = []
         self.deleted_word_bool = True
 
-
-    def screen_update_and_move(self,allsyls,current_syl,player): # after every changed object
-        self.screen.fill(self.black)
-        for i in range(current_syl):
-            syllable = allsyls[i]
-            if syllable.visible == True:
-                self.screen.blit(syllable.image,syllable.rect) #draw function?
-            syllable.rect.y += syllable.speed
-        self.screen.blit(player.image,player.rect)
-        pg.display.flip()
-
     def get_poslist(self):
         poslist = []
-        pos = self.screenh
-        while pos >0:
+        tenth = self.screenh // 10
+        pos = self.screenh - tenth
+        while pos >=0:
             poslist.append(pos)
-            pos -= self.screenh // 15
-        print(poslist)
+            pos -= tenth
         return poslist
 
     def get_screensyls(self):
-        screensyls = []
-        infinitesyls = self.syls + self.syls + self.syls + self.syls + self.syls
-        for i in range(self.cs,self.cs+len(self.poslist)):
-            screensyls.append(infinitesyls[i])
-        # needed = len(self.poslist)
-        # available_from_cs = len(self.syls)-1-self.cs
-        # if available_from_cs >= needed:
-        #     for i in range(self.cs,self.cs+needed):
-        #         screensyls.append(self.syls[i])
-        #     print("screensyls after if clause", len(screensyls))
-        # else:
-        #     rest = needed - available_from_cs
-        #     for i in range(self.cs,len(self.syls)):
-        #         screensyls.append(self.syls[i])
-        #     for j in range(0,rest):
-        #         screensyls.append(self.syls[j])
-        #     print("screensyls after else clause",len(screensyls))
-        return screensyls
-
+        syls = self.syls[self.cs:] + self.syls[:self.cs]
+        return syls[:len(self.poslist)] # takes however much is left if under the need
 
     def blitloop(self):
-        print(f'cs {self.cs}')
+        self.screensyls = self.get_screensyls()
+        # print(f'cs {self.cs}')
         self.screen.fill(self.black)
-        screensyls = self.get_screensyls()
         for i in range(len(self.poslist)):
-            if screensyls:
-                syl = screensyls.pop(0)
+            if self.screensyls:
+                syl = self.screensyls.pop(0)
                 self.screen.blit(syl.image, (syl.rect.x, self.poslist[i]+self.counter))
             else:
                 self.screen.blit(self.tokensyl.image, (self.tokensyl.rect.x,self.poslist[i]+self.counter))
-        self.counter += 10
-        if self.counter in range(self.screenh // 15 - 5, self.screenh // 15 + 5):
+        self.counter += 5
+        if self.counter == self.screenh // 10:
             self.counter = 0
             self.cs += 1
-            if self.cs >= len(self.syls)+len(self.poslist):
-                self.cs = 0
+        if self.cs == len(self.syls):
+            self.cs = 0
         self.screen.blit(self.player.image, self.player.rect)
         pg.display.flip()
 
@@ -266,7 +238,7 @@ class Game(globale_variablen.Settings):
                         self.screen.blit(image_win, image_win_rect)
                         self.screen.blit(image_score, image_score_rect)
                         display.flip()
-                        time.wait(3)
+                        time.wait(3000)
                         exit()
                     else:
                         action = self.player.act() # PLAYER MOVES ONCE A LOOP
