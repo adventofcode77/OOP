@@ -25,7 +25,7 @@ class Game(globale_variablen.Settings):
         self.counter = 0
         self.deleted_word_bool = False
         self.deletedlist = []
-        self.tokensyl = silbe.Silbe("syl","word",["def"],1,1)
+        self.tokensyl = silbe.Silbe("token","word",["def"],1,1)
         self.cs = 0
         self.poslist = self.get_poslist()
         self.screensyls = self.get_screensyls()
@@ -34,7 +34,6 @@ class Game(globale_variablen.Settings):
     def draw_desk(self): # origs
         x,y = self.right,self.down
         mysilben = self.player.my_silben
-        print("len mysyls:",len(mysilben))
         desk_syls = []
         index = 0
         for y in range(self.down,self.down*4,self.down):
@@ -70,8 +69,6 @@ class Game(globale_variablen.Settings):
                                     if item.tuple == off.tuple:
                                         del self.player.appendlist[i]
                                         break
-                                    else:
-                                        print(item.inhalt,item.tuple,"for item;",off.inhalt,off.tuple,"for tuple")
                             else:
                                 item.clicked_on = True
                                 self.draw_word(syl)
@@ -90,7 +87,6 @@ class Game(globale_variablen.Settings):
         self.check_word()
 
     def makedefstring(self):
-        liste = []
         if self.deleted_word_bool:
             bitlists = [a.bit for a in self.deletedlist]
         else:
@@ -113,13 +109,7 @@ class Game(globale_variablen.Settings):
         def split_def():
             lines = defrect.w / (self.screenw // 2)  # why does half of screen work instead of whole?
             return self.get_bits(defstring, lines)
-
-        print(defrect.w)
-        print(self.screenw)
-        print(defrect.w / self.screenw)
         listoflists = split_def()
-        for el in listoflists:
-            print(el)
         screen_rect = Rect(0, 0, self.screenh, self.screenw)
         for i in range(len(listoflists)):
             list = listoflists[i]
@@ -140,7 +130,6 @@ class Game(globale_variablen.Settings):
 
     def delete_word(self): #same syl is actually different objects in different lists, why?
         self.score += 5
-        #self.counter -= len(self.player.appendlist) # currently false
         for silbe in self.player.appendlist:
             for syl in self.syls:
                 if silbe.tuple == syl.tuple:
@@ -168,8 +157,8 @@ class Game(globale_variablen.Settings):
 
     def blitloop(self):
         self.screensyls = self.get_screensyls()
-        print(self.counter, self.cs, len(self.screensyls), len(self.syls))
         self.screen.fill(self.black)
+        print(len(self.syls),self.cs)
         for i in range(len(self.poslist)):
             if self.screensyls:
                 syl = self.screensyls.pop(0)
@@ -185,7 +174,8 @@ class Game(globale_variablen.Settings):
         if self.counter == self.screenh // 10:
             self.counter = 0
             self.cs += 1
-        if self.cs == len(self.syls):
+        if self.cs >= len(self.syls)-1: # == doesn't catch after deleted words
+            print("cs is lensyls")
             self.cs = 0
         self.screen.blit(self.player.image, self.player.rect)
         pg.display.flip()
@@ -207,7 +197,6 @@ class Game(globale_variablen.Settings):
                     image_end_rect.center = self.screen.get_rect().center
                     self.screen.blit(image_end, image_end_rect)
                     display.flip()
-                    print(len(self.player.my_silben))
                     return self.score
                     quit()
                 elif stuff.type == KEYDOWN:
@@ -222,7 +211,6 @@ class Game(globale_variablen.Settings):
             else:
                 if run == True:
                     if len(self.syls)==0: # including the invisible ones
-                        print("len self syls was zero")
                         self.screen.fill(self.black)
                         image_win = self.bigfont.render(f'YOU WON!', False, self.white)
                         image_score = self.bigfont.render(f'YOUR SCORE IS {round(self.score, 3)}', False, self.white)
