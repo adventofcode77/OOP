@@ -25,10 +25,11 @@ class Game(globale_variablen.Settings):
         self.counter = 0
         self.deleted_word_bool = False
         self.deletedlist = []
-        self.tokensyl = silbe.Silbe("token","word",["def"],1,1)
         self.cs = 0
         self.poslist = self.get_poslist()
         self.screensyls = self.get_screensyls()
+        self.generated = silbe.Silbe("o","word",["bit"],404,404)
+        self.generated.image = self.font.render("o", False, self.gold)
 
 
     def draw_desk(self): # origs
@@ -153,7 +154,14 @@ class Game(globale_variablen.Settings):
     def get_screensyls(self):
         #selfsyls = list(map(lambda a: a if a.visible == True else self.tempsyl(a.rect), self.syls))
         syls = self.syls[self.cs:] + self.syls[:self.cs]
-        return syls[:len(self.poslist)] # takes however much is left if under the need
+        liste = syls[:len(self.poslist)] # takes however much is left if under the need
+        if len(liste) < len(self.poslist):
+            diff = len(self.poslist)-len(liste)
+            while diff:
+                temp = self.generated
+                liste.append(temp)
+                diff -= 1
+        return liste
 
     def blitloop(self):
         self.screensyls = self.get_screensyls()
@@ -168,15 +176,14 @@ class Game(globale_variablen.Settings):
                     self.screen.blit(self.invisible,(syl.rect.x, self.poslist[i]+self.counter))
                 syl.rect.y = self.poslist[i] + self.counter
             else:
-                self.screen.blit(self.tokensyl.image, (self.tokensyl.rect.x,self.poslist[i]+self.counter))
-                self.tokensyl.rect.y = self.poslist[i] + self.counter
+                print("check if it goes here")
         self.counter += 5
         if self.counter == self.screenh // 10:
             self.counter = 0
             self.cs += 1
-        if self.cs >= len(self.syls)-1: # == doesn't catch after deleted words
-            print("cs is lensyls")
-            self.cs = 0
+            if self.cs > len(self.syls)-1: # == doesn't catch after deleted words
+                print("cs is lensyls")
+                self.cs = 0
         self.screen.blit(self.player.image, self.player.rect)
         pg.display.flip()
 

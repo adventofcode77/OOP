@@ -2,6 +2,7 @@ import pygame as pg
 import math as m
 from pygame import *
 from pygame import freetype
+import random
 
 class Settings:
     def __init__(self):
@@ -21,6 +22,7 @@ class Settings:
         self.bigfont = font.SysFont("Arial", 30)
         self.deffont = font.SysFont("Arial",15)
         self.invisible = self.font.render("o", False, self.gold)
+
 
     def get_bits(self,string,length):
         definition = string
