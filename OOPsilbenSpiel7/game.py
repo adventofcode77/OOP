@@ -17,7 +17,6 @@ class Game(globale_variablen.Settings):
         self.bank = woerter.Woerter()
         self.words = self.bank.get_words()
         self.defs = [a.meaning for a in self.words]
-        self.txt_syls = self.bank.txtsyls
         self.selected = []
         self.screen = pg.display.set_mode((self.screenh,self.screenw))
         self.score = 0
@@ -30,6 +29,7 @@ class Game(globale_variablen.Settings):
         self.screensyls = self.get_screensyls()
         self.generated = silbe.Silbe("o","word",["bit"],404,404)
         self.generated.image = self.font.render("o", False, self.gold)
+        self.silbe_all_syls = silbe.Silbe.silbe_all_syls
 
 
     def draw_desk(self): # origs
@@ -175,14 +175,11 @@ class Game(globale_variablen.Settings):
                 else:
                     self.screen.blit(self.invisible,(syl.rect.x, self.poslist[i]+self.counter))
                 syl.rect.y = self.poslist[i] + self.counter
-            else:
-                print("check if it goes here")
         self.counter += 5
         if self.counter == self.screenh // 10:
             self.counter = 0
             self.cs += 1
             if self.cs > len(self.syls)-1: # == doesn't catch after deleted words
-                print("cs is lensyls")
                 self.cs = 0
         self.screen.blit(self.player.image, self.player.rect)
         pg.display.flip()

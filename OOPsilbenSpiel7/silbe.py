@@ -6,6 +6,7 @@ from itertools import *
 import math
 
 class Silbe(globale_variablen.Settings): #do with sprites
+    silbe_all_syls = []
     def __init__(self,it,word,bit,order,worder): #or make it inherit from word
         super().__init__()
         self.order = order
@@ -19,6 +20,7 @@ class Silbe(globale_variablen.Settings): #do with sprites
         self.bit = bit # ['einer', 'Aktiengesellschaft']
         self.visible = True
         self.tuple = (order,worder)
+        Silbe.silbe_all_syls.append(self)
 
 
     def move(self,speed=5):
