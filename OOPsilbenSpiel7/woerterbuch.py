@@ -2,6 +2,7 @@ import wiktionary_de_parser
 from wiktionary_de_parser import Parser
 import random
 import globale_variablen
+import re
 
 class Woerterbuch(globale_variablen.Settings):
     def __init__(self, file_path):
@@ -9,7 +10,7 @@ class Woerterbuch(globale_variablen.Settings):
         self.file_path = file_path
         self.listofrecords = []
         self.list_records()
-        self.parsed = self.quick_get(100)
+        self.parsed = self.quick_get(3)
 
     def iterate(self,record):
         meaning = ""
@@ -25,7 +26,10 @@ class Woerterbuch(globale_variablen.Settings):
                 for i in range (len(line)):
                     newline = line[i]
                     if newline == "Bedeutungen":
+                        #print("meanings for",record['title'])
                         meaning = line[i+1]
+                        # for j in range(i+1,len(line)-1):
+                        #     print(line[j])
         else:
             return False
         return meaning,record['syllables']
@@ -42,8 +46,9 @@ class Woerterbuch(globale_variablen.Settings):
         record = self.listofrecords[j]
         if 'langCode' not in record or record['langCode'] != 'de':
             return self.getaword()
-        if self.iterate(record):
-            bedeutung, syls = self.iterate(record)
+        result = self.iterate(record)
+        if result:
+            bedeutung, syls = result
             simplelistforaword = [record["title"],bedeutung, syls]
             return simplelistforaword
         else:
@@ -54,11 +59,31 @@ class Woerterbuch(globale_variablen.Settings):
     def quick_get(self,num):
         dictwords = {}
         for i in range(num):
-            #print("what about me ",num,i)
-            list = self.getaword()
-            list[1] = list[1][4:]
-            if list[1] == "" or list[1] == " ":
-                list[1] = "easter egg"
+            success = False
+            while not success:
+                list = self.getaword()
+                if "|" in list[1]:
+                    continue
+                list[1] = list[1][4:] # remove line number
+                list[1] = re.sub('".*?"', '', list[1]) # copied how to remove quoted things
+                list[1] = re.sub("''.*?''", '', list[1])
+                list[1] = re.sub("<.*?>", '',list[1])
+                list[1] = re.sub("[.*?]", '',list[1])
+                #list[1] = re.sub("(.*?)", '', list[1]) # never finds such strings?
+                if "Familienname" in list[1]:
+                    continue
+                if "Name" in list[1]:
+                    continue
+                if "Vorname" in list[1]:
+                    continue
+                if "Gemeinde in" in list[1]:
+                    continue
+                if len(list[1]) in range(3, 150):
+                    success = True
+                if "landschaftlich" in list[1]:  # geography cat
+                    continue
+                if len(list[1]) in range(3,150):
+                    success = True
             #print("the list ",list)
             # print("0th ",list[0])  #word
             #print("1st ",list[1]) #meaning string

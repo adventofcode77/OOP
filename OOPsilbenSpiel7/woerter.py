@@ -10,9 +10,6 @@ class Woerter(globale_variablen.Settings):
         super().__init__()
         self.rect = pg.Rect(0,0,20,20)
         self.dictwithkeyname = self.get_bank()
-        self.txtsyls = self.randomize_syls()
-        self.flat = []
-        self.test = 0
         self.words = self.get_words()
         self.silben = self.get_silben()
 
@@ -22,7 +19,6 @@ class Woerter(globale_variablen.Settings):
         worder = 0
         for entry in self.dictwithkeyname:
             worder += 1
-            self.test += 1
             name = entry
             meaning = self.dictwithkeyname[entry][0]
             syls = self.dictwithkeyname[entry][1]
