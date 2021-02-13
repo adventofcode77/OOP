@@ -36,3 +36,6 @@ class Settings:
             definition = definition[advancement:]
         return list_of_lists # DO NOT FORGET RETURN
 
+pg.init()
+setobj = Settings()
+
