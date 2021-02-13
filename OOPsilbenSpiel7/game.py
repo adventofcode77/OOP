@@ -27,9 +27,9 @@ class Game(globale_variablen.Settings):
         self.cs = 0
         self.poslist = self.get_poslist()
         self.screensyls = self.get_screensyls()
-        self.generated = silbe.Silbe("o","word",["bit"],404,404)
-        self.generated.image = self.font.render("o", False, self.gold)
         self.silbe_all_syls = silbe.Silbe.silbe_all_syls
+        self.sylscounter = len(self.syls)
+
 
 
     def draw_desk(self): # origs
@@ -55,14 +55,14 @@ class Game(globale_variablen.Settings):
 
     def desk(self,click):
         # the event loop didn't work inside of this function
-        self.screen.fill(self.lila)
+        self.screen.fill(self.zuff)
         syls = self.draw_desk() # copies
         if click:
             x,y = click
             for syl in syls:
                 if syl.rect.collidepoint(x,y):
                     for item in self.player.my_silben: #next()?
-                        if item.tuple == syl.tuple:
+                        if item.tuple == syl.tuple: # couldn't find syl objects in lists where i'd previously put them
                             if item.clicked_on:
                                 item.clicked_on = False
                                 for i in range(len(self.player.appendlist)):
@@ -131,12 +131,16 @@ class Game(globale_variablen.Settings):
 
     def delete_word(self): #same syl is actually different objects in different lists, why?
         self.score += 5
-        for silbe in self.player.appendlist:
+        for this in self.player.appendlist:
             for syl in self.syls:
-                if silbe.tuple == syl.tuple:
-                    self.syls.remove(syl)
+                if this.tuple == syl.tuple:
+                    index = self.syls.index(syl)
+                    replacement = silbe.Silbe("o", "word", ["bit"], 404, 404)
+                    replacement.visible = False
+                    self.syls[index] = replacement
+                    self.sylscounter -= 1
             for syl in self.player.my_silben:
-                if silbe.tuple == syl.tuple:
+                if this.tuple == syl.tuple:
                     self.player.my_silben.remove(syl)
         self.deletedlist = self.player.appendlist[:]
         self.player.appendlist = []
@@ -155,18 +159,12 @@ class Game(globale_variablen.Settings):
         #selfsyls = list(map(lambda a: a if a.visible == True else self.tempsyl(a.rect), self.syls))
         syls = self.syls[self.cs:] + self.syls[:self.cs]
         liste = syls[:len(self.poslist)] # takes however much is left if under the need
-        if len(liste) < len(self.poslist):
-            diff = len(self.poslist)-len(liste)
-            while diff:
-                temp = self.generated
-                liste.append(temp)
-                diff -= 1
         return liste
 
     def blitloop(self):
         self.screensyls = self.get_screensyls()
         self.screen.fill(self.black)
-        print(len(self.syls),self.cs)
+        #print(len(self.syls),self.cs)
         for i in range(len(self.poslist)):
             if self.screensyls:
                 syl = self.screensyls.pop(0)
@@ -202,7 +200,6 @@ class Game(globale_variablen.Settings):
                     self.screen.blit(image_end, image_end_rect)
                     display.flip()
                     return self.score
-                    quit()
                 elif stuff.type == KEYDOWN:
                     if stuff.key == K_SPACE:
                         run = False
@@ -214,7 +211,7 @@ class Game(globale_variablen.Settings):
                     click = mouse.get_pos()
             else:
                 if run == True:
-                    if len(self.syls)==0: # including the invisible ones
+                    if self.sylscounter==0: # including the invisible ones
                         self.screen.fill(self.black)
                         image_win = self.bigfont.render(f'YOU WON!', False, self.white)
                         image_score = self.bigfont.render(f'YOUR SCORE IS {round(self.score, 3)}', False, self.white)
