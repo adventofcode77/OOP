@@ -17,14 +17,14 @@ class Spieler(globale_variablen.Settings):
 
     def act(self):
         keys = key.get_pressed()
-        if keys[K_LEFT] and self.rect.x >= 0+self.speed:
-            self.rect.x -= self.speed
-        elif keys[K_RIGHT] and self.rect.x <= 500-self.speed-self.rect.w:
-            self.rect.x += self.speed
-        elif keys[K_UP] and self.rect.y >= 0+self.speed:
-            self.rect.y -= self.speed
+        if keys[K_LEFT]: # and self.rect.x >= 0+self.speed:
+            self.rect.x = 0 if self.speed>self.rect.x else self.rect.x - self.speed
+        elif keys[K_RIGHT]: # and self.rect.x <= 500-self.speed-self.rect.w:
+            self.rect.right = self.screenw if self.rect.right + self.speed>self.screenw else self.rect.right + self.speed
+        elif keys[K_UP]: # and self.rect.y >= 0+self.speed:
+            self.rect.top = 0 if self.rect.top-self.speed < 0 else self.rect.top - self.speed
         elif keys[K_DOWN] and self.rect.y <= 500-self.speed-self.rect.w:
-            self.rect.y += self.speed
+            self.rect.bottom = self.screenh if self.rect.bottom + self.speed > self.screenh else self.rect.bottom + self.speed
         elif keys[K_SPACE]:
             return False
         elif keys[K_2]:
