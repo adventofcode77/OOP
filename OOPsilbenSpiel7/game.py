@@ -135,9 +135,12 @@ class Game(globale_variablen.Settings):
             for syl in self.syls:
                 if this.tuple == syl.tuple:
                     index = self.syls.index(syl)
-                    replacement = silbe.Silbe("o", "word", ["bit"], 404, 404)
-                    replacement.visible = False
-                    self.syls[index] = replacement
+                    if len(self.syls) <len(self.poslist):
+                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404)
+                        replacement.visible = False
+                        self.syls[index] = replacement
+                    else:
+                        self.syls.remove(syl)
                     self.sylscounter -= 1
             for syl in self.player.my_silben:
                 if this.tuple == syl.tuple:
@@ -150,16 +153,15 @@ class Game(globale_variablen.Settings):
         poslist = []
         tenth = self.screenh // 10
         pos = self.screenh - tenth
-        while pos >=0:
+        while pos >=0-self.counter:
             poslist.append(pos)
             pos -= tenth
         return poslist
 
     def get_screensyls(self):
-        #selfsyls = list(map(lambda a: a if a.visible == True else self.tempsyl(a.rect), self.syls))
+        visibles = [a for a in self.syls if a.visible == True]
         syls = self.syls[self.cs:] + self.syls[:self.cs]
-        liste = syls[:len(self.poslist)] # takes however much is left if under the need
-        return liste
+        return syls[:len(self.poslist)] # (now syls should always be bigger than this cut)
 
     def blitloop(self):
         self.screensyls = self.get_screensyls()
