@@ -23,7 +23,7 @@ class Spieler(globale_variablen.Settings):
             self.rect.right = self.screenw if self.rect.right + self.speed>self.screenw else self.rect.right + self.speed
         elif keys[K_UP]: # and self.rect.y >= 0+self.speed:
             self.rect.top = 0 if self.rect.top-self.speed < 0 else self.rect.top - self.speed
-        elif keys[K_DOWN] and self.rect.y <= 500-self.speed-self.rect.w:
+        elif keys[K_DOWN]: # and self.rect.y <= 500-self.speed-self.rect.w:
             self.rect.bottom = self.screenh if self.rect.bottom + self.speed > self.screenh else self.rect.bottom + self.speed
         elif keys[K_SPACE]:
             return False

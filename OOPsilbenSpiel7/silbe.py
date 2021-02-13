@@ -5,10 +5,10 @@ import globale_variablen
 from itertools import *
 import math
 
-class Silbe(globale_variablen.Settings): #do with sprites
+class Silbe(): #do with sprites
     silbe_all_syls = []
     def __init__(self,it,word,bit,order,worder): #or make it inherit from word
-        super().__init__()
+        self.s = globale_variablen.setobj
         self.order = order
         self.inhalt = it
         self.word = word
@@ -31,7 +31,7 @@ class Silbe(globale_variablen.Settings): #do with sprites
         g = random.randint(100, 255)
         b = random.randint(100, 255)
         sylcolor = (r,g,b)
-        return self.font.render(self.inhalt, False, sylcolor)
+        return self.s.font.render(self.inhalt, False, sylcolor)
 
 
 
