@@ -55,7 +55,7 @@ class Game(globale_variablen.Settings):
 
     def desk(self,click):
         # the event loop didn't work inside of this function
-        self.screen.fill(self.zuff)
+        self.screen.fill(self.black)
         syls = self.draw_desk() # copies
         if click:
             x,y = click
