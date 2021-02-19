@@ -13,6 +13,11 @@ class Woerter(globale_variablen.Settings):
         self.words = self.get_words()
         self.silben = self.get_silben()
 
+    def get_bank(self):
+        file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
+        parser = woerterbuch.Woerterbuch(file_path)
+        return parser.parsed
+
     def get_words(self):
         words = []
         totalsyls = 0
@@ -32,20 +37,6 @@ class Woerter(globale_variablen.Settings):
         for aword in self.words:
             for asyl in aword.syls:
                 sylobjects.append(asyl)
-        return sylobjects
-
-    def randomize_syls(self):
-        all_syls = []
-        ditems = self.dictwithkeyname.items()
-        for key, value in ditems:
-            meaning, syls = value[0], value[1]
-            for syl in syls:
-                all_syls += [syl]
-        return random.sample(all_syls, len(all_syls)) #sample returns new list
+        return random.sample(sylobjects,len(sylobjects)) #sample returns new list
 
 
-    def get_bank(self):
-        file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
-        parser = woerterbuch.Woerterbuch(file_path)
-        bank = parser.parsed
-        return bank

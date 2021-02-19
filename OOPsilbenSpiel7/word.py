@@ -14,7 +14,7 @@ class Word(globale_variablen.Settings):
         self.name = key
         self.txtsilben = txtsilben
         self.bits = self.get_bits(self.meaning, len(self.txtsilben))
-        self.syls = self.make_silben() #[silbe.Silbe("it","word","def inition")] #[silbe.Silbe(a, self.name) for a in silben]
+        self.syls = self.make_silben()
         self.image = self.font.render(self.name, False, self.black)
         self.rect = self.image.get_rect() # draw_rect()?
         self.rect.x = 0 #random.randrange(0,500-self.rect.w,50)
@@ -39,7 +39,7 @@ class Word(globale_variablen.Settings):
             syls.append(silbe1)
         for i in range(smaller,bigger):
             order += 1
-            bit = "."
+            bit = "..."
             it = self.txtsilben[i]
             word = self.name
             silbe1 = silbe.Silbe(it, word, bit, order,self.worder)
