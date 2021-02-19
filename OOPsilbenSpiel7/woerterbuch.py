@@ -5,12 +5,13 @@ import globale_variablen
 import re
 
 class Woerterbuch(globale_variablen.Settings):
+    # replace with escape game file / rewrite using wiktionary_de_parser's method
     def __init__(self, file_path):
         super().__init__()
         self.file_path = file_path
         self.listofrecords = []
         self.list_records()
-        self.parsed = self.quick_get(3)
+        self.parsed = self.quick_get(5) # too few words lead to syls no longer starting to fall from the top
 
     def iterate(self,record):
         meaning = ""
@@ -84,10 +85,6 @@ class Woerterbuch(globale_variablen.Settings):
                     continue
                 if len(list[1]) in range(3,150):
                     success = True
-            #print("the list ",list)
-            # print("0th ",list[0])  #word
-            #print("1st ",list[1]) #meaning string
-            # print("2nd ",list[2]) # syls
             dictwords[list[0]] = [list[1],list[2]]
         return dictwords
 

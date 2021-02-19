@@ -13,11 +13,6 @@ class Main:
         loop = game1.gameloop()
         score += loop
         print("score:",score)
-        # newgame = input("Game over. New game?")
-        # if newgame == "y":
-        #     self.newgame(score)
-        # else:
-        #     exit()
 
 if __name__ == '__main__':
      Main()
