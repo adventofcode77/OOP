@@ -7,14 +7,14 @@ import math
 
 class Silbe(): #do with sprites
     silbe_all_syls = []
-    def __init__(self,it,word,bit,order,worder): #or make it inherit from word
-        self.s = globale_variablen.setobj
+    def __init__(self,it,word,bit,order,worder, info): #or make it inherit from word
+        self.info = info
         self.order = order
         self.inhalt = it
         self.word = word
         self.image = self.make_image()
         self.rect = self.image.get_rect() # or text.get_rect()?
-        self.rect.x = random.randrange(0,500-self.rect.w,50)
+        self.rect.x = random.randrange(0,self.info.screenw-self.rect.w,self.info.screenw//10)
         self.speed = 3
         self.clicked_on = False
         self.bit = bit # ['einer', 'Aktiengesellschaft']
@@ -31,7 +31,7 @@ class Silbe(): #do with sprites
         g = random.randint(100, 255)
         b = random.randint(100, 255)
         sylcolor = (r,g,b)
-        return self.s.font.render(self.inhalt, False, sylcolor)
+        return self.info.font.render(self.inhalt, False, sylcolor)
 
 
 

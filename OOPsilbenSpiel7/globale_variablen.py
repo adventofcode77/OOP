@@ -15,10 +15,6 @@ class Settings:
         self.cyan = (0,255,255)
         self.yellow = (255,255,0)
         self.fps = 30
-        self.screenw, self.screenh = 500,500
-        # why does increasing the screen size from 500,500 lead to blank screen and player escaping it?
-        self.right = self.screenw//6
-        self.down = self.screenh//12
         self.font = font.SysFont("Arial",20)
         self.bigfont = font.SysFont("Arial", 30)
         self.deffont = font.SysFont("Arial",15)

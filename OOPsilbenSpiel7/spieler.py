@@ -3,16 +3,18 @@ from pygame import *
 from pygame.locals import *
 from OOPsilbenSpiel7 import globale_variablen
 
-class Spieler(globale_variablen.Settings):
-    def __init__(self):
+class Spieler():
+    def __init__(self,game_instance):
         super().__init__()
+        self.info = game_instance
         l, r, w, h = 200,200,40,40
         self.rect = pg.Rect(l,r,w,h)
         self.my_silben = []
-        self.txt = self.font.render("player", False, self.black)
+        self.txt = self.info.font.render("player", False, self.info.black)
         self.image = transform.scale(image.load('blue_player3.svg'),(self.rect.w,self.rect.h))
         self.speed = 15
         self.appendlist = []
+        self.screenwidth,self.screenheight = self.info.screenw,self.info.screenh
 
 
     def act(self):
@@ -20,11 +22,11 @@ class Spieler(globale_variablen.Settings):
         if keys[K_LEFT]: # and self.rect.x >= 0+self.speed:
             self.rect.x = 0 if self.speed>self.rect.x else self.rect.x - self.speed
         elif keys[K_RIGHT]: # and self.rect.x <= 500-self.speed-self.rect.w:
-            self.rect.right = self.screenw if self.rect.right + self.speed>self.screenw else self.rect.right + self.speed
+            self.rect.right = self.info.screenw if self.rect.right + self.speed>self.info.screenw else self.rect.right + self.speed
         elif keys[K_UP]: # and self.rect.y >= 0+self.speed:
             self.rect.top = 0 if self.rect.top-self.speed < 0 else self.rect.top - self.speed
         elif keys[K_DOWN]: # and self.rect.y <= 500-self.speed-self.rect.w:
-            self.rect.bottom = self.screenh if self.rect.bottom + self.speed > self.screenh else self.rect.bottom + self.speed
+            self.rect.bottom = self.info.screenh if self.rect.bottom + self.speed > self.info.screenh else self.rect.bottom + self.speed
         elif keys[K_SPACE]:
             return False
         elif keys[K_2]:
