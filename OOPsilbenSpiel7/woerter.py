@@ -5,9 +5,10 @@ from OOPsilbenSpiel7 import word
 from OOPsilbenSpiel7 import spieler
 import globale_variablen
 
-class Woerter(globale_variablen.Settings):
-    def __init__(self):
+class Woerter():
+    def __init__(self,game_instance):
         super().__init__()
+        self.info = game_instance
         self.rect = pg.Rect(0,0,20,20)
         self.dictwithkeyname = self.get_bank()
         self.words = self.get_words()
@@ -27,7 +28,7 @@ class Woerter(globale_variablen.Settings):
             name = entry
             meaning = self.dictwithkeyname[entry][0]
             syls = self.dictwithkeyname[entry][1]
-            aword = word.Word(name, meaning, syls, worder, totalsyls)
+            aword = word.Word(name, meaning, syls, worder, totalsyls, self.info)
             words.append(aword)
             totalsyls += len(syls)
         return words

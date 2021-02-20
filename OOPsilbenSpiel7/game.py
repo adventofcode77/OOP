@@ -8,16 +8,20 @@ from OOPsilbenSpiel7 import silbe
 from OOPsilbenSpiel7 import spieler
 
 
-class Game(globale_variablen.Settings):
+class Game(globale_variablen.Settings,woerter.Woerter,silbe.Silbe,spieler.Spieler):
 
     def __init__(self):
         super().__init__()
-        self.player = spieler.Spieler()
-        self.bank = woerter.Woerter()
+        self.screen_via_display_set_mode = pg.display.set_mode((0, 0), RESIZABLE)
+        self.screenw, self.screenh = self.screen_via_display_set_mode.get_rect().size
+        self.right = self.screenw // 6
+        self.down = self.screenh//12
+        self.player = spieler.Spieler(self)
+        self.bank = woerter.Woerter(self)
         self.words = self.bank.get_words()
         self.defs = [a.meaning for a in self.words]
         self.selected = []
-        self.screen_via_display_set_mode = pg.display.set_mode((self.screenh, self.screenw), RESIZABLE)
+        print(self.screenw,self.screenh)
         self.screen_copy  = self.screen_via_display_set_mode.copy()
         # followed a post on resizable pygame screen; it doesn't stretch the game, only the empty screen space
         self.score = 0
@@ -28,11 +32,8 @@ class Game(globale_variablen.Settings):
         self.deleted_word_bool = False
         self.deletedlist = []
         self.cs = 0
-        self.poslist = self.get_poslist()
+        self.poslist = self.get_pos_list()
         self.screensyls = self.get_screensyls()
-
-
-
 
     def draw_desk(self): # origs
         mysilben = self.player.my_silben
@@ -42,7 +43,8 @@ class Game(globale_variablen.Settings):
             for x in range(self.right,self.right*5,self.right):
                 if index < len(mysilben):
                     syl = mysilben[index]
-                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0],syl.tuple[1])
+                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0], syl.tuple[1], syl.info)
+                    # why didn't syl.copy() work?
                     if syl.clicked_on == True:
                         copy.image = self.font.render(copy.inhalt,False,self.lime)
                     else:
@@ -75,20 +77,20 @@ class Game(globale_variablen.Settings):
                                 item.clicked_on = True
                                 self.draw_word(syl)
         self.draw_word()
-        self.screen_trans()
+        self.screen_transfer()
 
 
     def draw_word(self,syl=None):
-        self.blitword(farbe=(self.lila,self.lila)) #draws over word and def
+        self.blit_word(farbe=(self.lila, self.lila)) #draws over word and def
         if syl:
             self.player.appendlist.append(syl)
             if self.deleted_word_bool:
                 self.deleted_word_bool = False
                 self.deletedlist = []
-        self.blitword()
+        self.blit_word()
         self.check_word()
 
-    def makedefstring(self):
+    def make_def_string(self):
         if self.deleted_word_bool:
             bitlists = [a.bit for a in self.deletedlist]
         else:
@@ -97,23 +99,24 @@ class Game(globale_variablen.Settings):
         defstring = " ".join(bitstrings)
         return defstring
 
-    def blitword(self, farbe=None):
+    def blit_word(self, farbe=None):
         # replace with a pygame gui that works with sql?
         if farbe is not (self.lila, self.lila):
             farbe = (self.yellow, self.yellow) if self.deleted_word_bool else (self.lime, self.cyan)
         liste = self.player.appendlist
         wordstring = "".join([a.inhalt for a in liste])
-        defstring = self.makedefstring()
+        defstring = self.make_def_string()
         word_image = self.font.render(wordstring, False, farbe[0])
         def_image = self.deffont.render(defstring, False, self.black)
         wordrect = word_image.get_rect()
         defrect = def_image.get_rect()
-
         def split_def():
             lines = defrect.w / (self.screenw // 2)  # why does half of screen work instead of whole?
             return self.get_bits(defstring, lines)
         listoflists = split_def()
-        screen_rect = Rect(0, 0, self.screenh, self.screenw)
+        screen_rect = pg.Rect(0, 0, self.screenw, self.screenh)
+        #print(f'center of screen_rect from which to blit word def is {screen_rect.x,screen_rect.y}'
+        #      f'current screen size is {self.screenw,self.screenh}')
         for i in range(len(listoflists)):
             list = listoflists[i]
             bitimg = self.deffont.render(" ".join(list), False, farbe[1])
@@ -138,7 +141,7 @@ class Game(globale_variablen.Settings):
                 if this.tuple == syl.tuple:
                     index = self.syls.index(syl)
                     if len(self.syls) <len(self.poslist):
-                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404)
+                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self)
                         replacement.visible = False
                         self.syls[index] = replacement
                     else:
@@ -151,7 +154,7 @@ class Game(globale_variablen.Settings):
         self.player.appendlist = []
         self.deleted_word_bool = True
 
-    def get_poslist(self):
+    def get_pos_list(self):
         poslist = []
         tenth = self.screenh // 10
         pos = self.screenh - tenth
@@ -164,7 +167,7 @@ class Game(globale_variablen.Settings):
         syls = self.syls[self.cs:] + self.syls[:self.cs]
         return syls[:len(self.poslist)] # (now syls should always be bigger than this cut)
 
-    def blitloop(self): # why is there some trembling?
+    def blit_loop(self): # why is there some trembling?
         self.screensyls = self.get_screensyls()
         self.screen_copy.fill(self.black)
         for i in range(len(self.poslist)):
@@ -176,69 +179,17 @@ class Game(globale_variablen.Settings):
                     self.screen_copy.blit(self.invisible, (syl.rect.x, self.poslist[i] + self.counter))
                 syl.rect.y = self.poslist[i] + self.counter
         self.counter += 5
-        if self.counter == self.screenh // 10:
+        if self.counter >= self.screenh // 10:
             self.counter = 0
             self.cs += 1
             if self.cs > len(self.syls)-1: # "==" doesn't work after words get deleted
                 self.cs = 0
         self.screen_copy.blit(self.player.image, self.player.rect)
-        self.screen_trans()
+        self.screen_transfer()
 
-    def screen_trans(self):
+    def screen_transfer(self):
         resized_fake_screen = pg.transform.scale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_fake_screen, (0, 0))
         pg.display.flip()
 
-    def gameloop(self):
-        clock = pg.time.Clock()
-        run = True
-        print([each.name for each in self.words])
-        click = False
-        while True:
-            clock.tick(self.fps) #ONE LOOP
-            self.score -= 0.005 #quicker play wins more
-            for stuff in event.get(): # CAN QUIT ONCE A LOOP
-                if stuff.type == QUIT:
-                    self.screen_copy.fill(self.black)
-                    image_end = self.font.render("GAME OVER", False, self.white)
-                    image_end_rect = image_end.get_rect()
-                    image_end_rect.center = self.screen_copy.get_rect().center
-                    self.screen_copy.blit(image_end, image_end_rect)
-                    self.screen_trans()
-                    return self.score
-                elif stuff.type == KEYDOWN:
-                    if stuff.key == K_SPACE:
-                        run = False
-                    elif stuff.key == K_a:
-                        for item in self.player.my_silben:
-                            item.clicked_on = False
-                        run = True
-                elif stuff.type == MOUSEBUTTONDOWN:
-                    click = mouse.get_pos()
-                elif stuff.type == VIDEORESIZE:
-                    self.screen_copy = pg.display.set_mode(stuff.size, RESIZABLE)
-            else:
-                if run == True:
-                    if self.sylscounter==0: # including the invisible ones
-                        self.screen_copy.fill(self.black)
-                        image_win = self.bigfont.render(f'YOU WON!', False, self.white)
-                        image_score = self.bigfont.render(f'YOUR SCORE IS {round(self.score, 3)}', False, self.white)
-                        image_win_rect = image_win.get_rect()
-                        image_score_rect = image_score.get_rect()
-                        image_win_rect.center = self.screen_copy.get_rect().center
-                        image_score_rect.center = self.screen_copy.get_rect().center
-                        image_score_rect.y += image_win_rect.h * 1.5
-                        self.screen_copy.blit(image_win, image_win_rect)
-                        self.screen_copy.blit(image_score, image_score_rect)
-                        self.screen_trans()
-                        time.wait(3000)
-                        exit()
-                    else:
-                        action = self.player.act() # PLAYER MOVES ONCE A LOOP
-                        if action == 1: # from web result
-                            run = False
-                        self.player.pick(self.syls)
-                        self.blitloop()
-                else:
-                    self.desk(click)
-                    click = False
+
