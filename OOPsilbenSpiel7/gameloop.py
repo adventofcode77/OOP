@@ -17,28 +17,30 @@ class Gameloop(game.Game):
             self.screen_transfer()
             self.clock.tick(self.fps) #ONE LOOP
             self.score -= 0.005 #quicker play wins more
-            for stuff in event.get(): # CAN QUIT ONCE A LOOP
-                if stuff.type == QUIT:
+            for e in event.get(): # CAN QUIT ONCE A LOOP
+                if e.type == QUIT:
                     self.screen_copy.fill(self.black)
                     image_end = self.font.render("GAME OVER", False, self.white)
                     image_end_rect = image_end.get_rect()
                     image_end_rect.center = self.screen_copy.get_rect().center
                     self.screen_copy.blit(image_end, image_end_rect)
                     self.screen_transfer()
-                    print(self.player.screenwidth,self.player.screenheight)
+                    #print(self.player.screenwidth,self.player.screenheight)
                     return self.score
-                elif stuff.type == KEYDOWN:
-                    if stuff.key == K_SPACE:
+                elif e.type == KEYDOWN:
+                    if e.key == K_SPACE:
                         self.run = False
-                    elif stuff.key == K_a:
+                    elif e.key == K_a:
                         for item in self.player.my_silben:
                             item.clicked_on = False
                         self.run = True
-                elif stuff.type == MOUSEBUTTONDOWN:
+                elif e.type == MOUSEBUTTONDOWN:
                     self.click = mouse.get_pos()
-                elif stuff.type == VIDEORESIZE:
-                    print('about to resize screenw and screenh')
-                    self.screen_via_display_set_mode = pg.display.set_mode(stuff.size, RESIZABLE)
+                    print(f'mouseclick at {self.click}')
+                elif e.type == VIDEORESIZE:
+                    self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
+                    self.screenw, self.screenh = e.size
+                    print(self.screenw,self.screenh)
             else:
                 if self.run == True:
                     if self.sylscounter==0: # including the invisible ones

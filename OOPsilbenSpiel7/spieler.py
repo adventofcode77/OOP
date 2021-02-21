@@ -7,25 +7,28 @@ class Spieler():
     def __init__(self,game_instance):
         super().__init__()
         self.info = game_instance
-        l, r, w, h = 200,200,40,40
-        self.rect = pg.Rect(l,r,w,h)
+        self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2,40,40)
         self.my_silben = []
         self.txt = self.info.font.render("player", False, self.info.black)
         self.image = transform.scale(image.load('blue_player3.svg'),(self.rect.w,self.rect.h))
         self.speed = 15
         self.appendlist = []
-        self.screenwidth,self.screenheight = self.info.screenw,self.info.screenh
+        #self.screenwidth,self.screenheight = self.info.screenw,self.info.screenh
 
 
     def act(self):
         keys = key.get_pressed()
-        if keys[K_LEFT]: # and self.rect.x >= 0+self.speed:
+        if keys[K_LEFT]:
             self.rect.x = 0 if self.speed>self.rect.x else self.rect.x - self.speed
-        elif keys[K_RIGHT]: # and self.rect.x <= 500-self.speed-self.rect.w:
+        elif keys[K_RIGHT]:
+            print(f'screenw of game_instance is {self.info.screenw}'
+                  f'player right is {self.rect.right}')
+            if self.rect.right + self.speed>self.info.screenw:
+                print(f'player right {self.rect.right} plus speed {self.speed} is bigger than screenw {self.info.screenw}')
             self.rect.right = self.info.screenw if self.rect.right + self.speed>self.info.screenw else self.rect.right + self.speed
-        elif keys[K_UP]: # and self.rect.y >= 0+self.speed:
+        elif keys[K_UP]:
             self.rect.top = 0 if self.rect.top-self.speed < 0 else self.rect.top - self.speed
-        elif keys[K_DOWN]: # and self.rect.y <= 500-self.speed-self.rect.w:
+        elif keys[K_DOWN]:
             self.rect.bottom = self.info.screenh if self.rect.bottom + self.speed > self.info.screenh else self.rect.bottom + self.speed
         elif keys[K_SPACE]:
             return False
