@@ -8,11 +8,11 @@ from OOPsilbenSpiel7 import silbe
 from OOPsilbenSpiel7 import spieler
 
 
-class Game(globale_variablen.Settings,woerter.Woerter,silbe.Silbe,spieler.Spieler):
+class Game(globale_variablen.Settings):
 
     def __init__(self):
         super().__init__()
-        self.screen_via_display_set_mode = pg.display.set_mode((0, 0), RESIZABLE)
+        self.screen_via_display_set_mode = pg.display.set_mode((1392, 783), RESIZABLE)
         self.screenw, self.screenh = self.screen_via_display_set_mode.get_rect().size
         self.right = self.screenw // 6
         self.down = self.screenh//12
@@ -35,6 +35,31 @@ class Game(globale_variablen.Settings,woerter.Woerter,silbe.Silbe,spieler.Spiele
         self.poslist = self.get_pos_list()
         self.screensyls = self.get_screensyls()
 
+    def desk(self,click):
+        # the event loop didn't work inside of this function
+        self.screen_copy.fill(self.black)
+        syls = self.draw_desk() # copies
+        if click:
+            x,y = click
+            for syl in syls:
+                print(f'syl {syl.inhalt} at {syl.rect.x,syl.rect.y}') # syls dont change pre-resizing positions
+                if syl.rect.collidepoint(x,y):
+                    for item in self.player.my_silben: #next()?
+                        if item.tuple == syl.tuple:
+                            # couldn't find syl objects in lists where i'd previously put them (& collidelist didn't work)
+                            if item.clicked_on:
+                                item.clicked_on = False
+                                for i in range(len(self.player.appendlist)):
+                                    off = self.player.appendlist[i]
+                                    if item.tuple == off.tuple:
+                                        del self.player.appendlist[i]
+                                        break
+                            else:
+                                item.clicked_on = True
+                                self.draw_word(syl)
+        self.draw_word()
+        self.screen_transfer()
+
     def draw_desk(self): # origs
         mysilben = self.player.my_silben
         desk_syls = []
@@ -55,30 +80,6 @@ class Game(globale_variablen.Settings,woerter.Woerter,silbe.Silbe,spieler.Spiele
                     index += 1
                     x += copy.rect.w
         return desk_syls
-
-    def desk(self,click):
-        # the event loop didn't work inside of this function
-        self.screen_copy.fill(self.black)
-        syls = self.draw_desk() # copies
-        if click:
-            x,y = click
-            for syl in syls:
-                if syl.rect.collidepoint(x,y):
-                    for item in self.player.my_silben: #next()?
-                        if item.tuple == syl.tuple: # couldn't find syl objects in lists where i'd previously put them
-                            if item.clicked_on:
-                                item.clicked_on = False
-                                for i in range(len(self.player.appendlist)):
-                                    off = self.player.appendlist[i]
-                                    if item.tuple == off.tuple:
-                                        del self.player.appendlist[i]
-                                        break
-                            else:
-                                item.clicked_on = True
-                                self.draw_word(syl)
-        self.draw_word()
-        self.screen_transfer()
-
 
     def draw_word(self,syl=None):
         self.blit_word(farbe=(self.lila, self.lila)) #draws over word and def
@@ -114,7 +115,7 @@ class Game(globale_variablen.Settings,woerter.Woerter,silbe.Silbe,spieler.Spiele
             lines = defrect.w / (self.screenw // 2)  # why does half of screen work instead of whole?
             return self.get_bits(defstring, lines)
         listoflists = split_def()
-        screen_rect = pg.Rect(0, 0, self.screenw, self.screenh)
+        screen_rect = Rect(0, 0, self.screenw, self.screenh)
         #print(f'center of screen_rect from which to blit word def is {screen_rect.x,screen_rect.y}'
         #      f'current screen size is {self.screenw,self.screenh}')
         for i in range(len(listoflists)):
@@ -187,9 +188,13 @@ class Game(globale_variablen.Settings,woerter.Woerter,silbe.Silbe,spieler.Spiele
         self.screen_copy.blit(self.player.image, self.player.rect)
         self.screen_transfer()
 
-    def screen_transfer(self):
-        resized_fake_screen = pg.transform.scale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
-        self.screen_via_display_set_mode.blit(resized_fake_screen, (0, 0))
+    def screen_transfer(self): # corrently resizes the current display image, but objects are no longer clickable at the right coordinates
+        resized_screen_copy = pg.transform.scale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
+        print(f'screenvia size is {self.screen_via_display_set_mode.get_rect().size} and copy image size is {resized_screen_copy.get_rect().size}')
+        self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
+        print("at blitting screenw and screenh are",self.screenw, self.screenh,
+              "and screenvia is",self.screen_via_display_set_mode.get_rect().size,
+              "and player.rect.right is",self.player.rect.right)
         pg.display.flip()
 
 
