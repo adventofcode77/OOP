@@ -16,20 +16,20 @@ class Spieler():
         #self.screenwidth,self.screenheight = self.info.screenw,self.info.screenh
 
 
-    def act(self):
+    def act(self,cw,ch):
         keys = key.get_pressed()
         if keys[K_LEFT]:
             self.rect.x = 0 if self.speed>self.rect.x else self.rect.x - self.speed
         elif keys[K_RIGHT]:
-            print(f'screenw of game_instance is {self.info.screenw}'
+            print(f'screenw of game_instance is {cw}'
                   f'player right is {self.rect.right}')
-            if self.rect.right + self.speed>self.info.screenw:
+            if self.rect.right + self.speed > cw:
                 print(f'player right {self.rect.right} plus speed {self.speed} is bigger than screenw {self.info.screenw}')
-            self.rect.right = self.info.screenw if self.rect.right + self.speed>self.info.screenw else self.rect.right + self.speed
+            self.rect.right = cw if self.rect.right + self.speed>cw else self.rect.right + self.speed
         elif keys[K_UP]:
             self.rect.top = 0 if self.rect.top-self.speed < 0 else self.rect.top - self.speed
         elif keys[K_DOWN]:
-            self.rect.bottom = self.info.screenh if self.rect.bottom + self.speed > self.info.screenh else self.rect.bottom + self.speed
+            self.rect.bottom = ch if self.rect.bottom + self.speed > ch else self.rect.bottom + self.speed
         elif keys[K_SPACE]:
             return False
         elif keys[K_2]:
