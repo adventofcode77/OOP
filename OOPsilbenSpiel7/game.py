@@ -13,7 +13,8 @@ class Game(globale_variablen.Settings):
     def __init__(self):
         super().__init__()
         self.screen_via_display_set_mode = pg.display.set_mode((1392, 783), RESIZABLE)
-        self.screenw, self.screenh = self.screen_via_display_set_mode.get_rect().size
+        self.screen_copy = self.screen_via_display_set_mode.copy()
+        self.screenw, self.screenh = self.screen_copy.get_rect().size
         self.right = self.screenw // 6
         self.down = self.screenh//12
         self.player = spieler.Spieler(self)
@@ -22,7 +23,6 @@ class Game(globale_variablen.Settings):
         self.defs = [a.meaning for a in self.words]
         self.selected = []
         print(self.screenw,self.screenh)
-        self.screen_copy  = self.screen_via_display_set_mode.copy()
         # followed a post on resizable pygame screen; it doesn't stretch the game, only the empty screen space
         self.score = 0
         self.syls = self.bank.silben
@@ -190,11 +190,10 @@ class Game(globale_variablen.Settings):
 
     def screen_transfer(self): # corrently resizes the current display image, but objects are no longer clickable at the right coordinates
         resized_screen_copy = pg.transform.scale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
-        print(f'screenvia size is {self.screen_via_display_set_mode.get_rect().size} and copy image size is {resized_screen_copy.get_rect().size}')
+        self.screenw, self.screenh = resized_screen_copy.get_rect().size
+        #print(f'copy image size is screenw,screenh: {resized_screen_copy.get_rect().size}')
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
-        print("at blitting screenw and screenh are",self.screenw, self.screenh,
-              "and screenvia is",self.screen_via_display_set_mode.get_rect().size,
-              "and player.rect.right is",self.player.rect.right)
+        #print("player.rect.right is",self.player.rect.right)
         pg.display.flip()
 
 
