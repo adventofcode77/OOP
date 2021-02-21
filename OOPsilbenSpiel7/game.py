@@ -12,28 +12,19 @@ class Game(globale_variablen.Settings):
 
     def __init__(self):
         super().__init__()
-        self.screen_via_display_set_mode = pg.display.set_mode((1392, 783), RESIZABLE)
-        self.screen_copy = self.screen_via_display_set_mode.copy()
-        self.screenw, self.screenh = self.screen_copy.get_rect().size
-        self.right = self.screenw // 6
-        self.down = self.screenh//12
         self.player = spieler.Spieler(self)
         self.bank = woerter.Woerter(self)
         self.words = self.bank.get_words()
-        self.defs = [a.meaning for a in self.words]
-        self.selected = []
-        print(self.screenw,self.screenh)
-        # followed a post on resizable pygame screen; it doesn't stretch the game, only the empty screen space
         self.score = 0
         self.syls = self.bank.silben
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
-        self.counter = 0
+        self.syl_speed = 0
         self.deleted_word_bool = False
         self.deletedlist = []
-        self.cs = 0
-        self.poslist = self.get_pos_list()
-        self.screensyls = self.get_screensyls()
+        self.start_syls_cut_at = 0
+        self.pos_list = self.get_pos_list()
+        self.screen_syls = self.get_screensyls()
 
     def desk(self,click):
         # the event loop didn't work inside of this function
@@ -108,7 +99,7 @@ class Game(globale_variablen.Settings):
         wordstring = "".join([a.inhalt for a in liste])
         defstring = self.make_def_string()
         word_image = self.font.render(wordstring, False, farbe[0])
-        def_image = self.deffont.render(defstring, False, self.black)
+        def_image = self.smaller_font.render(defstring, False, self.black)
         wordrect = word_image.get_rect()
         defrect = def_image.get_rect()
         def split_def():
@@ -120,7 +111,7 @@ class Game(globale_variablen.Settings):
         #      f'current screen size is {self.screenw,self.screenh}')
         for i in range(len(listoflists)):
             list = listoflists[i]
-            bitimg = self.deffont.render(" ".join(list), False, farbe[1])
+            bitimg = self.smaller_font.render(" ".join(list), False, farbe[1])
             bitrect = bitimg.get_rect()
             bitrect.center = screen_rect.center
             self.screen_copy.blit(bitimg, (bitrect.x, bitrect.y + (i + 1) * bitrect.h))
@@ -141,7 +132,7 @@ class Game(globale_variablen.Settings):
             for syl in self.syls:
                 if this.tuple == syl.tuple:
                     index = self.syls.index(syl)
-                    if len(self.syls) <len(self.poslist):
+                    if len(self.syls) <len(self.pos_list):
                         replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self)
                         replacement.visible = False
                         self.syls[index] = replacement
@@ -159,41 +150,38 @@ class Game(globale_variablen.Settings):
         poslist = []
         tenth = self.screenh // 10
         pos = self.screenh - tenth
-        while pos >=0-self.counter:
+        while pos >=0-self.syl_speed:
             poslist.append(pos)
             pos -= tenth
         return poslist
 
     def get_screensyls(self):
-        syls = self.syls[self.cs:] + self.syls[:self.cs]
-        return syls[:len(self.poslist)] # (now syls should always be bigger than this cut)
+        syls = self.syls[self.start_syls_cut_at:] + self.syls[:self.start_syls_cut_at]
+        return syls[:len(self.pos_list)] # (now syls should always be bigger than this cut)
 
-    def blit_loop(self): # why is there some trembling?
-        self.screensyls = self.get_screensyls()
+    def blit_loop(self): # why is there some trembling? especially after downsizing screen
+        self.screen_syls = self.get_screensyls()
         self.screen_copy.fill(self.black)
-        for i in range(len(self.poslist)):
-            if self.screensyls:
-                syl = self.screensyls.pop(0)
+        for i in range(len(self.pos_list)):
+            if self.screen_syls:
+                syl = self.screen_syls.pop(0)
                 if syl.visible == True:
-                    self.screen_copy.blit(syl.image, (syl.rect.x, self.poslist[i] + self.counter))
+                    self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_speed))
                 else:
-                    self.screen_copy.blit(self.invisible, (syl.rect.x, self.poslist[i] + self.counter))
-                syl.rect.y = self.poslist[i] + self.counter
-        self.counter += 5
-        if self.counter >= self.screenh // 10:
-            self.counter = 0
-            self.cs += 1
-            if self.cs > len(self.syls)-1: # "==" doesn't work after words get deleted
-                self.cs = 0
+                    self.screen_copy.blit(self.invisible, (syl.rect.x, self.pos_list[i] + self.syl_speed))
+                syl.rect.y = self.pos_list[i] + self.syl_speed
+        self.syl_speed += self.screenh // 100
+        if self.syl_speed >= self.screenh // 10:
+            self.syl_speed = 0
+            self.start_syls_cut_at += 1
+            if self.start_syls_cut_at > len(self.syls)-1: # "==" doesn't work after words get deleted
+                self.start_syls_cut_at = 0
         self.screen_copy.blit(self.player.image, self.player.rect)
         self.screen_transfer()
 
     def screen_transfer(self): # corrently resizes the current display image, but objects are no longer clickable at the right coordinates
         resized_screen_copy = pg.transform.scale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
-        self.screenw, self.screenh = resized_screen_copy.get_rect().size
-        #print(f'copy image size is screenw,screenh: {resized_screen_copy.get_rect().size}')
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
-        #print("player.rect.right is",self.player.rect.right)
         pg.display.flip()
 
 

@@ -1,11 +1,17 @@
 import pygame as pg
 import math as m
 from pygame import *
-from pygame import freetype
-import random
+import math
 
 class Settings:
     def __init__(self):
+        self.screen_via_display_set_mode = pg.display.set_mode((1392, 783), RESIZABLE)
+        self.screen_copy = self.screen_via_display_set_mode.copy()
+        # how is making a copy different than making a second screen (which didn't work)
+        self.screenw, self.screenh = self.screen_copy.get_rect().size
+        self.screen_surface = int(math.sqrt(self.screenw * self.screenh))
+        self.right = self.screenw // 6
+        self.down = self.screenh // 12
         self.black = (0,0,0)
         self.white = (255,255,255)
         self.zuff = (200,200,200)
@@ -15,9 +21,9 @@ class Settings:
         self.cyan = (0,255,255)
         self.yellow = (255,255,0)
         self.fps = 30
-        self.font = font.SysFont("Arial",20)
-        self.bigfont = font.SysFont("Arial", 30)
-        self.deffont = font.SysFont("Arial",15)
+        self.font = font.SysFont("Arial",self.screen_surface//20)
+        self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)
+        self.smaller_font = font.SysFont("Arial", self.screen_surface // 25)
         self.invisible = self.font.render("o", False, self.black)
 
 
