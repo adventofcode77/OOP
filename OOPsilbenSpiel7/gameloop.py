@@ -36,20 +36,14 @@ class Gameloop(game.Game):
                         self.run = True
                 elif e.type == MOUSEBUTTONDOWN:
                     self.click = mouse.get_pos()
-                    print(f'mouseclick at {self.click}')
-                elif e.type == VIDEORESIZE: # updating all screen/copy values here fixes (some of) the bugs
+                elif e.type == VIDEORESIZE: # updates the size to which the screen_copy image should be scaled
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
-                    self.screen_copy = self.screen_via_display_set_mode.copy()
-                    self.screenw, self.screenh = self.screen_copy.get_rect().size
-                    self.right = self.screenw // 6
-                    self.down = self.screenh // 12
-                    print("do screenw/h change after resizing screenvia",self.screenw,self.screenh)
             else:
                 if self.run == True:
                     if self.sylscounter==0: # excluding the invisible ones using a counter
                         self.screen_copy.fill(self.black)
-                        image_win = self.bigfont.render(f'YOU WON!', False, self.white)
-                        image_score = self.bigfont.render(f'YOUR SCORE IS {round(self.score, 3)}', False, self.white)
+                        image_win = self.bigger_font.render(f'YOU WON!', False, self.white)
+                        image_score = self.bigger_font.render(f'YOUR SCORE IS {round(self.score, 3)}', False, self.white)
                         image_win_rect = image_win.get_rect()
                         image_score_rect = image_score.get_rect()
                         image_win_rect.center = self.screen_copy.get_rect().center
@@ -61,11 +55,18 @@ class Gameloop(game.Game):
                         time.wait(3000)
                         exit()
                     else:
-                        action = self.player.act(self.screenw,self.screenh) # PLAYER MOVES ONCE A LOOP; # takes current screen size as parameter
+                        action = self.player.act() # PLAYER MOVES ONCE A LOOP
                         if action == 1: # from web result
                             self.run = False
                         self.player.pick(self.syls)
                         self.blit_loop()
                 else:
+                    if self.click: # scale the mouseclick coordinates back to the original screen size
+                        current_x, current_y = self.click
+                        orig_screenw, orig_screenh = self.screenw, self.screenh
+                        current_screenw, current_screenh = self.screen_via_display_set_mode.get_rect().size
+                        current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh
+                        x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh
+                        self.click = (x,y)
                     self.desk(self.click)
                     self.click = False

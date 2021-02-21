@@ -11,7 +11,7 @@ class Woerterbuch(globale_variablen.Settings):
         self.file_path = file_path
         self.listofrecords = []
         self.list_records()
-        self.parsed = self.quick_get(5) # too few words lead to syls no longer starting to fall from the top
+        self.parsed = self.quick_get(5) # why do too few words lead to syls starting to fall from the middle
 
     def iterate(self,record):
         meaning = ""

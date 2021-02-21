@@ -22,10 +22,6 @@ class Silbe(): #do with sprites
         self.tuple = (order,worder)
         Silbe.silbe_all_syls.append(self)
 
-
-    def move(self,speed=5):
-        self.rect.y += self.speed
-
     def make_image(self):
         r = random.randint(100,255)
         g = random.randint(100, 255)
