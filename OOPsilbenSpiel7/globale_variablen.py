@@ -20,7 +20,7 @@ class Settings:
         self.lime = (0,255,0)
         self.cyan = (0,255,255)
         self.yellow = (255,255,0)
-        self.fps = 30
+        self.fps = 45
         self.font = font.SysFont("Arial",self.screen_surface//20)
         self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)
         self.smaller_font = font.SysFont("Arial", self.screen_surface // 25)
@@ -28,8 +28,9 @@ class Settings:
 
 
     def get_bits(self, string, num_parts):
-        definition = string
-        list_of_lists = [] # list of strings?
+        definition = string.split(" ")
+        print(definition)
+        list_of_lists = [] # list of strings
         num_syls = num_parts if num_parts > 0 else 1
         advancement = m.ceil(len(definition)/num_syls)
         if advancement == 0:
@@ -37,6 +38,7 @@ class Settings:
         while definition:
             list_of_lists.append(definition[:advancement])
             definition = definition[advancement:]
+        print(list_of_lists)
         return list_of_lists # DO NOT FORGET RETURN
 
 pg.init()

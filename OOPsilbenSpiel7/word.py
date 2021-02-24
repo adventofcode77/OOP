@@ -10,11 +10,9 @@ class Word():
         self.info = info
         self.totalsyls = totalsyls
         self.worder = worder
-        meaning = meaning.split(" ")
-        self.meaning = list(filter(None,meaning))
         self.name = key
         self.txtsilben = txtsilben
-        self.bits = self.info.get_bits(self.meaning, len(self.txtsilben))
+        self.bits = self.info.get_bits(meaning, len(self.txtsilben))
         self.syls = self.make_silben()
         self.image = self.info.font.render(self.name, False, self.info.black)
         self.rect = self.image.get_rect() # draw_rect()?
@@ -22,7 +20,7 @@ class Word():
 
 
     def make_silben(self):
-        order = self.totalsyls
+        order = self.totalsyls # make class attribute?
         syls = []
         if len(self.txtsilben)>len(self.bits):
             smaller = len(self.bits)
