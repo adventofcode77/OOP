@@ -96,27 +96,38 @@ class Game(globale_variablen.Settings):
             farbe = (self.yellow, self.yellow) if self.deleted_word_bool else (self.lime, self.cyan)
         liste = self.player.appendlist
         wordstring = "".join([a.inhalt for a in liste])
-        center = self.screen_copy.get_rect().center
-        self.blit_def(self.make_def_string(),farbe[1],center)
+        self.blit_def_word_by_word(self.make_def_string(),farbe[1],self.screen_copy.get_rect().center)
         word_image = self.font.render(wordstring, False, farbe[0])
         wordrect = word_image.get_rect()
-        wordrect.center = center
+        wordrect.center = self.screen_copy.get_rect().center
         self.screen_copy.blit(word_image, (wordrect.x, wordrect.y))
 
-    def blit_def(self,defstring,farbe,center): # does it need to get the image in order to know how big the font is compared to the screen size?
-        def_image = self.smaller_font.render(defstring, False, self.black)
-        defrect = def_image.get_rect()
-        listoflists = self.split_def(defstring, defrect)
-        for i in range(len(listoflists)):
-            list = listoflists[i]
-            bitimg = self.smaller_font.render(" ".join(list), False, farbe)
-            bitrect = bitimg.get_rect()
-            bitrect.center = center
-            self.screen_copy.blit(bitimg, (bitrect.x, bitrect.y + (i + 1) * bitrect.h))
-
-    def split_def(self, string, defrect):
-        lines = defrect.w / (self.screenw // 2)  # why does half of screen work instead of whole?
-        return self.get_bits(string, lines)
+    def blit_def_word_by_word(self,defstring, color,midtop): # does it need to get the image in order to know how big the font is
+        words = defstring.split()
+        line = ""
+        list_lines_img = []
+        for word in words:
+            line_img = self.smaller_font.render(line, False, self.white)
+            if line_img.get_rect().w >= 0.5*self.screen_copy.get_rect().w:
+                list_lines_img.append(line_img)
+                line = ""
+            line += word + " "
+        line_img = self.smaller_font.render(line, False, self.white)
+        line_height = line_img.get_rect().h
+        list_lines_img.append(line_img) # append the last part
+        screen_rect = self.screen_copy.get_rect()
+        height_def_window = screen_rect.h - midtop[1]
+        if len(list_lines_img) != 0:
+            spacing = height_def_window // len(list_lines_img) + 2
+        print(screen_rect.h, spacing)
+        for i in range(len(list_lines_img)):
+            line_img = list_lines_img[i]
+            line_rect = line_img.get_rect()
+            if spacing > line_height:
+                spacing = line_height
+            line_rect.center = (midtop[0],(midtop[1]+spacing*(i+1))) #spacing needs to increase with each line
+            print("line at ",midtop[1]+spacing*(i+1),"midtop is",midtop,"spacing is",spacing)
+            self.screen_copy.blit(line_img,line_rect)
 
     def check_word(self):
         appendlisttuples = [a.tuple for a in self.player.appendlist]

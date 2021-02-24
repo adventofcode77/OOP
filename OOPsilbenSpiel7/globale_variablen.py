@@ -27,10 +27,10 @@ class Settings:
         self.invisible = self.font.render("o", False, self.black)
 
 
-    def get_bits(self,string,length):
+    def get_bits(self, string, num_parts):
         definition = string
         list_of_lists = []
-        num_syls = length if length>0 else 1
+        num_syls = num_parts if num_parts > 0 else 1
         advancement = m.ceil(len(definition)/num_syls)
         if advancement == 0:
             advancement = 1
