@@ -5,7 +5,7 @@ import math
 
 class Settings:
     def __init__(self):
-        self.screen_via_display_set_mode = pg.display.set_mode((1392, 783), RESIZABLE)
+        self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         # how is making a copy different than making a second screen (which didn't work)
         self.screenw, self.screenh = self.screen_copy.get_rect().size

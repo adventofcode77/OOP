@@ -18,7 +18,6 @@ class Word():
         self.syls = self.make_silben()
         self.image = self.info.font.render(self.name, False, self.info.black)
         self.rect = self.image.get_rect() # draw_rect()?
-        self.rect.x = 0 #random.randrange(0,500-self.rect.w,50)
 
 
 

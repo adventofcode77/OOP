@@ -6,9 +6,8 @@ import math
 
 class Spieler():
     def __init__(self,game_instance):
-        super().__init__()
         self.info = game_instance
-        self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2,self.info.screen_surface//10,self.info.screen_surface//10)
+        self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2,self.info.screen_surface//15,self.info.screen_surface//10)
         self.my_silben = []
         self.txt = self.info.font.render("player", False, self.info.black)
         self.image = transform.scale(image.load('blue_player3.svg'),(self.rect.w,self.rect.h))
