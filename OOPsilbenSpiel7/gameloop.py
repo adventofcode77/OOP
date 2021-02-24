@@ -7,7 +7,7 @@ import random
 class Gameloop(game.Game):
     def __init__(self):
         super().__init__()
-        self.clock = pg.time.Clock()
+        self.clock = pg.time.Clock() # speed depends on cpu
         self.fall = True
         print([each.name for each in self.words])
         self.click = False
