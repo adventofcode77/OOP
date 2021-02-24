@@ -91,32 +91,32 @@ class Game(globale_variablen.Settings):
         defstring = " ".join(bitstrings)
         return defstring
 
-    def blit_word(self, farbe=None):
-        # replace with a pygame gui that works with sql?
+    def blit_word(self, farbe=None): # replace with a pygame gui that works with sql? or word by word?
         if farbe is not (self.lila, self.lila):
             farbe = (self.yellow, self.yellow) if self.deleted_word_bool else (self.lime, self.cyan)
         liste = self.player.appendlist
         wordstring = "".join([a.inhalt for a in liste])
-        defstring = self.make_def_string()
+        center = self.screen_copy.get_rect().center
+        self.blit_def(self.make_def_string(),farbe[1],center)
         word_image = self.font.render(wordstring, False, farbe[0])
-        def_image = self.smaller_font.render(defstring, False, self.black)
         wordrect = word_image.get_rect()
+        wordrect.center = center
+        self.screen_copy.blit(word_image, (wordrect.x, wordrect.y))
+
+    def blit_def(self,defstring,farbe,center): # does it need to get the image in order to know how big the font is compared to the screen size?
+        def_image = self.smaller_font.render(defstring, False, self.black)
         defrect = def_image.get_rect()
-        def split_def():
-            lines = defrect.w / (self.screenw // 2)  # why does half of screen work instead of whole?
-            return self.get_bits(defstring, lines)
-        listoflists = split_def()
-        screen_rect = Rect(0, 0, self.screenw, self.screenh)
-        #print(f'center of screen_rect from which to blit word def is {screen_rect.x,screen_rect.y}'
-        #      f'current screen size is {self.screenw,self.screenh}')
+        listoflists = self.split_def(defstring, defrect)
         for i in range(len(listoflists)):
             list = listoflists[i]
-            bitimg = self.smaller_font.render(" ".join(list), False, farbe[1])
+            bitimg = self.smaller_font.render(" ".join(list), False, farbe)
             bitrect = bitimg.get_rect()
-            bitrect.center = screen_rect.center
+            bitrect.center = center
             self.screen_copy.blit(bitimg, (bitrect.x, bitrect.y + (i + 1) * bitrect.h))
-        wordrect.center = screen_rect.center
-        self.screen_copy.blit(word_image, (wordrect.x, wordrect.y))
+
+    def split_def(self, string, defrect):
+        lines = defrect.w / (self.screenw // 2)  # why does half of screen work instead of whole?
+        return self.get_bits(string, lines)
 
     def check_word(self):
         appendlisttuples = [a.tuple for a in self.player.appendlist]
