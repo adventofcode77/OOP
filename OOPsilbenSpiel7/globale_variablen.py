@@ -29,7 +29,7 @@ class Settings:
 
     def get_bits(self, string, num_parts):
         definition = string
-        list_of_lists = []
+        list_of_lists = [] # list of strings?
         num_syls = num_parts if num_parts > 0 else 1
         advancement = m.ceil(len(definition)/num_syls)
         if advancement == 0:

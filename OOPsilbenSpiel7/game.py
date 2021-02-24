@@ -6,6 +6,7 @@ from OOPsilbenSpiel7 import woerter
 from OOPsilbenSpiel7 import globale_variablen
 from OOPsilbenSpiel7 import silbe
 from OOPsilbenSpiel7 import spieler
+import math
 
 
 class Game(globale_variablen.Settings):
@@ -103,28 +104,20 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(word_image, (wordrect.x, wordrect.y))
 
     def blit_def_word_by_word(self,defstring, color,midtop): # does it need to get the image in order to know how big the font is
-        words = defstring.split()
-        line = ""
-        list_lines_img = []
-        for word in words:
-            line_img = self.smaller_font.render(line, False, self.white)
-            if line_img.get_rect().w >= 0.5*self.screen_copy.get_rect().w:
-                list_lines_img.append(line_img)
-                line = ""
-            line += word + " "
-        line_img = self.smaller_font.render(line, False, self.white)
-        line_height = line_img.get_rect().h
-        list_lines_img.append(line_img) # append the last part
+        print(f'defstring: {defstring}')
+        def_image = self.smaller_font.render(defstring, False, self.black)
+        defrect = def_image.get_rect()
+        num_lines = math.ceil(defrect.w / (self.screenw // 1.5))  # why does half of screen work instead of whole?
+        listofstrings = self.get_bits(defstring, num_lines)
+        print("listofstrings",listofstrings)
         screen_rect = self.screen_copy.get_rect()
         height_def_window = screen_rect.h - midtop[1]
-        if len(list_lines_img) != 0:
-            spacing = height_def_window // len(list_lines_img) + 2
-        print(screen_rect.h, spacing)
-        for i in range(len(list_lines_img)):
-            line_img = list_lines_img[i]
+        spacing = height_def_window // (num_lines + 1)
+        for i in range(num_lines):
+            line_img = self.smaller_font.render(listofstrings[i], False, color)
             line_rect = line_img.get_rect()
-            if spacing > line_height:
-                spacing = line_height
+            if spacing > defrect.h:
+                spacing = defrect.h
             line_rect.center = (midtop[0],(midtop[1]+spacing*(i+1))) #spacing needs to increase with each line
             print("line at ",midtop[1]+spacing*(i+1),"midtop is",midtop,"spacing is",spacing)
             self.screen_copy.blit(line_img,line_rect)
