@@ -36,9 +36,10 @@ class Gameloop(game.Game):
                         self.fall = True
                     elif e.key == K_c:
                         self.screen_copy.fill(self.black)
-                        self.blit_def(f'cheating costs 3 seconds! one of the words means... {" ".join(random.choice(self.words).meaning)}',self.white,self.screen_copy.get_rect().midtop)
+                        self.blit_def_word_by_word(f'cheating costs 5 seconds! one of the words means... '
+                                      f'{" ".join(random.choice(self.words).meaning)}',self.white,self.screen_copy.get_rect().midtop)
                         self.screen_transfer()
-                        time.wait(3000)
+                        time.wait(5000)
                 elif e.type == MOUSEBUTTONDOWN:
                     self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE: # updates the size to which the screen_copy image should be scaled
