@@ -6,7 +6,7 @@ import math
 class Settings:
     def __init__(self,file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'):
         self.file_path = file_path
-        self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE)
+        self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         # how is making a copy different than making a second screen (which didn't work)
         self.screenw, self.screenh = self.screen_copy.get_rect().size
@@ -21,7 +21,7 @@ class Settings:
         self.lime = (0,255,0)
         self.cyan = (0,255,255)
         self.yellow = (255,255,0)
-        self.fps = 60 # keine konstante geschwindigkeit
+        self.fps = 30 # keine konstante geschwindigkeit
         self.font = font.SysFont("Arial",self.screen_surface//20)
         self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)
         self.smaller_font = font.SysFont("Arial", self.screen_surface // 25)

@@ -7,12 +7,13 @@ import math
 
 class Silbe(): #do with sprites
     silbe_all_syls = []
-    def __init__(self,it,word,bit,order,worder, info): #or make it inherit from word
+    def __init__(self,it,word,bit,order,worder, info, hue): #or make it inherit from word
         self.info = info
         self.order = order
         self.inhalt = it
         self.word = word
-        self.image = self.make_image(random.choice((0,1,2)))
+        self.hue = hue
+        self.image = self.make_image(hue)
         self.rect = self.image.get_rect() # or text.get_rect()?
         self.rect.x = random.randrange(0,self.info.screenw-self.rect.w,self.info.screenw//10)
         self.clicked_on = False

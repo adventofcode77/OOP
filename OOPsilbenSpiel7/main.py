@@ -10,7 +10,7 @@ class Main:
     def newgame(self,input_code,score):
         pg.init()
         game1 = gameloop.Gameloop(input_code)
-        score += game1.score
+        score += round(game1.score, 2)
         code = game1.output_code
         print(f'score: {score},code: {code}')
 

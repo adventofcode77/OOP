@@ -2,7 +2,7 @@ import pygame as pg
 from pygame import *
 from OOPsilbenSpiel7 import silbe
 import globale_variablen
-import math
+import math, random
 
 class Word():
     all_syls = []
@@ -16,16 +16,16 @@ class Word():
         self.txtsilben = txtsilben
         Word.all_syls.append(txtsilben)
         self.bits = self.info.get_bits(self.meaning, len(self.txtsilben))
-        self.syls = self.make_silben()
+        self.syls = self.make_silben(random.choice((0,1,2)))
         self.image = self.info.font.render(self.name, False, self.info.black)
         self.rect = self.image.get_rect() # draw_rect()?
 
 
 
-    def make_silben(self):
+    def make_silben(self, hue):
         order = self.totalsyls # make class attribute?
         syls = []
-        if len(self.txtsilben)>len(self.bits):
+        if len(self.txtsilben)>len(self.bits): # change to a counter?
             smaller = len(self.bits)
             bigger = len(self.txtsilben)
         else:
@@ -36,13 +36,13 @@ class Word():
             bit = self.bits[i]
             it = self.txtsilben[i]
             word = self.name
-            silbe1 = silbe.Silbe(it,word,bit,order, self.worder, self.info)
+            silbe1 = silbe.Silbe(it,word,bit,order, self.worder, self.info, hue)
             syls.append(silbe1)
         for i in range(smaller,bigger):
             order += 1
             bit = "..."
             it = self.txtsilben[i]
             word = self.name
-            silbe1 = silbe.Silbe(it, word, bit, order,self.worder, self.info)
+            silbe1 = silbe.Silbe(it, word, bit, order,self.worder, self.info, hue)
             syls.append(silbe1)
         return syls
