@@ -14,10 +14,10 @@ class Game(globale_variablen.Settings):
     def __init__(self):
         super().__init__()
         self.player = spieler.Spieler(self) # takes the game object as parameter
-        self.bank = woerter.Woerter(self)
-        self.words = self.bank.get_words()
+        self.woerter = woerter.Woerter(self)
+        self.words = self.woerter.get_words()
         self.score = 0
-        self.syls = self.bank.silben
+        self.syls = self.woerter.silben
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
         self.syl_speed = 0
@@ -50,7 +50,7 @@ class Game(globale_variablen.Settings):
                                 item.clicked_on = True
                                 self.draw_word(syl)
         self.draw_word()
-        self.screen_transfer()
+        #self.screen_transfer()
 
     def draw_desk(self): # origs
         mysilben = self.player.my_silben
@@ -60,7 +60,7 @@ class Game(globale_variablen.Settings):
             for x in range(self.right,self.right*5,self.right):
                 if index < len(mysilben):
                     syl = mysilben[index]
-                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0], syl.tuple[1], syl.info)
+                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0], syl.tuple[1], syl.info, syl.hue)
                     # why didn't syl.copy() work?
                     if syl.clicked_on == True:
                         copy.image = self.font.render(copy.inhalt,False,self.lime)
@@ -135,7 +135,7 @@ class Game(globale_variablen.Settings):
             wordtuples = [a.tuple for a in word.syls]
             if appendlisttuples == wordtuples:
                 self.delete_word()
-                self.words.remove(word)
+                self.words.remove(word) # words is used only for cheating
 
     def delete_word(self): #same syl is actually different objects in different lists, why?
         self.score += 5
@@ -144,7 +144,7 @@ class Game(globale_variablen.Settings):
                 if this.tuple == syl.tuple:
                     index = self.syls.index(syl)
                     if len(self.syls) <len(self.pos_list):
-                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self)
+                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self, 0)
                         replacement.visible = False
                         self.syls[index] = replacement
                     else:

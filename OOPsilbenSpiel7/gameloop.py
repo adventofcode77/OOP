@@ -19,8 +19,6 @@ class Gameloop(game.Game):
 
     def mainloop(self):
         while True:
-            self.screen_transfer() # resizes the last iteration's image to the current screen size and draws it
-            self.clock.tick(self.fps) #ONE LOOP
             self.score -= 0.005 #quicker play wins more
             for e in event.get(): # CAN QUIT ONCE A LOOP
                 if e.type == QUIT:
@@ -30,6 +28,7 @@ class Gameloop(game.Game):
                     image_end_rect.center = self.screen_copy.get_rect().center
                     self.screen_copy.blit(image_end, image_end_rect)
                     self.screen_transfer()
+                    time.wait(500)
                     return self.score
                 elif e.type == KEYDOWN:
                     if e.key == K_SPACE:
@@ -80,3 +79,5 @@ class Gameloop(game.Game):
                         self.click = (x,y)
                     self.desk(self.click)
                     self.click = False
+            self.screen_transfer() # resizes the last iteration's image to the current screen size and draws it
+            self.clock.tick(self.fps) #ONE LOOP
