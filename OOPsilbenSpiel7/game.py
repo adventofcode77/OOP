@@ -13,7 +13,7 @@ class Game(globale_variablen.Settings):
 
     def __init__(self):
         super().__init__()
-        self.player = spieler.Spieler(self)
+        self.player = spieler.Spieler(self) # takes the game object as parameter
         self.bank = woerter.Woerter(self)
         self.words = self.bank.get_words()
         self.score = 0
@@ -27,6 +27,7 @@ class Game(globale_variablen.Settings):
         self.pos_list = self.get_pos_list()
         self.screen_syls = self.get_screensyls()
 
+
     def desk(self,click):
         # the event loop didn't work inside of this function
         self.screen_copy.fill(self.black)
@@ -34,7 +35,6 @@ class Game(globale_variablen.Settings):
         if click:
             x,y = click
             for syl in syls:
-                print(f'syl {syl.inhalt} at {syl.rect.x,syl.rect.y}') # syls dont change pre-resizing positions
                 if syl.rect.collidepoint(x,y):
                     for item in self.player.my_silben: #next()?
                         if item.tuple == syl.tuple:
@@ -85,12 +85,12 @@ class Game(globale_variablen.Settings):
 
     def make_def_string(self):
         if self.deleted_word_bool:
-            bitlists = [a.bit for a in self.deletedlist]
+            bitlists = [word for a in self.deletedlist[:] for word in a.bit]
+            print("bitlists",bitlists)
         else:
-            bitlists = [a.bit for a in self.player.appendlist]
-        bitstrings = map(" ".join, bitlists)
-        defstring = " ".join(bitstrings)
-        return defstring
+            bitlists = [word for a in self.player.appendlist[:] for word in a.bit]
+            print("bitlists", bitlists)
+        return bitlists
 
     def blit_word(self, farbe=None): # replace with a pygame gui that works with sql? or word by word?
         if farbe is not (self.lila, self.lila):
@@ -104,7 +104,8 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(word_image, (wordrect.x, wordrect.y))
 
     def blit_def_word_by_word(self, defstring, color, midtop):  # does it need to get the image in order to know how big the font is
-        words = defstring.split()
+        words = defstring
+        print("words",words)
         line = ""
         list_lines_img = []
         for word in words:
@@ -117,16 +118,15 @@ class Game(globale_variablen.Settings):
         line_height = line_img.get_rect().h
         list_lines_img.append(line_img)  # append the last part
         screen_rect = self.screen_copy.get_rect()
-        height_def_window = screen_rect.h - midtop[1]
+        height_def_window = screen_rect.h - midtop[1] - line_height
         spacing = height_def_window // len(list_lines_img)
-        print(screen_rect.h, spacing)
-        for i in range(len(list_lines_img)-1):
+        print('len list lines img for ',words,":",len(list_lines_img))
+        for i in range(len(list_lines_img)):
             line_img = list_lines_img[i]
             line_rect = line_img.get_rect()
             if spacing > line_height*1.5:
                 spacing = line_height*1.5
             line_rect.center = (midtop[0], (midtop[1] + spacing * (i + 1)))  # spacing needs to increase with each line
-            print("line at ", midtop[1] + spacing * (i + 1), "midtop is", midtop, "spacing is", spacing)
             self.screen_copy.blit(line_img, line_rect)
 
     def check_word(self):

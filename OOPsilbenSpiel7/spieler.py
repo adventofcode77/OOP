@@ -11,7 +11,7 @@ class Spieler():
         self.my_silben = []
         self.txt = self.info.font.render("player", False, self.info.black)
         self.image = transform.scale(image.load('blue_player3.svg'),(self.rect.w,self.rect.h))
-        self.speed = self.info.screen_surface/20
+        self.speed = self.info.screen_surface/20 # abhängig von fps
         self.appendlist = []
 
     def act(self):
