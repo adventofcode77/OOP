@@ -144,7 +144,7 @@ class Game(globale_variablen.Settings):
                 if this.tuple == syl.tuple:
                     index = self.syls.index(syl)
                     if len(self.syls) <len(self.pos_list):
-                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self, 0)
+                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self, 0) # replace with simpler object?
                         replacement.visible = False
                         self.syls[index] = replacement
                     else:
