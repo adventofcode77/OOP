@@ -6,12 +6,11 @@ import re
 
 class Woerterbuch(globale_variablen.Settings):
     # replace with escape game file / rewrite using wiktionary_de_parser's method
-    def __init__(self, file_path):
+    def __init__(self):
         super().__init__()
-        self.file_path = file_path
         self.listofrecords = []
         self.list_records()
-        self.parsed = self.quick_get(20) # why do too few words lead to syls starting to fall from the middle
+        self.parsed = self.quick_get(10) # why do too few words lead to syls starting to fall from the middle
 
     def iterate(self,record):
         meaning = ""
