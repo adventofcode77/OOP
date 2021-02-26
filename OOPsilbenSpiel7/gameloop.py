@@ -2,16 +2,20 @@ import pygame as pg
 from pygame import *
 from pygame.locals import *
 from OOPsilbenSpiel7 import game
+from OOPsilbenSpiel7 import woerterbuch
 import random
 
 class Gameloop(game.Game):
-    def __init__(self):
+    def __init__(self, input_code):
         super().__init__()
+        self.wb = woerterbuch.Woerterbuch()
+        self.output_code = ""
         self.clock = pg.time.Clock() # speed depends on cpu
         self.fall = True
         print([each.name for each in self.words])
         self.click = False
         self.mainloop()
+
 
     def mainloop(self):
         while True:

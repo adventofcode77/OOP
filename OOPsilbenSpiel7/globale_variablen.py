@@ -4,7 +4,8 @@ from pygame import *
 import math
 
 class Settings:
-    def __init__(self):
+    def __init__(self,file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'):
+        self.file_path = file_path
         self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         # how is making a copy different than making a second screen (which didn't work)
@@ -20,7 +21,7 @@ class Settings:
         self.lime = (0,255,0)
         self.cyan = (0,255,255)
         self.yellow = (255,255,0)
-        self.fps = 45
+        self.fps = 60 # keine konstante geschwindigkeit
         self.font = font.SysFont("Arial",self.screen_surface//20)
         self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)
         self.smaller_font = font.SysFont("Arial", self.screen_surface // 25)
@@ -28,7 +29,7 @@ class Settings:
 
 
     def get_bits(self, string, num_parts):
-        definition = string.split(" ")
+        definition = string
         print(definition)
         list_of_lists = [] # list of strings
         num_syls = num_parts if num_parts > 0 else 1
@@ -38,7 +39,7 @@ class Settings:
         while definition:
             list_of_lists.append(definition[:advancement])
             definition = definition[advancement:]
-        print(list_of_lists)
+        print("get bits listoflists",list_of_lists)
         return list_of_lists # DO NOT FORGET RETURN
 
 pg.init()

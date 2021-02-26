@@ -6,6 +6,7 @@ from OOPsilbenSpiel7 import spieler
 import globale_variablen
 
 class Woerter():
+    all_syls = []
     def __init__(self,game_instance):
         super().__init__()
         self.info = game_instance
@@ -15,8 +16,7 @@ class Woerter():
         self.silben = self.get_silben()
 
     def get_bank(self):
-        file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'
-        parser = woerterbuch.Woerterbuch(file_path)
+        parser = woerterbuch.Woerterbuch()
         return parser.parsed
 
     def get_words(self):
@@ -28,6 +28,7 @@ class Woerter():
             name = entry
             meaning = self.dictwithkeyname[entry][0]
             syls = self.dictwithkeyname[entry][1]
+            Woerter.all_syls.append([syl for syl in syls])
             aword = word.Word(name, meaning, syls, worder, totalsyls, self.info)
             words.append(aword)
             totalsyls += len(syls)
@@ -39,5 +40,20 @@ class Woerter():
             for asyl in aword.syls:
                 sylobjects.append(asyl)
         return random.sample(sylobjects,len(sylobjects)) #sample returns new list
+
+    def split_into_syls(self, word):
+        word_syls = []
+        for syl in Woerter.all_syls:
+            if syl in word:
+                word_syls.append(syl)
+
+        index = 0
+        while word:
+            chars = word[:index]
+            if chars in Woerter.all_syls:
+                syls.append(chars)
+                word = word[index:]
+            index += 1
+
 
 
