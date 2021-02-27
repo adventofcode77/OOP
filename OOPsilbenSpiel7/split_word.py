@@ -67,18 +67,27 @@ def split_word_syls(word): # german-specific #Angstschweiß
                     next_part = word[i:]
                     if split and split[1] is not None:
                         next_part = split[1] + word[i:]
-                if i == len(word)-2:
-                        word_syls[-1] += next_part
-                        return word_syls
-                else:
-                    print("here",i,word)
-                return word_syls,split_word_syls(next_part)
+                # if i == len(word)-1:
+                #     print("do you go here")
+                #     word_syls[-1] += next_part
+                #     return word_syls
+                # else:
+                #     print("here",i,word)
+                print("about to return word syls and func(nextpart).word syls is:",word_syls,"and next part is",next_part)
+                return word_syls + split_word_syls(next_part)
 
             else:
                 encountered_vowel = True
             index_last_vowel = i
         else:
             print("bottom",i,len(word)-1, char, word_syls)
+        if i == len(word)-1:
+            if word_syls:
+                word_syls[-1] += word
+                return word_syls
+            else:
+                word_syls = [word]
+                return word_syls
 
 
-print(split_word_syls("angstschlotternd"))
+print(split_word_syls("nächtsschnellere"))
