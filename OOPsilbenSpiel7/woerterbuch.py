@@ -11,7 +11,7 @@ class Woerterbuch(globale_variablen.Settings):
         self.listofrecords = []
         self.list_records()
         self.parsed = self.quick_get(10) # why do too few words lead to syls starting to fall from the middle
-
+            # save a sample in case the imported parser stops working
     def iterate(self,record):
         meaning = ""
         if 'syllables' in record.keys():
