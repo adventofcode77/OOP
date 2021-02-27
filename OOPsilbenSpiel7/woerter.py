@@ -7,13 +7,14 @@ import globale_variablen
 
 class Woerter():
     all_syls = []
-    def __init__(self,game_instance):
-        super().__init__()
+    def __init__(self,game_instance, input_code):
         self.info = game_instance
         self.rect = pg.Rect(0,0,20,20)
         self.dictwithkeyname = self.get_bank()
         self.words = self.get_words()
         self.silben = self.get_silben()
+        self.code_syls = []
+        self.split_string_into_syls(input_code)
 
     def get_bank(self):
         parser = woerterbuch.Woerterbuch()
@@ -41,19 +42,20 @@ class Woerter():
                 sylobjects.append(asyl)
         return random.sample(sylobjects,len(sylobjects)) #sample returns new list
 
-    def split_into_syls(self, word):
-        word_syls = []
-        for syl in Woerter.all_syls:
-            if syl in word:
-                word_syls.append(syl)
+    # def split_string_into_syls(self, string):
+    #     string.split()
+    #     all_syls = []
+    #     for word in string:
+    #         all_syls.append(self.split_word_syls(word))
 
-        index = 0
-        while word:
-            chars = word[:index]
-            if chars in Woerter.all_syls:
-                syls.append(chars)
-                word = word[index:]
-            index += 1
+
+
+
+
+
+
+
+
 
 
 

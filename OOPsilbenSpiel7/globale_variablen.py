@@ -2,10 +2,12 @@ import pygame as pg
 import math as m
 from pygame import *
 import math
+import gameloop
 
 class Settings:
     def __init__(self,file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'):
         self.file_path = file_path # filter insulting words
+        #self.gameloop_instance = gameloop.Gameloop()
         self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         # how is making a copy different than making a second screen (which didn't work)

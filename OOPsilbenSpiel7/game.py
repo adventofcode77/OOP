@@ -6,18 +6,21 @@ from OOPsilbenSpiel7 import woerter
 from OOPsilbenSpiel7 import globale_variablen
 from OOPsilbenSpiel7 import silbe
 from OOPsilbenSpiel7 import spieler
-import math
+from OOPsilbenSpiel7 import gameloop
 
 
 class Game(globale_variablen.Settings):
 
-    def __init__(self):
+    def __init__(self, input_code):
+        print("does this print")
         super().__init__()
+        self.input_code = input_code
+        self.output_code = ""
         self.player = spieler.Spieler(self) # takes the game object as parameter
-        self.woerter = woerter.Woerter(self)
+        self.woerter = woerter.Woerter(self, input_code)
         self.words = self.woerter.get_words()
         self.score = 0
-        self.syls = self.woerter.silben
+        self.syls = self.woerter.silben + self.woerter.code_silben()
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
         self.syl_speed = 0
@@ -26,6 +29,7 @@ class Game(globale_variablen.Settings):
         self.start_syls_cut_at = 0
         self.pos_list = self.get_pos_list()
         self.screen_syls = self.get_screensyls()
+        self.gameloop = gameloop.Gameloop(self) # starts the game
 
 
     def desk(self,click):
@@ -60,7 +64,7 @@ class Game(globale_variablen.Settings):
             for x in range(self.right,self.right*5,self.right):
                 if index < len(mysilben):
                     syl = mysilben[index]
-                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0], syl.tuple[1], syl.info, syl.hue)
+                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0], syl.tuple[1], syl.info, syl.rgb)
                     # why didn't syl.copy() work?
                     if syl.clicked_on == True:
                         copy.image = self.font.render(copy.inhalt,False,self.lime)
@@ -144,7 +148,7 @@ class Game(globale_variablen.Settings):
                 if this.tuple == syl.tuple:
                     index = self.syls.index(syl)
                     if len(self.syls) <len(self.pos_list):
-                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self, 0) # replace with simpler object?
+                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self, (0,0,0)) # replace with simpler object?
                         replacement.visible = False
                         self.syls[index] = replacement
                     else:
