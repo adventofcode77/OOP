@@ -18,13 +18,10 @@ class Woerter():
         self.num_syls = self.get_num_code_syls(input_code)
         self.placeholder_code_text = self.get_escape_game_text()
         self.code_text_bits = self.info.get_bits(self.placeholder_code_text.split(), self.num_syls)
-        print("code text bits",self.code_text_bits)
-        self.list_words = {}
-        self.list_words = self.get_code_words_and_syls(input_code)[0]
-        self.num_bits = self.get_code_words_and_syls(input_code)[1]
-        print("code text bits",self.code_text_bits,"for num syls",self.num_syls)
-        self.code_words = self.get_code_words_and_syls(input_code)[0]
-        self.code_syls = self.make_code_syls()
+        print("num code text bits",len(self.code_text_bits), "num syls", self.num_syls) # 17, 17
+        self.code_words = []
+        self.code_syls = []
+        self.get_code_words_and_syls(input_code)
 
     def get_num_code_syls(self, input_code):
         num_syls = 0
@@ -56,9 +53,6 @@ class Woerter():
             self.totalsyls += len(syls)
         return words
 
-    def make_code_words(self):
-        pass
-
     def get_silben(self):
         sylobjects = []
         for aword in self.words:
@@ -67,37 +61,22 @@ class Woerter():
         return random.sample(sylobjects,len(sylobjects)) #sample returns new list
 
     def get_code_words_and_syls(self, string):
-        counter = 0
-        self.num_syls = 0
-        string = string.split()
-        for word in string:
-            syls = self.split_word_syls(word)
-            if counter > len(self.code_text_bits):
-                self.list_words[word] = [syls],["*"]
-            else:
-                self.list_words[word] = [syls],self.code_text_bits[counter]
-            self.num_syls += len(syls)
-            print("key",word,"value",self.list_words[word])
-            counter += 1
-        #self.append_defs_to_dict_code_words()
-        return [self.list_words, self.num_syls]
-
-    def make_code_syls(self):
-        counter_bits = 0
-        code_syls = []
-        for word in self.list_words:
-            syls = self.list_words[word][0][0] # list of lists with one element
-            bit = self.list_words[word][1]
+        words = string.split()
+        for i in range(len(words)):
             self.worder += 1
-            for syl in syls:
-                it = syl
-                info = self.info
-                rgb = self.info.make_rgb()
-                syl_object = silbe.Silbe(it,word,bit,self.worder,self.totalsyls, info, rgb)
-                code_syls.append(syl_object)
-                self.totalsyls += 1
-                counter_bits += 1
-        return code_syls
+            aword = words[i]
+            syls = self.split_word_syls(aword)
+            len_syls = len(syls)
+            listofbits = self.code_text_bits[i:i+len_syls]
+            print("syls!",syls)
+            print("LIST of BITS",listofbits)
+            bits = " ".join([bit for bits in listofbits for bit in bits])
+            print("bits",bits)
+            word_object = word.Word(aword, bits, syls, self.worder, self.totalsyls, self.info)
+            self.code_words.append(word_object)
+        for aword in self.code_words: # can't say "for word in" because of word.Word
+            self.code_syls.append(aword.make_silben(self.info.make_rgb()))
+        self.code_syls = [elem for list in self.code_syls for elem in list]
 
     def split_word_syls(self,word): # german-specific #Angstschweiß
         word_syls = []
