@@ -135,12 +135,20 @@ class Game(globale_variablen.Settings):
 
     def check_word(self):
         appendlisttuples = [a.tuple for a in self.player.appendlist]
-        for word in self.words:
-            wordtuples = [a.tuple for a in word.syls]
-            print("applisttuples",appendlisttuples,"wordtuples",wordtuples)
+        for word in self.words: # check for the word in non-code words
+            wordtuples = [a.tuple for a in word.syls] # 1 comparison with wordtuples for each word in words
+            print("(search in self words) applisttuples",appendlisttuples,"wordtuples",wordtuples)
             if appendlisttuples == wordtuples:
                 self.delete_word()
                 self.words.remove(word) # words is used only for cheating
+        for word in self.woerter.code_words: # check in code words
+            print(type(word),"word is",word.name)
+            wordtuples = [a.tuple for a in word.syls]
+            print("(in code words) applisttuples",appendlisttuples,"wordtuples",wordtuples)
+            if appendlisttuples == wordtuples:
+                print("gotcha")
+                self.delete_word()
+                self.woerter.code_words.remove(word)
 
     def delete_word(self): #same syl is actually different objects in different lists, why?
         self.score += 5
