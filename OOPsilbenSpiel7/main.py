@@ -5,7 +5,7 @@ from OOPsilbenSpiel7 import game
 
 class Main:
     def __init__(self):
-        self.newgame("This is a sample code",0)
+        self.newgame("Ein Beispielcode steht hier als Ersatz von dem ernsthaften möglicherweise merkwürdigen code",0)
 
     def newgame(self,input_code,score):
         pg.init()
