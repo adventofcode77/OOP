@@ -12,7 +12,6 @@ from OOPsilbenSpiel7 import gameloop
 class Game(globale_variablen.Settings):
 
     def __init__(self, input_code):
-        print("does this print")
         super().__init__()
         self.input_code = input_code
         self.output_code = ""
@@ -20,7 +19,7 @@ class Game(globale_variablen.Settings):
         self.woerter = woerter.Woerter(self, input_code)
         self.words = self.woerter.get_words()
         self.score = 0
-        self.syls = self.woerter.silben + self.woerter.code_silben()
+        self.syls = self.woerter.silben + self.woerter.code_syls
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
         self.syl_speed = 0
@@ -30,6 +29,7 @@ class Game(globale_variablen.Settings):
         self.pos_list = self.get_pos_list()
         self.screen_syls = self.get_screensyls()
         self.gameloop = gameloop.Gameloop(self) # starts the game
+
 
 
     def desk(self,click):

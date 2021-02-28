@@ -16,16 +16,9 @@ class Word():
         self.txtsilben = txtsilben
         Word.all_syls.append(txtsilben)
         self.bits = self.info.get_bits(self.meaning, len(self.txtsilben))
-        self.syls = self.make_silben(self.make_rgb())
+        self.syls = self.make_silben(self.info.make_rgb())
         self.image = self.info.font.render(self.name, False, self.info.black)
         self.rect = self.image.get_rect() # draw_rect()?
-
-    def make_rgb(self): # make three main hues, each for all in a word
-        hue = random.choice((0,1,2))
-        rgb = [100,100,100]
-        rgb[0],rgb[1],rgb[2] = random.randint(0,200),random.randint(0,200),random.randint(0,150)
-        rgb[hue] = 255
-        return rgb
 
     def make_silben(self, rgb):
         order = self.totalsyls # make class attribute?

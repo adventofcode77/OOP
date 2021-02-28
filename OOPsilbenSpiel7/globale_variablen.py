@@ -2,7 +2,7 @@ import pygame as pg
 import math as m
 from pygame import *
 import math
-import gameloop
+import random
 
 class Settings:
     def __init__(self,file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'):
@@ -30,6 +30,7 @@ class Settings:
         self.invisible = self.font.render("o", False, self.black)
 
 
+
     def get_bits(self, string, num_parts):
         definition = string
         print(definition)
@@ -43,6 +44,13 @@ class Settings:
             definition = definition[advancement:]
         print("get bits listoflists",list_of_lists)
         return list_of_lists # DO NOT FORGET RETURN
+
+    def make_rgb(self): # make three main hues, each for all in a word
+        hue = random.choice((0,1,2))
+        rgb = [100,100,100]
+        rgb[0],rgb[1],rgb[2] = random.randint(0,200),random.randint(0,200),random.randint(0,150)
+        rgb[hue] = 255
+        return rgb
 
 pg.init()
 setobj = Settings()
