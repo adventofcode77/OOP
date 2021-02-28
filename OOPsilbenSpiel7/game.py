@@ -17,7 +17,7 @@ class Game(globale_variablen.Settings):
         self.output_code = ""
         self.player = spieler.Spieler(self) # takes the game object as parameter
         self.woerter = woerter.Woerter(self, input_code)
-        self.words = self.woerter.get_words()
+        self.words = self.woerter.words
         self.score = 0
         self.syls = self.woerter.silben + self.woerter.code_syls
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
@@ -137,6 +137,7 @@ class Game(globale_variablen.Settings):
         appendlisttuples = [a.tuple for a in self.player.appendlist]
         for word in self.words:
             wordtuples = [a.tuple for a in word.syls]
+            print("applisttuples",appendlisttuples,"wordtuples",wordtuples)
             if appendlisttuples == wordtuples:
                 self.delete_word()
                 self.words.remove(word) # words is used only for cheating

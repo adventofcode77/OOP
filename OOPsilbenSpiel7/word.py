@@ -27,7 +27,7 @@ class Word():
             smaller = len(self.bits)
             bigger = len(self.txtsilben)
         else:
-            smaller = len(self.txtsilben)
+            smaller = len(self.bits) # changed
             bigger = len(self.txtsilben)
         for i in range(smaller):
             order += 1

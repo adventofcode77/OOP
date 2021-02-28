@@ -33,7 +33,7 @@ class Settings:
 
     def get_bits(self, string, num_parts):
         definition = string
-        print(definition)
+        #print(definition)
         list_of_lists = [] # list of strings
         num_syls = num_parts if num_parts > 0 else 1
         advancement = m.ceil(len(definition)/num_syls)
@@ -42,7 +42,7 @@ class Settings:
         while definition:
             list_of_lists.append(definition[:advancement])
             definition = definition[advancement:]
-        print("get bits listoflists",list_of_lists)
+        #print("get bits listoflists",list_of_lists)
         return list_of_lists # DO NOT FORGET RETURN
 
     def make_rgb(self): # make three main hues, each for all in a word

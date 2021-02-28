@@ -13,48 +13,51 @@ class Woerter():
         self.dictwithkeyname = self.get_bank()
         self.totalsyls = 0
         self.worder = 0
-        self.words = self.get_words()
+        self.words = self.get_words(self.dictwithkeyname)
         self.silben = self.get_silben()
-        self.code_syls_txt = [word for list in self.split_string_into_syls(input_code) for word in list]
-        self.placeholder_code_text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.".split()
-        self.code_text_bits = self.info.get_bits(self.placeholder_code_text,len(self.code_syls_txt))
+        self.num_syls = self.get_num_code_syls(input_code)
+        self.placeholder_code_text = self.get_escape_game_text()
+        self.code_text_bits = self.info.get_bits(self.placeholder_code_text.split(), self.num_syls)
+        print("code text bits",self.code_text_bits)
+        self.list_words = {}
+        self.list_words = self.get_code_words_and_syls(input_code)[0]
+        self.num_bits = self.get_code_words_and_syls(input_code)[1]
+        print("code text bits",self.code_text_bits,"for num syls",self.num_syls)
+        self.code_words = self.get_code_words_and_syls(input_code)[0]
         self.code_syls = self.make_code_syls()
+
+    def get_num_code_syls(self, input_code):
+        num_syls = 0
+        words = input_code.split()
+        for word in words:
+            num_syls += len(self.split_word_syls(word))
+        return num_syls
+
+    def get_escape_game_text(self):
+        with open('/Users/ellie/PycharmProjects/OOPworterror/OOPsilbenSpiel7/escape_game_text', 'r') as file:
+            # "with" takes care of closing the file # replace absolute paths with relative?
+            text = file.read().replace('\n', '')
+        return text
 
     def get_bank(self):
         parser = woerterbuch.Woerterbuch()
         return parser.parsed
 
-    def get_words(self):
+    def get_words(self,source):
         words = []
-        for entry in self.dictwithkeyname:
+        for entry in source:
             self.worder += 1
             name = entry
-            meaning = self.dictwithkeyname[entry][0]
-            syls = self.dictwithkeyname[entry][1]
+            meaning = source[entry][0]
+            syls = source[entry][1]
             Woerter.all_syls.append([syl for syl in syls])
             aword = word.Word(name, meaning, syls, self.worder, self.totalsyls, self.info)
             words.append(aword)
             self.totalsyls += len(syls)
         return words
 
-    def make_code_syls(self):
-        counter = 0 # replace with
-        code_syls = []
-        for syl in self.code_syls_txt:
-            self.worder += 1
-            print("code syl",syl)
-            it = syl
-            word = "winner"
-            if counter >= len(self.code_text_bits)-1:
-                bit = ["!"]
-            else:
-                bit = self.code_text_bits[counter]
-            counter += 1
-            info = self.info
-            rgb = self.info.make_rgb()
-            code_syls.append(silbe.Silbe(it,word,bit,self.worder,self.totalsyls, info, rgb))
-            self.totalsyls += 1
-        return code_syls
+    def make_code_words(self):
+        pass
 
     def get_silben(self):
         sylobjects = []
@@ -63,12 +66,38 @@ class Woerter():
                 sylobjects.append(asyl)
         return random.sample(sylobjects,len(sylobjects)) #sample returns new list
 
-    def split_string_into_syls(self, string):
+    def get_code_words_and_syls(self, string):
+        counter = 0
+        self.num_syls = 0
         string = string.split()
-        all_syls = []
         for word in string:
-            all_syls.append(self.split_word_syls(word))
-        return all_syls
+            syls = self.split_word_syls(word)
+            if counter > len(self.code_text_bits):
+                self.list_words[word] = [syls],["*"]
+            else:
+                self.list_words[word] = [syls],self.code_text_bits[counter]
+            self.num_syls += len(syls)
+            print("key",word,"value",self.list_words[word])
+            counter += 1
+        #self.append_defs_to_dict_code_words()
+        return [self.list_words, self.num_syls]
+
+    def make_code_syls(self):
+        counter_bits = 0
+        code_syls = []
+        for word in self.list_words:
+            syls = self.list_words[word][0][0] # list of lists with one element
+            bit = self.list_words[word][1]
+            self.worder += 1
+            for syl in syls:
+                it = syl
+                info = self.info
+                rgb = self.info.make_rgb()
+                syl_object = silbe.Silbe(it,word,bit,self.worder,self.totalsyls, info, rgb)
+                code_syls.append(syl_object)
+                self.totalsyls += 1
+                counter_bits += 1
+        return code_syls
 
     def split_word_syls(self,word): # german-specific #Angstschweiß
         word_syls = []
