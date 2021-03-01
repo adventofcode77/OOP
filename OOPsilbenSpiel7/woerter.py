@@ -9,7 +9,7 @@ class Woerter():
     all_syls = []
     def __init__(self,game_instance, input_code):
         self.info = game_instance
-        self.rect = pg.Rect(0,0,20,20)
+        #self.rect = pg.Rect(0,0,20,20)
         self.dictwithkeyname = self.get_bank()
         self.totalsyls = 0
         self.worder = 0
@@ -58,7 +58,7 @@ class Woerter():
         for aword in self.words:
             for asyl in aword.syls:
                 sylobjects.append(asyl)
-        return random.sample(sylobjects,len(sylobjects)) #sample returns new list
+        return sylobjects
 
     def get_code_words_and_syls(self, string):
         words = string.split()
@@ -68,10 +68,7 @@ class Woerter():
             syls = self.split_word_syls(aword)
             len_syls = len(syls)
             listofbits = self.code_text_bits[i:i+len_syls]
-            print("syls!",syls)
-            print("LIST of BITS",listofbits)
             bits = " ".join([bit for bits in listofbits for bit in bits])
-            print("bits",bits)
             word_object = word.Word(aword, bits, syls, self.worder, self.totalsyls, self.info)
             self.code_words.append(word_object)
         for aword in self.code_words: # can't say "for word in" because of word.Word

@@ -10,7 +10,6 @@ from OOPsilbenSpiel7 import gameloop
 
 
 class Game(globale_variablen.Settings):
-
     def __init__(self, input_code):
         super().__init__()
         self.input_code = input_code
@@ -19,16 +18,22 @@ class Game(globale_variablen.Settings):
         self.woerter = woerter.Woerter(self, input_code)
         self.words = self.woerter.words
         self.score = 0
-        self.syls = self.woerter.silben + self.woerter.code_syls
+        syls = self.woerter.silben + self.woerter.code_syls
+        self.syls = random.sample(syls, len(syls))
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
         self.syl_speed = 0
         self.deleted_word_bool = False
+        self.deleted_code_word_bool = False
         self.deletedlist = []
+        self.deleted_word = ""
         self.start_syls_cut_at = 0
         self.pos_list = self.get_pos_list()
         self.screen_syls = self.get_screensyls()
+        self.guessed_code_words = []
+        #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
+
 
 
 
@@ -78,38 +83,46 @@ class Game(globale_variablen.Settings):
         return desk_syls
 
     def draw_word(self,syl=None):
-        self.blit_word(farbe=(self.lila, self.lila)) #draws over word and def
         if syl:
+            self.blit_word(farbe=(self.lila, self.lila)) #draws over word and def
             self.player.appendlist.append(syl)
-            if self.deleted_word_bool:
+            if self.deleted_word_bool or self.deleted_code_word_bool:
                 self.deleted_word_bool = False
+                self.deleted_code_word_bool = False
                 self.deletedlist = []
+                self.deleted_word = ""
+            self.check_word()
+            # if not self.woerter.code_syls:
+            #     self.win_window()
         self.blit_word()
-        self.check_word()
+
 
     def make_def_string(self):
-        if self.deleted_word_bool:
+        if self.deleted_word_bool or self.deleted_code_word_bool:
             bitlists = [word for a in self.deletedlist[:] for word in a.bit]
-            print("bitlists",bitlists)
         else:
             bitlists = [word for a in self.player.appendlist[:] for word in a.bit]
-            print("bitlists", bitlists)
         return bitlists
 
-    def blit_word(self, farbe=None): # replace with a pygame gui that works with sql? or word by word?
+    def blit_word(self, farbe=None): # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
         if farbe is not (self.lila, self.lila):
-            farbe = (self.yellow, self.yellow) if self.deleted_word_bool else (self.lime, self.cyan)
-        liste = self.player.appendlist
-        wordstring = "".join([a.inhalt for a in liste])
-        self.blit_def_word_by_word(self.make_def_string(), farbe[1], self.screen_copy.get_rect().center)
+            if self.deleted_word_bool:
+                farbe = (self.purple, self.purple)
+                wordstring = self.deleted_word
+            elif self.deleted_code_word_bool:
+                farbe = (self.yellow, self.yellow)
+                wordstring = self.deleted_word
+            else:
+                farbe = (self.lime, self.cyan)
+                wordstring = "".join([a.inhalt for a in self.player.appendlist])
+        self.blit_string_word_by_word(self.make_def_string(), farbe[1], self.screen_copy.get_rect().center)
         word_image = self.font.render(wordstring, False, farbe[0])
         wordrect = word_image.get_rect()
         wordrect.center = self.screen_copy.get_rect().center
         self.screen_copy.blit(word_image, (wordrect.x, wordrect.y))
 
-    def blit_def_word_by_word(self, defstring, color, midtop):  # does it need to get the image in order to know how big the font is
+    def blit_string_word_by_word(self, defstring, color, midtop, font = None):  # does it need to get the image in order to know how big the font i
         words = defstring
-        print("words",words)
         line = ""
         list_lines_img = []
         for word in words:
@@ -124,7 +137,6 @@ class Game(globale_variablen.Settings):
         screen_rect = self.screen_copy.get_rect()
         height_def_window = screen_rect.h - midtop[1] - line_height
         spacing = height_def_window // len(list_lines_img)
-        print('len list lines img for ',words,":",len(list_lines_img))
         for i in range(len(list_lines_img)):
             line_img = list_lines_img[i]
             line_rect = line_img.get_rect()
@@ -134,21 +146,25 @@ class Game(globale_variablen.Settings):
             self.screen_copy.blit(line_img, line_rect)
 
     def check_word(self):
+        temp_bool = True
         appendlisttuples = [a.tuple for a in self.player.appendlist]
         for word in self.words: # check for the word in non-code words
             wordtuples = [a.tuple for a in word.syls] # 1 comparison with wordtuples for each word in words
-            print("(search in self words) applisttuples",appendlisttuples,"wordtuples",wordtuples)
             if appendlisttuples == wordtuples:
+                self.deleted_word = word.name
                 self.delete_word()
                 self.words.remove(word) # words is used only for cheating
-        for word in self.woerter.code_words: # check in code words
-            print(type(word),"word is",word.name)
-            wordtuples = [a.tuple for a in word.syls]
-            print("(in code words) applisttuples",appendlisttuples,"wordtuples",wordtuples)
-            if appendlisttuples == wordtuples:
-                print("gotcha")
-                self.delete_word()
-                self.woerter.code_words.remove(word)
+                self.deleted_word_bool = True
+                temp_bool = False
+        if temp_bool:
+            for word in self.woerter.code_words: # check in code words
+                wordtuples = [a.tuple for a in word.syls]
+                if appendlisttuples == wordtuples:
+                    self.deleted_word = word.name
+                    self.delete_word()
+                    self.woerter.code_words.remove(word)
+                    self.guessed_code_words.append(word)
+                    self.deleted_code_word_bool = True
 
     def delete_word(self): #same syl is actually different objects in different lists, why?
         self.score += 5
@@ -168,7 +184,7 @@ class Game(globale_variablen.Settings):
                     self.player.my_silben.remove(syl)
         self.deletedlist = self.player.appendlist[:]
         self.player.appendlist = []
-        self.deleted_word_bool = True
+
 
     def get_pos_list(self):
         poslist = []
