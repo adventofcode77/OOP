@@ -23,6 +23,8 @@ class Settings:
         self.lime = (0,255,0)
         self.cyan = (0,255,255)
         self.yellow = (255,255,0)
+        self.orange = (255,165,0)
+        self.purple = (255,0,255)
         self.fps = 30 # keine konstante geschwindigkeit
         self.font = font.SysFont("Arial",self.screen_surface//20)
         self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)

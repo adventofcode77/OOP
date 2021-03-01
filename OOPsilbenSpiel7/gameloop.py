@@ -11,9 +11,12 @@ class Gameloop():
         self.info = game_instance
         self.clock = pg.time.Clock()  # speed depends on cpu
         self.fall = True
+        self.win = False
+        self.next = False
+        self.next_counter = 0
         print([each.name for each in self.info.words])
         self.click = False
-        self.mainloop()
+        self.mainloop() # call last
 
     def mainloop(self):
         while True:
@@ -29,25 +32,45 @@ class Gameloop():
                     time.wait(500)
                     return self.info.score
                 elif e.type == KEYDOWN:
-                    if e.key == K_SPACE:
+                    if e.key == K_SPACE: # go to the desk
                         self.fall = False
-                    elif e.key == K_a:
+                    elif e.key == K_a: # return from the desk
                         for item in self.info.player.my_silben:
                             item.clicked_on = False
                         self.fall = True
-                    elif e.key == K_c:
+                    elif e.key == K_c: # see a random definition
                         self.info.screen_copy.fill(self.info.black)
-                        self.info.blit_def_word_by_word(f'cheating costs 5 seconds! one of the words means... '
+                        self.info.blit_string_word_by_word(f'cheating costs 5 seconds! one of the words means... '
                                                    f'{" ".join(random.choice(self.info.words).meaning)}', self.info.white,
-                                                   self.info.screen_copy.get_rect().midtop)
+                                                           self.info.screen_copy.get_rect().midtop)
                         self.info.screen_transfer()
                         time.wait(5000)
+                    elif e.key == K_w: # open win screen
+                        self.win = True
+                    elif e.key == K_e: # close win screen
+                        self.win = False
+                    elif e.key == K_d: # show next code explanation installment
+                        self.next = True
                 elif e.type == MOUSEBUTTONDOWN:
                     self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
             else:
-                if self.fall == True:
+                if self.win:
+                    self.info.screen_copy.fill(self.info.black)
+                    code = " ".join([word.name for word in self.info.guessed_code_words])
+                    self.info.blit_string_word_by_word(code, self.info.yellow, self.info.screen_copy.get_rect().midtop)
+                    list_code_meanings = [word.meaning for word in self.info.guessed_code_words]
+                    explanation = " ".join(list_code_meanings[self.next_counter])
+                    self.info.blit_string_word_by_word(explanation,self.info.yellow,self.info.screen_copy.get_rect().center)
+                    if self.next:
+                        if self.next_counter >= len(list_code_meanings)-1:
+                            self.next_counter = 0
+                        else:
+                            self.next_counter += 1
+                        self.next = False
+                    self.info.screen_transfer()
+                elif self.fall == True:
                     if self.info.sylscounter == 0:  # excluding the invisible ones using a counter
                         self.info.screen_copy.fill(self.info.black)
                         image_win = self.info.bigger_font.render(f'YOU WON!', False, self.info.white)
