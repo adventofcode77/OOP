@@ -1,9 +1,7 @@
 import pygame as pg
 from pygame import *
 from pygame.locals import *
-from OOPsilbenSpiel7 import woerterbuch
 import random
-from OOPsilbenSpiel7 import game
 
 
 class Gameloop():
@@ -60,21 +58,40 @@ class Gameloop():
                     self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
+            # AFTER GOING THROUGH THE EVENTS LIST
             else:
-                if self.win:
+                # GUESSED WORDS WINDOW
+                if self.win and self.info.guessed_code_words:
                     self.info.screen_copy.fill(self.info.black)
-                    code = " ".join([word.name for word in self.info.guessed_code_words])
-                    self.info.blit_string_word_by_word(code, self.info.yellow, self.info.screen_copy.get_rect().midtop)
-                    list_code_meanings = [word.meaning for word in self.info.guessed_code_words]
-                    explanation = " ".join(list_code_meanings[self.next_counter])
-                    self.info.blit_string_word_by_word(explanation,self.info.yellow,self.info.screen_copy.get_rect().center)
-                    if self.next:
-                        if self.next_counter >= len(list_code_meanings)-1:
-                            self.next_counter = 0
-                        else:
-                            self.next_counter += 1
-                        self.next = False
+                    # PROMPT USER TO CHANGE THEIR ORDER
+                    old_pos, new_pos = random.randint(0,self.next_counter//2), random.randint(self.next_counter//2,self.next_counter)
+                    self.info.blit_string_word_by_word(f'To change the order of the code words, click on the position'
+                                                       f'of a word, then click on its new position. Example: {old_pos} followed by '
+                                                       f'{new_pos} will move {self.info.guessed_code_words[old_pos-1].name} to'
+                                                       f'position {new_pos}.', self.info.white, self.info.midtop)
                     self.info.screen_transfer()
+                    user_input = input()
+                    user_word, num = user_input.split()
+                    num = int(num)
+                    if user_word and num and user_word in self.info.guessed_code_words and num < len(self.info.guessed_code_words):
+                        code = " ".join([word.name for word in self.info.guessed_code_words])
+                        self.info.blit_string_word_by_word(code, self.info.yellow, self.info.midtop + self.info.down) # replace distance with a font sample height unit
+                        list_code_meanings = [word.meaning for word in self.info.guessed_code_words]
+                        explanation = " ".join(list_code_meanings[self.next_counter])
+                        self.info.blit_string_word_by_word(explanation,self.info.yellow,self.info.screen_copy.get_rect().center)
+                        if self.next:
+                            if self.next_counter >= len(list_code_meanings)-1:
+                                self.next_counter = 0
+                            else:
+                                self.next_counter += 1
+                            self.next = False
+                    else:
+                        code = " ".join([word.name for word in self.info.guessed_code_words if word.name is not user_word])
+                        code = code[:num] + user_word + code[num:]
+                        self.info.blit_string_word_by_word(code, self.info.yellow, self.info.screen_copy.get_rect().midtop)
+                    self.info.screen_transfer()
+
+                # MAIN LOOP
                 elif self.fall == True:
                     if self.info.sylscounter == 0:  # excluding the invisible ones using a counter
                         self.info.screen_copy.fill(self.info.black)
@@ -97,6 +114,7 @@ class Gameloop():
                             self.fall = False
                         self.info.player.pick(self.info.syls)
                         self.info.blit_loop()
+                # PICKED SYLS WINDOW
                 else:
                     if self.click:  # scale the mouseclick coordinates back to the original screen size
                         current_x, current_y = self.click
