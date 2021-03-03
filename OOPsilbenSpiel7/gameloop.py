@@ -40,9 +40,14 @@ class Gameloop():
                         self.fall = True
                     elif e.key == K_c: # see a random definition
                         self.info.screen_copy.fill(self.info.black)
-                        self.info.blit_string_word_by_word(f'cheating costs 5 seconds! one of the words means... '
-                                                   f'{" ".join(random.choice(self.info.words).meaning)}', self.info.white,
-                                                           self.info.screen_copy.get_rect().midtop)
+                        if (self.info.words):
+                            self.info.blit_string_word_by_word(f'cheating costs 5 seconds! one of the words means... '
+                                                       f'{" ".join(random.choice(self.info.words).meaning)}', self.info.white,
+                                                               self.info.screen_copy.get_rect().midtop)
+                        else:
+                            self.info.blit_string_word_by_word(f'cheating costs 5 seconds! one piece of the puzle is...'
+                                                       f'{" ".join(random.choice(self.info.woerter.code_words).meaning)}', self.info.white,
+                                                               self.info.screen_copy.get_rect().midtop)
                         self.info.screen_transfer()
                         time.wait(5000)
                     elif e.key == K_w: # open win screen

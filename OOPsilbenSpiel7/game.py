@@ -34,9 +34,6 @@ class Game(globale_variablen.Settings):
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
-
-
-
     def desk(self,click):
         # the event loop didn't work inside of this function
         self.screen_copy.fill(self.black)
@@ -59,7 +56,6 @@ class Game(globale_variablen.Settings):
                                 item.clicked_on = True
                                 self.draw_word(syl)
         self.draw_word()
-        #self.screen_transfer()
 
     def draw_desk(self): # origs
         mysilben = self.player.my_silben
@@ -92,10 +88,7 @@ class Game(globale_variablen.Settings):
                 self.deletedlist = []
                 self.deleted_word = ""
             self.check_word()
-            # if not self.woerter.code_syls:
-            #     self.win_window()
         self.blit_word()
-
 
     def make_def_string(self):
         if self.deleted_word_bool or self.deleted_code_word_bool:
