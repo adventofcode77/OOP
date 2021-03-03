@@ -17,8 +17,8 @@ class Woerter():
         self.silben = self.get_silben()
         self.num_syls = self.get_num_code_syls(input_code)
         self.placeholder_code_text = self.get_escape_game_text()
+        print("txt",self.placeholder_code_text.split())
         self.code_text_bits = self.info.get_bits(self.placeholder_code_text.split(), self.num_syls)
-        print("num code text bits",len(self.code_text_bits), "num syls", self.num_syls) # 17, 17
         self.code_words = []
         self.code_syls = []
         self.get_code_words_and_syls(input_code)
@@ -136,7 +136,10 @@ class Woerter():
                         next_part = word[i:]
                         if split and split[1] is not None:
                             next_part = split[1] + word[i:]
-                    return word_syls + self.split_word_syls(next_part)
+                    if next_part:
+                        return word_syls + self.split_word_syls(next_part)
+                    else:
+                        return word_syls
                 else:
                     encountered_vowel = True
                 index_last_vowel = i
