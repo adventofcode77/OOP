@@ -5,7 +5,7 @@ import math
 import random
 
 class Settings:
-    def __init__(self,file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'):
+    def __init__(self,file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'): #
         self.file_path = file_path # filter insulting words
         #self.gameloop_instance = gameloop.Gameloop()
         self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
