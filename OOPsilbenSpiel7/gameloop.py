@@ -91,7 +91,7 @@ class Gameloop():
                         self.info.blit_string_word_by_word(code, self.info.yellow, self.info.screen_copy.get_rect().midtop)
                     self.info.screen_transfer()
 
-                # MAIN LOOP
+                # MAIN LOOP # test
                 elif self.fall == True:
                     if self.info.sylscounter == 0:  # excluding the invisible ones using a counter
                         self.info.screen_copy.fill(self.info.black)
