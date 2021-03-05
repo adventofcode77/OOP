@@ -68,9 +68,9 @@ class Game(globale_variablen.Settings):
                     copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0], syl.tuple[1], syl.info, syl.rgb)
                     # why didn't syl.copy() work?
                     if syl.clicked_on == True:
-                        copy.image = self.font.render(copy.inhalt,False,self.lime)
+                        copy.image = self.default_font.render(copy.inhalt, False, self.lime)
                     else:
-                        copy.image = self.font.render(copy.inhalt, False, self.white)
+                        copy.image = self.default_font.render(copy.inhalt, False, self.white)
                     copy.rect.x,copy.rect.y = x,y
                     self.screen_copy.blit(copy.image, copy.rect)
                     desk_syls.append(copy) #copy whole syl
@@ -109,7 +109,7 @@ class Game(globale_variablen.Settings):
                 farbe = (self.lime, self.cyan)
                 wordstring = "".join([a.inhalt for a in self.player.appendlist])
         self.blit_string_word_by_word(self.make_def_string(), farbe[1], self.screen_copy.get_rect().center)
-        word_image = self.font.render(wordstring, False, farbe[0])
+        word_image = self.default_font.render(wordstring, False, farbe[0])
         wordrect = word_image.get_rect()
         wordrect.center = self.screen_copy.get_rect().center
         self.screen_copy.blit(word_image, (wordrect.x, wordrect.y))
@@ -118,13 +118,15 @@ class Game(globale_variablen.Settings):
         words = defstring
         line = ""
         list_lines_img = []
+        if font is None:
+            font = self.smaller_font
         for word in words:
-            line_img = self.smaller_font.render(line, False, color)
+            line_img = font.render(line, False, color)
             if line_img.get_rect().w >= 0.5 * self.screen_copy.get_rect().w:
                 list_lines_img.append(line_img)
                 line = ""
             line += word + " "
-        line_img = self.smaller_font.render(line, False, color)
+        line_img = font.render(line, False, color)
         line_height = line_img.get_rect().h
         list_lines_img.append(line_img)  # append the last part
         screen_rect = self.screen_copy.get_rect()

@@ -2,7 +2,7 @@ import pygame as pg
 from pygame import *
 from pygame.locals import *
 import random
-
+import main
 
 class Gameloop():
     def __init__(self, game_instance):
@@ -14,6 +14,8 @@ class Gameloop():
         self.next_counter = 0
         print([each.name for each in self.info.words])
         self.click = False
+        self.win_first_click = False
+        self.win_second_click = False
         self.mainloop() # call last
 
     def mainloop(self):
@@ -22,7 +24,7 @@ class Gameloop():
             for e in event.get():  # CAN QUIT ONCE A LOOP
                 if e.type == QUIT:
                     self.info.screen_copy.fill(self.info.black)
-                    image_end = self.info.font.render("GAME OVER", False, self.info.white)
+                    image_end = self.info.default_font.render("GAME OVER", False, self.info.white)
                     image_end_rect = image_end.get_rect()
                     image_end_rect.center = self.info.screen_copy.get_rect().center
                     self.info.screen_copy.blit(image_end, image_end_rect)
@@ -52,10 +54,16 @@ class Gameloop():
                         self.win = True
                     elif e.key == K_e: # close win screen
                         self.win = False
-                    elif e.key == K_d: # show next code explanation installment
+                    elif e.key == K_d: # show next code_string explanation installment
                         self.next = True
                 elif e.type == MOUSEBUTTONDOWN:
-                    self.click = mouse.get_pos()
+                    if self.win:
+                        if self.win_first_click:
+                            self.win_second_click = mouse.get_pos()
+                        else:
+                            self.win_first_click = mouse.get_pos()
+                    else:
+                        self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
             # AFTER GOING THROUGH THE EVENTS LIST
@@ -64,36 +72,52 @@ class Gameloop():
                 if self.win and self.info.guessed_code_words:
                     self.info.screen_copy.fill(self.info.black)
                     # PROMPT USER TO CHANGE THEIR ORDER
-                    old_pos, new_pos = random.randint(0,self.next_counter//2), random.randint(self.next_counter//2,self.next_counter)
-                    self.info.blit_string_word_by_word(f'To change the order of the code words, click on the position'
-                                                       f'of a word, then click on its new position. Example: {old_pos} followed by '
-                                                       f'{new_pos} will move {self.info.guessed_code_words[old_pos-1].name} to'
-                                                       f'position {new_pos}.', self.info.white, self.info.midtop)
-                    self.info.screen_transfer()
-                    user_input = input()
-                    user_word, num = user_input.split()
-                    num = int(num)
-                    if user_word and num and user_word in self.info.guessed_code_words and num < len(self.info.guessed_code_words):
-                        code = " ".join([word.name for word in self.info.guessed_code_words])
-                        self.info.blit_string_word_by_word(code, self.info.yellow, self.info.midtop + self.info.down) # replace distance with a font sample height unit
-                        list_code_meanings = [word.meaning for word in self.info.guessed_code_words]
-                        explanation = " ".join(list_code_meanings[self.next_counter])
-                        self.info.blit_string_word_by_word(explanation,self.info.yellow,self.info.screen_copy.get_rect().center)
-                        if self.next:
-                            if self.next_counter >= len(list_code_meanings)-1:
-                                self.next_counter = 0
-                            else:
-                                self.next_counter += 1
-                            self.next = False
-                    else:
-                        code = " ".join([word.name for word in self.info.guessed_code_words if word.name is not user_word])
-                        code = code[:num] + user_word + code[num:]
-                        self.info.blit_string_word_by_word(code, self.info.yellow, self.info.screen_copy.get_rect().midtop)
+                    int_rect = self.info.default_font.render('99 ', False, self.info.black).get_rect()
+                    self.info.blit_string_word_by_word(f'To change the order of the code_string words, click on the position'
+                                                       f'of a word, then click on its new position.', self.info.white, (self.info.midtop[0],self.info.midtop[1]+int_rect.h),self.info.tiny_font)
+                    # make a visual list of rects for the positions
+                    len_code_words = len(self.info.guessed_code_words)
+                    rects_code_words = []
+                    for i in range(len_code_words):
+                        num_image = self.info.default_font.render(f'{i}', False, self.info.white)
+                        num_rect = num_image.get_rect()
+                        rects_code_words.append(num_rect)
+                        num_rect.x, num_rect.y = self.info.right + i*int_rect.w, self.info.down
+                        self.info.screen_copy.blit(num_image,num_rect)
+                    if self.win_first_click and self.win_second_click:
+                        first_click = self.win_first_click
+                        second_click = self.win_second_click
+                        self.win_first_click = False
+                        self.win_second_click = False
+                        first_click_rect = Rect(first_click[0],first_click[1],1,1)
+                        second_click_rect = Rect(second_click[0],second_click[1],1,1)
+                        first_index = first_click_rect.collidelist(rects_code_words)
+                        second_index = second_click_rect.collidelist(rects_code_words)
+                        if first_index is not -1 and second_index is not -1:
+                            first_num = first_index
+                            second_num = second_index
+                            taken = self.info.guessed_code_words.pop(first_num)
+                            self.info.guessed_code_words.insert(second_num,taken)
+                    code_string = " ".join([word.name for word in self.info.guessed_code_words])
+                    self.info.blit_string_word_by_word(code_string, self.info.yellow, (self.info.midtop[0], self.info.midtop[1] + self.info.down)) # replace distance with a font sample height unit
+                    list_code_meanings = [word.meaning for word in self.info.guessed_code_words]
+                    explanation = " ".join(list_code_meanings[self.next_counter])
+                    self.info.blit_string_word_by_word(explanation,self.info.yellow,self.info.screen_copy.get_rect().center)
+                    if self.next:
+                        if self.next_counter >= len(list_code_meanings)-1:
+                            self.next_counter = 0
+                        else:
+                            self.next_counter += 1
+                        self.next = False
+
                     self.info.screen_transfer()
 
                 # MAIN LOOP # test
                 elif self.fall == True:
-                    if self.info.sylscounter == 0:  # excluding the invisible ones using a counter
+                    self.win = False
+                    print(" ".join([word.name for word in self.info.guessed_code_words]))
+                    print(main.Main.code)
+                    if " ".join([word.name for word in self.info.guessed_code_words]) == main.Main.code:
                         self.info.screen_copy.fill(self.info.black)
                         image_win = self.info.bigger_font.render(f'YOU WON!', False, self.info.white)
                         image_score = self.info.bigger_font.render(f'YOUR SCORE IS {round(self.info.score, 2)}', False,

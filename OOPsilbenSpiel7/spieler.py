@@ -9,7 +9,7 @@ class Spieler():
         self.info = game_instance
         self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2,self.info.screen_surface//15,self.info.screen_surface//10)
         self.my_silben = []
-        self.txt = self.info.font.render("player", False, self.info.black)
+        self.txt = self.info.default_font.render("player", False, self.info.black)
         self.image = transform.scale(image.load('blue_player3.svg'),(self.rect.w,self.rect.h))
         self.speed = self.info.screen_surface/20 # abhängig von fps
         self.appendlist = []
