@@ -11,9 +11,12 @@ class Settings:
         #self.gameloop_instance = gameloop.Gameloop()
         self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
+        self.large_surface = self.screen_via_display_set_mode.copy()
+        self.large_surface = pg.transform.scale(self.large_surface,(7000,7000))
         # how is making a copy different than making a second screen (which didn't work)
         self.screenw, self.screenh = self.screen_copy.get_rect().size
         self.midtop = self.screen_copy.get_rect().midtop
+        self.large_midtop = self.large_surface.get_rect().midtop
         self.screen_surface = int(math.sqrt(self.screenw * self.screenh))
         self.right = self.screenw // 6
         self.down = self.screenh // 12
@@ -30,7 +33,7 @@ class Settings:
         self.fps = 30 # keine konstante geschwindigkeit
         self.default_font = font.SysFont("Arial", self.screen_surface // 20) # make one rendering function?
         self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)
-        self.smaller_font = font.SysFont("Arial", self.screen_surface // 25)
+        self.smaller_font = font.SysFont("Arial", self.screen_surface // 28)
         self.tiny_font = font.SysFont("Arial", self.screen_surface // 45)
         self.invisible = self.default_font.render("o", False, self.black)
 

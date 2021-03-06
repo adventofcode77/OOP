@@ -114,13 +114,15 @@ class Game(globale_variablen.Settings):
         wordrect.center = self.screen_copy.get_rect().center
         self.screen_copy.blit(word_image, (wordrect.x, wordrect.y))
 
-    def blit_string_word_by_word(self, defstring, color, midtop, font = None):  # does it need to get the image in order to know how big the font i
+    def blit_string_word_by_word(self, defstring, color, midtop, font = None,screen=None):  # does it need to get the image in order to know how big the font i
         words = defstring
         line = ""
         list_lines_img = []
         height,width = 0,0
         if font is None:
             font = self.smaller_font
+        if not screen:
+            screen = self.screen_copy
         for i in range(len(words)):
             word = words[i]
             line += word + " "
@@ -137,7 +139,7 @@ class Game(globale_variablen.Settings):
             line_img = list_lines_img[i]
             line_rect = line_img.get_rect()
             line_rect.center = (midtop[0], (midtop[1] + spacing * (i + 1)))  # spacing needs to increase with each line
-            self.screen_copy.blit(line_img, line_rect)
+            screen.blit(line_img, line_rect)
             last_line_y = line_rect.y
         return last_line_y # how far down the screen there is curently text
 
