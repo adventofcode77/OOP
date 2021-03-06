@@ -5,7 +5,7 @@ from OOPsilbenSpiel7 import game
 
 class Main:
     file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml' #make a failsafe
-    code = "Die Figur befindet sich auf Feldnummer 17"
+    code = "1951 waren mein"
     score = 0
     def __init__(self):
         self.newgame(Main.code, Main.score)

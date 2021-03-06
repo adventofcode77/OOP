@@ -90,7 +90,7 @@ class Game(globale_variablen.Settings):
             self.check_word()
         self.blit_word()
 
-    def make_def_string(self):
+    def make_def_list(self):
         if self.deleted_word_bool or self.deleted_code_word_bool:
             bitlists = [word for a in self.deletedlist[:] for word in a.bit]
         else:
@@ -108,7 +108,7 @@ class Game(globale_variablen.Settings):
             else:
                 farbe = (self.lime, self.cyan)
                 wordstring = "".join([a.inhalt for a in self.player.appendlist])
-        self.blit_string_word_by_word(self.make_def_string(), farbe[1], self.screen_copy.get_rect().center)
+        self.blit_string_word_by_word(self.make_def_list(), farbe[1], self.screen_copy.get_rect().center)
         word_image = self.default_font.render(wordstring, False, farbe[0])
         wordrect = word_image.get_rect()
         wordrect.center = self.screen_copy.get_rect().center
@@ -118,27 +118,28 @@ class Game(globale_variablen.Settings):
         words = defstring
         line = ""
         list_lines_img = []
+        height,width = 0,0
         if font is None:
             font = self.smaller_font
-        for word in words:
+        for i in range(len(words)):
+            word = words[i]
+            line += word + " "
             line_img = font.render(line, False, color)
             if line_img.get_rect().w >= 0.5 * self.screen_copy.get_rect().w:
                 list_lines_img.append(line_img)
                 line = ""
-            line += word + " "
-        line_img = font.render(line, False, color)
-        line_height = line_img.get_rect().h
-        list_lines_img.append(line_img)  # append the last part
-        screen_rect = self.screen_copy.get_rect()
-        height_def_window = screen_rect.h - midtop[1] - line_height
-        spacing = height_def_window // len(list_lines_img)
+            elif i == len(words)-1: # append the last part
+                list_lines_img.append(line_img)
+            height,width = line_img.get_rect().h, line_img.get_rect().w
+        spacing = height
+        last_line_y = 0
         for i in range(len(list_lines_img)):
             line_img = list_lines_img[i]
             line_rect = line_img.get_rect()
-            if spacing > line_height*1.5:
-                spacing = line_height*1.5
             line_rect.center = (midtop[0], (midtop[1] + spacing * (i + 1)))  # spacing needs to increase with each line
             self.screen_copy.blit(line_img, line_rect)
+            last_line_y = line_rect.y
+        return last_line_y # how far down the screen there is curently text
 
     def check_word(self):
         temp_bool = True

@@ -41,12 +41,12 @@ class Gameloop():
                     elif e.key == K_c: # see a random definition
                         self.info.screen_copy.fill(self.info.black)
                         if (self.info.words):
-                            self.info.blit_string_word_by_word(f'cheating costs 5 seconds! one of the words means... '
-                                                       f'{" ".join(random.choice(self.info.words).meaning)}', self.info.white,
+                            tolist = f'cheating costs 5 seconds! one of the words means... {" ".join(random.choice(self.info.words).meaning)}'.split()
+                            self.info.blit_string_word_by_word(tolist, self.info.white,
                                                                self.info.screen_copy.get_rect().midtop)
                         else:
-                            self.info.blit_string_word_by_word(f'cheating costs 5 seconds! one piece of the puzle is...'
-                                                       f'{" ".join(random.choice(self.info.woerter.code_words).meaning)}', self.info.white,
+                            self.info.blit_string_word_by_word(f'cheating costs 5 seconds! one piece of the puzzle is...'
+                                                       f'{" ".join(random.choice(self.info.woerter.code_words).meaning)}'.split(), self.info.white,
                                                                self.info.screen_copy.get_rect().midtop)
                         self.info.screen_transfer()
                         time.wait(5000)
@@ -71,19 +71,26 @@ class Gameloop():
                 # GUESSED WORDS WINDOW
                 if self.win and self.info.guessed_code_words:
                     self.info.screen_copy.fill(self.info.black)
-                    # PROMPT USER TO CHANGE THEIR ORDER
-                    int_rect = self.info.default_font.render('99 ', False, self.info.black).get_rect()
-                    self.info.blit_string_word_by_word(f'To change the order of the code_string words, click on the position'
-                                                       f'of a word, then click on its new position.', self.info.white, (self.info.midtop[0],self.info.midtop[1]+int_rect.h),self.info.tiny_font)
-                    # make a visual list of rects for the positions
+                    height_of_all = 0
                     len_code_words = len(self.info.guessed_code_words)
                     rects_code_words = []
-                    for i in range(len_code_words):
+                    int_rect = self.info.default_font.render('99 ', False, self.info.white).get_rect()
+                    spacing = int_rect.h
+                    print("win spacing",spacing)
+                    for i in range(len_code_words): # make a visual list of rects for the positions
                         num_image = self.info.default_font.render(f'{i}', False, self.info.white)
                         num_rect = num_image.get_rect()
                         rects_code_words.append(num_rect)
                         num_rect.x, num_rect.y = self.info.right + i*int_rect.w, self.info.down
                         self.info.screen_copy.blit(num_image,num_rect)
+                    height_of_all += self.info.down + int_rect.h + spacing
+                    print("h of all after the nums", height_of_all,"down",self.info.down)
+                    # PROMPT USER TO CHANGE THEIR ORDER
+                    blit_h = self.info.blit_string_word_by_word(f'To change the order of the code_string words, click on the position'
+                                                       f'of a word, then click on its new position. Use the key v to verify your choice.'.split()
+                                                       , self.info.white, (self.info.midtop[0],height_of_all))
+                    height_of_all = blit_h + spacing
+                    print("h of all after the instructions", height_of_all)
                     if self.win_first_click and self.win_second_click:
                         first_click = self.win_first_click
                         second_click = self.win_second_click
@@ -99,22 +106,25 @@ class Gameloop():
                             taken = self.info.guessed_code_words.pop(first_num)
                             self.info.guessed_code_words.insert(second_num,taken)
                     code_string = " ".join([word.name for word in self.info.guessed_code_words])
-                    self.info.blit_string_word_by_word(code_string, self.info.yellow, (self.info.midtop[0], self.info.midtop[1] + self.info.down)) # replace distance with a font sample height unit
+                    blit_h = self.info.blit_string_word_by_word(code_string.split(), self.info.yellow, (self.info.midtop[0], height_of_all)) # replace distance with a font sample height unit
+                    height_of_all = blit_h + spacing
+                    print("h of all after the string", height_of_all)
                     list_code_meanings = [word.meaning for word in self.info.guessed_code_words]
                     explanation = " ".join(list_code_meanings[self.next_counter])
-                    self.info.blit_string_word_by_word(explanation,self.info.yellow,self.info.screen_copy.get_rect().center)
+                    blit_h = self.info.blit_string_word_by_word(explanation.split(),self.info.yellow,(self.info.midtop[0],height_of_all))
+                    height_of_all = blit_h + spacing
                     if self.next:
                         if self.next_counter >= len(list_code_meanings)-1:
                             self.next_counter = 0
                         else:
                             self.next_counter += 1
                         self.next = False
-
+                    self.info.screen_copy.get_rect().h = height_of_all
                     self.info.screen_transfer()
 
-                # MAIN LOOP # test
+                # MAIN LOOP
                 elif self.fall == True:
-                    self.win = False
+
                     print(" ".join([word.name for word in self.info.guessed_code_words]))
                     print(main.Main.code)
                     if " ".join([word.name for word in self.info.guessed_code_words]) == main.Main.code:
