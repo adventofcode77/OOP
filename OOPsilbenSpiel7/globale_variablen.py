@@ -28,7 +28,7 @@ class Settings:
         self.orange = (255,165,0)
         self.purple = (255,0,255)
         self.fps = 30 # keine konstante geschwindigkeit
-        self.default_font = font.SysFont("Arial", self.screen_surface // 20)
+        self.default_font = font.SysFont("Arial", self.screen_surface // 20) # make one rendering function?
         self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)
         self.smaller_font = font.SysFont("Arial", self.screen_surface // 25)
         self.tiny_font = font.SysFont("Arial", self.screen_surface // 45)

@@ -60,7 +60,7 @@ class Woerter():
                 sylobjects.append(asyl)
         return sylobjects
 
-    def get_code_words_and_syls(self, string):
+    def get_code_words_and_syls(self, string): # https://www.sttmedia.com/syllablefrequency-german
         words = string.split()
         for i in range(len(words)):
             self.worder += 1
