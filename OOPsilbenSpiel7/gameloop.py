@@ -71,6 +71,8 @@ class Gameloop():
                 # GUESSED WORDS WINDOW
                 if self.win and self.info.guessed_code_words:
                     self.info.screen_copy.fill(self.info.black)
+                    self.info.large_surface.fill(self.info.black)
+                    surface_cut = pg.Surface.subsurface(self.info.large_surface,pg.Rect(2000,0,3000,3000))
                     height_of_all = 0
                     len_code_words = len(self.info.guessed_code_words)
                     rects_code_words = []
@@ -82,13 +84,13 @@ class Gameloop():
                         num_rect = num_image.get_rect()
                         rects_code_words.append(num_rect)
                         num_rect.x, num_rect.y = self.info.right + i*int_rect.w, self.info.down
-                        self.info.screen_copy.blit(num_image,num_rect)
+                        surface_cut.blit(num_image,num_rect)
                     height_of_all += self.info.down + int_rect.h + spacing
                     print("h of all after the nums", height_of_all,"down",self.info.down)
                     # PROMPT USER TO CHANGE THEIR ORDER
                     blit_h = self.info.blit_string_word_by_word(f'To change the order of the code_string words, click on the position'
                                                        f'of a word, then click on its new position. Use the key v to verify your choice.'.split()
-                                                       , self.info.white, (self.info.midtop[0],height_of_all))
+                                                       , self.info.white, (self.info.midtop[0],height_of_all), screen=surface_cut)
                     height_of_all = blit_h + spacing
                     print("h of all after the instructions", height_of_all)
                     if self.win_first_click and self.win_second_click:
@@ -106,12 +108,12 @@ class Gameloop():
                             taken = self.info.guessed_code_words.pop(first_num)
                             self.info.guessed_code_words.insert(second_num,taken)
                     code_string = " ".join([word.name for word in self.info.guessed_code_words])
-                    blit_h = self.info.blit_string_word_by_word(code_string.split(), self.info.yellow, (self.info.midtop[0], height_of_all)) # replace distance with a font sample height unit
+                    blit_h = self.info.blit_string_word_by_word(code_string.split(), self.info.yellow, (self.info.midtop[0], height_of_all),screen=surface_cut) # replace distance with a font sample height unit
                     height_of_all = blit_h + spacing
                     print("h of all after the string", height_of_all)
                     list_code_meanings = [word.meaning for word in self.info.guessed_code_words]
                     explanation = " ".join(list_code_meanings[self.next_counter])
-                    blit_h = self.info.blit_string_word_by_word(explanation.split(),self.info.yellow,(self.info.midtop[0],height_of_all))
+                    blit_h = self.info.blit_string_word_by_word(explanation.split(),self.info.yellow,(self.info.midtop[0],height_of_all),screen=surface_cut)
                     height_of_all = blit_h + spacing
                     if self.next:
                         if self.next_counter >= len(list_code_meanings)-1:
@@ -119,8 +121,24 @@ class Gameloop():
                         else:
                             self.next_counter += 1
                         self.next = False
-                    self.info.screen_copy.get_rect().h = height_of_all
+                    if height_of_all > self.info.screen_copy.get_rect().h:
+                        orig_width,orig_height = self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h
+                        new_height = height_of_all
+                        ratio = new_height / orig_height
+                        print("ratio",ratio)
+                        new_width = orig_width * ratio
+                        padding = (new_width - orig_width) // 2 # indents the cut to the left so the new width can take black background proportionately from left and right
+                        corrected_subsurface = pg.Surface.subsurface(self.info.large_surface,pg.Rect((2000 - padding,0,new_width,new_height)))
+                        print("corrected subsurface",corrected_subsurface.get_rect())
+                        resized_copied_surface = pg.transform.scale(corrected_subsurface, (self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
+                        print("resized",resized_copied_surface.get_rect())
+                        self.info.screen_copy.blit(resized_copied_surface,(0,0))
+                    else:
+                        print("h of al",height_of_all,"orig h",self.info.screen_copy.get_rect().h)
+                        corrected_subsurface = pg.Surface.subsurface(self.info.large_surface,pg.Rect(2000,0,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
+                        self.info.screen_copy.blit(corrected_subsurface,(0,0))
                     self.info.screen_transfer()
+
 
                 # MAIN LOOP
                 elif self.fall == True:
