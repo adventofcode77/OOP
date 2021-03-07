@@ -31,6 +31,9 @@ class Game(globale_variablen.Settings):
         self.pos_list = self.get_pos_list()
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
+        self.corrected_subsurface = self.screen_copy.copy()
+        self.padding = 0
+        self.testbool = False
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
@@ -38,14 +41,16 @@ class Game(globale_variablen.Settings):
         # the event loop didn't work inside of this function
         self.screen_copy.fill(self.black)
         self.large_surface.fill(self.black)
-        syls,surface_cut = self.draw_desk() # copies; copy of the desk surface so far
+        syls,surface_cut = self.draw_desk() # copies; copy of the desk surface so far (syls are hardcoded on surface cut)
         if click:
+            click = self.scale_click(click,self.corrected_subsurface,self.screen_via_display_set_mode)
             x,y = click
+            x -= self.padding # change padding back to 0 when the text no longer goes over the original screen size
             for syl in syls:
+                print(syl.inhalt,syl.rect.x,syl.rect.y)
                 if syl.rect.collidepoint(x,y):
                     for item in self.player.my_silben: #next()?
-                        if item.tuple == syl.tuple:
-                            # couldn't find syl objects in lists where i'd previously put them (& collidelist didn't work)
+                        if item.tuple == syl.tuple: # couldn't find syl objects in lists where i'd previously put them (& collidelist didn't work)
                             if item.clicked_on:
                                 item.clicked_on = False
                                 for i in range(len(self.player.appendlist)):
@@ -127,9 +132,12 @@ class Game(globale_variablen.Settings):
             self.corrected_subsurface = pg.Surface.subsurface(self.large_surface,pg.Rect((2000 - self.padding,0,new_width,new_height)))
             self.resized_copied_surface = pg.transform.scale(self.corrected_subsurface, (self.screen_copy.get_rect().w,self.screen_copy.get_rect().h))
             self.screen_copy.blit(self.resized_copied_surface,(0,0))
+            self.testbool = True
         else:
             self.resized_copied_surface = pg.Surface.subsurface(self.large_surface,pg.Rect(2000,0,self.screen_copy.get_rect().w,self.screen_copy.get_rect().h))
+            self.corrected_subsurface = pg.Surface.subsurface(self.large_surface,pg.Rect((2000,0,self.screen_copy.get_rect().w,self.screen_copy.get_rect().h)))
             self.screen_copy.blit(self.resized_copied_surface,(0,0))
+            self.padding = 0
 
     def blit_string_word_by_word(self, defstring, color, midtop, font = None,screen=None):  # does it need to get the image in order to know how big the font i
         words = defstring
