@@ -37,7 +37,8 @@ class Game(globale_variablen.Settings):
     def desk(self,click):
         # the event loop didn't work inside of this function
         self.screen_copy.fill(self.black)
-        syls = self.draw_desk() # copies
+        self.large_surface.fill(self.black)
+        syls,surface_cut = self.draw_desk() # copies; copy of the desk surface so far
         if click:
             x,y = click
             for syl in syls:
@@ -54,10 +55,11 @@ class Game(globale_variablen.Settings):
                                         break
                             else:
                                 item.clicked_on = True
-                                self.draw_word(syl)
-        self.draw_word()
+                                self.draw_word(surface_cut,syl)
+        self.draw_word(surface_cut)
 
     def draw_desk(self): # origs
+        surface_cut = pg.Surface.subsurface(self.large_surface,pg.Rect(2000,0,3000,3000))
         mysilben = self.player.my_silben
         desk_syls = []
         index = 0
@@ -72,15 +74,15 @@ class Game(globale_variablen.Settings):
                     else:
                         copy.image = self.default_font.render(copy.inhalt, False, self.white)
                     copy.rect.x,copy.rect.y = x,y
-                    self.screen_copy.blit(copy.image, copy.rect)
+                    surface_cut.blit(copy.image, copy.rect)
                     desk_syls.append(copy) #copy whole syl
                     index += 1
                     x += copy.rect.w
-        return desk_syls
+        return desk_syls, surface_cut
 
-    def draw_word(self,syl=None):
+    def draw_word(self,surface_cut,syl=None):
         if syl:
-            self.blit_word(farbe=(self.lila, self.lila)) #draws over word and def
+            self.blit_word(surface_cut,farbe=(self.lila, self.lila)) #draws over word and def
             self.player.appendlist.append(syl)
             if self.deleted_word_bool or self.deleted_code_word_bool:
                 self.deleted_word_bool = False
@@ -88,7 +90,7 @@ class Game(globale_variablen.Settings):
                 self.deletedlist = []
                 self.deleted_word = ""
             self.check_word()
-        self.blit_word()
+        self.blit_word(surface_cut)
 
     def make_def_list(self):
         if self.deleted_word_bool or self.deleted_code_word_bool:
@@ -97,7 +99,9 @@ class Game(globale_variablen.Settings):
             bitlists = [word for a in self.player.appendlist[:] for word in a.bit]
         return bitlists
 
-    def blit_word(self, farbe=None): # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
+    def blit_word(self, surface_cut,farbe=None): # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
+        height_of_all = 0
+        #self.large_surface.fill(self.white) #check this
         if farbe is not (self.lila, self.lila):
             if self.deleted_word_bool:
                 farbe = (self.purple, self.purple)
@@ -108,11 +112,24 @@ class Game(globale_variablen.Settings):
             else:
                 farbe = (self.lime, self.cyan)
                 wordstring = "".join([a.inhalt for a in self.player.appendlist])
-        self.blit_string_word_by_word(self.make_def_list(), farbe[1], self.screen_copy.get_rect().center)
+        blit_h = self.blit_string_word_by_word(self.make_def_list(), farbe[1], self.screen_copy.get_rect().center,screen=surface_cut) # starts one line below the blitted word per the function
+        height_of_all = blit_h
         word_image = self.default_font.render(wordstring, False, farbe[0])
         wordrect = word_image.get_rect()
         wordrect.center = self.screen_copy.get_rect().center
-        self.screen_copy.blit(word_image, (wordrect.x, wordrect.y))
+        surface_cut.blit(word_image, (wordrect.x, wordrect.y))
+        if height_of_all > self.screen_copy.get_rect().h:
+            orig_width,orig_height = self.screen_copy.get_rect().w,self.screen_copy.get_rect().h
+            new_height = height_of_all
+            ratio = new_height / orig_height
+            new_width = orig_width * ratio
+            self.padding = (new_width - orig_width) // 2 # indents the cut to the left so the new width can take black background proportionately from left and right
+            self.corrected_subsurface = pg.Surface.subsurface(self.large_surface,pg.Rect((2000 - self.padding,0,new_width,new_height)))
+            self.resized_copied_surface = pg.transform.scale(self.corrected_subsurface, (self.screen_copy.get_rect().w,self.screen_copy.get_rect().h))
+            self.screen_copy.blit(self.resized_copied_surface,(0,0))
+        else:
+            self.resized_copied_surface = pg.Surface.subsurface(self.large_surface,pg.Rect(2000,0,self.screen_copy.get_rect().w,self.screen_copy.get_rect().h))
+            self.screen_copy.blit(self.resized_copied_surface,(0,0))
 
     def blit_string_word_by_word(self, defstring, color, midtop, font = None,screen=None):  # does it need to get the image in order to know how big the font i
         words = defstring
@@ -141,7 +158,7 @@ class Game(globale_variablen.Settings):
             line_rect.center = (midtop[0], (midtop[1] + spacing * (i + 1)))  # spacing needs to increase with each line
             screen.blit(line_img, line_rect)
             last_line_y = line_rect.y
-        return last_line_y # how far down the screen there is curently text
+        return last_line_y+spacing # how far down the screen there is curently text
 
     def check_word(self):
         temp_bool = True
