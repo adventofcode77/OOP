@@ -163,7 +163,7 @@ class Gameloop():
                         self.info.player.pick(self.info.syls)
                         self.info.blit_loop()
                 # PICKED SYLS WINDOW
-                else:
+                else: #this broke after the subscreen changes
                     if self.click:  # scale the mouseclick coordinates back to the original screen size
                         current_x, current_y = self.click
                         orig_screenw, orig_screenh = self.info.screenw, self.info.screenh
