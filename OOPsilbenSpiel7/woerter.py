@@ -17,7 +17,7 @@ class Woerter():
         self.silben = self.get_silben()
         self.num_syls = self.get_num_code_syls(input_code)
         self.placeholder_code_text = self.get_escape_game_text()
-        print("txt",self.placeholder_code_text.split())
+        print("txt",len(self.placeholder_code_text.split()))
         self.code_text_bits = self.info.get_bits(self.placeholder_code_text.split(), self.num_syls)
         self.code_words = []
         self.code_syls = []

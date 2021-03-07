@@ -165,13 +165,7 @@ class Gameloop():
                 # PICKED SYLS WINDOW
                 else: #this broke after the subscreen changes
                     if self.click:  # scale the mouseclick coordinates back to the original screen size
-                        current_x, current_y = self.click
-                        orig_screenw, orig_screenh = self.info.screenw, self.info.screenh
-                        current_screenw, current_screenh = self.info.screen_via_display_set_mode.get_rect().size
-                        current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh
-                        x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh
-                        self.click = (x, y)
-                    #self.info.large_surface.fill(self.info.black)
+                        self.click = self.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                     self.info.desk(self.click)
                     self.click = False
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
@@ -179,13 +173,8 @@ class Gameloop():
 
     def scale_click(self, click, orig_screen, current_screen): # corr and via
         current_x, current_y = click # clicked on via
-        print("the click on via:",current_x, current_y)
         orig_screenw, orig_screenh = orig_screen.get_rect().w, orig_screen.get_rect().h # the cut x,y
-        print("the corr w,h",orig_screenw, orig_screenh)
         current_screenw, current_screenh = current_screen.get_rect().size # the via x,y
-        print("the via w,h",current_screenw, current_screenh)
         current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh # where in via x,y were
-        print("where in via were x,y",current_x_ratio, current_y_ratio)
         x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh # where in corr they are
-        print("where in corr are x,y",x, y)
         return (x,y)

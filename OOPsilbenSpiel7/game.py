@@ -37,13 +37,13 @@ class Game(globale_variablen.Settings):
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
-    def desk(self,click):
+    def desk(self,click): # the click is adjusted for where it'd be on screen_copy
         # the event loop didn't work inside of this function
         self.screen_copy.fill(self.black)
         self.large_surface.fill(self.black)
         syls,surface_cut = self.draw_desk() # copies; copy of the desk surface so far (syls are hardcoded on surface cut)
         if click:
-            click = self.scale_click(click,self.corrected_subsurface,self.screen_via_display_set_mode)
+            click = self.scale_click(click,self.corrected_subsurface,self.screen_copy)
             x,y = click
             x -= self.padding # change padding back to 0 when the text no longer goes over the original screen size
             for syl in syls:
@@ -155,11 +155,11 @@ class Game(globale_variablen.Settings):
             if line_img.get_rect().w >= 0.5 * self.screen_copy.get_rect().w:
                 list_lines_img.append(line_img)
                 line = ""
-            elif i == len(words)-1: # append the last part
-                list_lines_img.append(line_img)
+            elif i == len(words)-1:
+                print("def",defstring)
+                print("last line",line)
+                list_lines_img.append(line_img) # append the last part
             height,width = line_img.get_rect().h, line_img.get_rect().w
-        print("def",defstring)
-        print("last line",line)
         spacing = height
         last_line_y = 0
         for i in range(len(list_lines_img)):
