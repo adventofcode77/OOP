@@ -121,26 +121,12 @@ class Gameloop():
                         else:
                             self.next_counter += 1
                         self.next = False
-                    if height_of_all > self.info.screen_copy.get_rect().h:
-                        orig_width,orig_height = self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h
-                        new_height = height_of_all
-                        ratio = new_height / orig_height
-                        new_width = orig_width * ratio
-                        self.info.padding = (new_width - orig_width) // 2 # indents the cut to the left so the new width can take black background proportionately from left and right
-                        self.info.corrected_subsurface = pg.Surface.subsurface(self.info.large_surface,pg.Rect((2000 - self.info.padding,0,new_width,new_height)))
-                        self.resized_copied_surface = pg.transform.scale(self.info.corrected_subsurface, (self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
-                        self.info.screen_copy.blit(self.resized_copied_surface,(0,0))
-                    else:
-                        self.resized_copied_surface = pg.Surface.subsurface(self.info.large_surface,pg.Rect(2000,0,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
-                        self.info.screen_copy.blit(self.resized_copied_surface,(0,0))
+                    self.info.text_wrap(self.info.screen_copy,self.info.large_surface,self.info.identation_surface_cut,height_of_all)
                     self.info.screen_transfer()
-
 
                 # MAIN LOOP
                 elif self.fall == True:
-
-                    print(" ".join([word.name for word in self.info.guessed_code_words]))
-                    print(main.Main.code)
+                    print([word.meaning for word in self.info.guessed_code_words])
                     if " ".join([word.name for word in self.info.guessed_code_words]) == main.Main.code:
                         self.info.screen_copy.fill(self.info.black)
                         image_win = self.info.bigger_font.render(f'YOU WON!', False, self.info.white)
