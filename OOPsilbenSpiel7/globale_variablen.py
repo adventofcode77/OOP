@@ -53,6 +53,19 @@ class Settings:
         #print("get bits listoflists",list_of_lists)
         return list_of_lists # DO NOT FORGET RETURN
 
+    def scale_click(self, click, orig_screen, current_screen): # cut and via
+        current_x, current_y = click # clicked on via
+        print("the click on via:",current_x, current_y)
+        orig_screenw, orig_screenh = orig_screen.get_rect().w, orig_screen.get_rect().h # the cut x,y
+        print("the corr w,h",orig_screenw, orig_screenh)
+        current_screenw, current_screenh = current_screen.get_rect().size # the via x,y
+        print("the via w,h",current_screenw, current_screenh)
+        current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh # where in via x,y were
+        print("where in via were x,y",current_x_ratio, current_y_ratio)
+        x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh # where in cut they are
+        print("where in corr are x,y",x, y)
+        return (x,y)
+
     def make_rgb(self): # make three main hues, each for all in a word
         hue = random.choice((0,1,2))
         rgb = [100,100,100]

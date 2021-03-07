@@ -16,9 +16,7 @@ class Gameloop():
         self.click = False
         self.win_first_click = False
         self.win_second_click = False
-        self.corrected_subsurface = self.info.screen_copy.copy()
         self.resized_copied_surface = self.info.screen_copy.copy()
-        self.padding = 0
         self.mainloop() # call last
 
     def mainloop(self):
@@ -97,10 +95,10 @@ class Gameloop():
                                                        , self.info.white, (self.info.midtop[0],height_of_all), screen=surface_cut)
                     height_of_all = blit_h + spacing
                     if self.win_first_click and self.win_second_click: # need to scale them to surface_cut
-                        self.win_first_click = self.scale_click(self.win_first_click,self.corrected_subsurface,self.info.screen_via_display_set_mode)
-                        self.win_second_click = self.scale_click(self.win_second_click,self.corrected_subsurface,self.info.screen_via_display_set_mode)
-                        first_click_rect = Rect(self.win_first_click[0]-self.padding,self.win_first_click[1],1,1) # the padding is taken out so it doens't need to be added to the rects
-                        second_click_rect = Rect(self.win_second_click[0]-self.padding,self.win_second_click[1],1,1)
+                        self.win_first_click = self.scale_click(self.win_first_click,self.info.corrected_subsurface,self.info.screen_via_display_set_mode)
+                        self.win_second_click = self.scale_click(self.win_second_click,self.info.corrected_subsurface,self.info.screen_via_display_set_mode)
+                        first_click_rect = Rect(self.win_first_click[0]-self.info.padding,self.win_first_click[1],1,1) # the padding is taken out so it doens't need to be added to the rects
+                        second_click_rect = Rect(self.win_second_click[0]-self.info.padding,self.win_second_click[1],1,1)
                         self.win_first_click = False
                         self.win_second_click = False
                         first_index = first_click_rect.collidelist(rects_code_words) #the actual rect positions have been shifted by padding, but to compensate this padding is taken out from the click x coordinate
@@ -128,9 +126,9 @@ class Gameloop():
                         new_height = height_of_all
                         ratio = new_height / orig_height
                         new_width = orig_width * ratio
-                        self.padding = (new_width - orig_width) // 2 # indents the cut to the left so the new width can take black background proportionately from left and right
-                        self.corrected_subsurface = pg.Surface.subsurface(self.info.large_surface,pg.Rect((2000 - self.padding,0,new_width,new_height)))
-                        self.resized_copied_surface = pg.transform.scale(self.corrected_subsurface, (self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
+                        self.info.padding = (new_width - orig_width) // 2 # indents the cut to the left so the new width can take black background proportionately from left and right
+                        self.info.corrected_subsurface = pg.Surface.subsurface(self.info.large_surface,pg.Rect((2000 - self.info.padding,0,new_width,new_height)))
+                        self.resized_copied_surface = pg.transform.scale(self.info.corrected_subsurface, (self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
                         self.info.screen_copy.blit(self.resized_copied_surface,(0,0))
                     else:
                         self.resized_copied_surface = pg.Surface.subsurface(self.info.large_surface,pg.Rect(2000,0,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
@@ -179,15 +177,15 @@ class Gameloop():
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # ONE LOOP
 
-    def scale_click(self, click, orig_screen, current_screen): # cut and via
+    def scale_click(self, click, orig_screen, current_screen): # corr and via
         current_x, current_y = click # clicked on via
         print("the click on via:",current_x, current_y)
         orig_screenw, orig_screenh = orig_screen.get_rect().w, orig_screen.get_rect().h # the cut x,y
-        print("the cut w,h",orig_screenw, orig_screenh)
+        print("the corr w,h",orig_screenw, orig_screenh)
         current_screenw, current_screenh = current_screen.get_rect().size # the via x,y
         print("the via w,h",current_screenw, current_screenh)
         current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh # where in via x,y were
         print("where in via were x,y",current_x_ratio, current_y_ratio)
-        x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh # where in cut they are
-        print("where in cut are x,y",x, y)
+        x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh # where in corr they are
+        print("where in corr are x,y",x, y)
         return (x,y)
