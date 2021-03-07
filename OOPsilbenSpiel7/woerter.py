@@ -17,8 +17,7 @@ class Woerter():
         self.silben = self.get_silben()
         self.num_syls = self.get_num_code_syls(input_code)
         self.placeholder_code_text = self.get_escape_game_text()
-        print("txt",len(self.placeholder_code_text.split()))
-        self.code_text_bits = self.info.get_bits(self.placeholder_code_text.split(), self.num_syls)
+        self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(input_code.split()))
         self.code_words = []
         self.code_syls = []
         self.get_code_words_and_syls(input_code)
@@ -31,7 +30,7 @@ class Woerter():
         return num_syls
 
     def get_escape_game_text(self):
-        with open('/Users/ellie/PycharmProjects/OOPworterror/OOPsilbenSpiel7/escape_game_text', 'r') as file:
+        with open('escape_game_text', 'r') as file:
             # "with" takes care of closing the file # replace absolute paths with relative?
             text = file.read().replace('\n', '')
         return text
@@ -62,15 +61,20 @@ class Woerter():
 
     def get_code_words_and_syls(self, string): # https://www.sttmedia.com/syllablefrequency-german
         words = string.split()
+        bits_counter = 0
+        print("len list words",len(words))
+        print("len code text bits", len(self.code_word_text_bits))
         for i in range(len(words)):
             self.worder += 1
             aword = words[i]
             syls = self.split_word_syls(aword)
             len_syls = len(syls)
-            listofbits = self.code_text_bits[i:i+len_syls]
-            bits = " ".join([bit for bits in listofbits for bit in bits])
-            word_object = word.Word(aword, bits, syls, self.worder, self.totalsyls, self.info)
+            word_bit_string = " ".join(self.code_word_text_bits[i])
+            print("word_bit_string for word number",i,",",aword,",:",word_bit_string)
+            #bits = " ".join([bit for bits in listofbits for bit in bits])
+            word_object = word.Word(aword, word_bit_string, syls, self.worder, self.totalsyls, self.info)
             self.code_words.append(word_object)
+            bits_counter += len_syls
         for aword in self.code_words: # can't say "for word in" because of word.Word
             self.code_syls.append(aword.make_silben(self.info.make_rgb()))
         self.code_syls = [elem for list in self.code_syls for elem in list]

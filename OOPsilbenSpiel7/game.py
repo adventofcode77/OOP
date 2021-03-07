@@ -19,6 +19,7 @@ class Game(globale_variablen.Settings):
         self.words = self.woerter.words
         self.score = 0
         syls = self.woerter.silben + self.woerter.code_syls
+        print([syl.bit for syl in self.woerter.code_syls])
         self.syls = random.sample(syls, len(syls))
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
@@ -123,21 +124,20 @@ class Game(globale_variablen.Settings):
         wordrect = word_image.get_rect()
         wordrect.center = self.screen_copy.get_rect().center
         surface_cut.blit(word_image, (wordrect.x, wordrect.y))
-        if height_of_all > self.screen_copy.get_rect().h:
-            orig_width,orig_height = self.screen_copy.get_rect().w,self.screen_copy.get_rect().h
-            new_height = height_of_all
-            ratio = new_height / orig_height
-            new_width = orig_width * ratio
-            self.padding = (new_width - orig_width) // 2 # indents the cut to the left so the new width can take black background proportionately from left and right
-            self.corrected_subsurface = pg.Surface.subsurface(self.large_surface,pg.Rect((2000 - self.padding,0,new_width,new_height)))
-            self.resized_copied_surface = pg.transform.scale(self.corrected_subsurface, (self.screen_copy.get_rect().w,self.screen_copy.get_rect().h))
-            self.screen_copy.blit(self.resized_copied_surface,(0,0))
-            self.testbool = True
+        self.text_wrap(self.screen_copy,self.large_surface,self.identation_surface_cut,height_of_all)
+
+    def text_wrap(self, screen_copy,large_surface,right_identation_l_s,text_h):
+        orig_text_w,orig_text_h = screen_copy.get_rect().w,screen_copy.get_rect().h
+        if text_h > screen_copy.get_rect().h:
+            new_text_h = text_h
         else:
-            self.resized_copied_surface = pg.Surface.subsurface(self.large_surface,pg.Rect(2000,0,self.screen_copy.get_rect().w,self.screen_copy.get_rect().h))
-            self.corrected_subsurface = pg.Surface.subsurface(self.large_surface,pg.Rect((2000,0,self.screen_copy.get_rect().w,self.screen_copy.get_rect().h)))
-            self.screen_copy.blit(self.resized_copied_surface,(0,0))
-            self.padding = 0
+            new_text_h = orig_text_h
+        ratio = new_text_h / orig_text_h
+        new_text_w = orig_text_w * ratio
+        self.padding = (new_text_w - orig_text_w) // 2 # indents the cut to the left so the new width can take black background proportionately from left and right
+        self.corrected_subsurface = pg.Surface.subsurface(large_surface,pg.Rect((right_identation_l_s - self.padding,0,new_text_w,new_text_h)))
+        self.resized_copied_surface = pg.transform.scale(self.corrected_subsurface, (screen_copy.get_rect().w,screen_copy.get_rect().h))
+        screen_copy.blit(self.resized_copied_surface,(0,0))
 
     def blit_string_word_by_word(self, defstring, color, midtop, font = None,screen=None):  # does it need to get the image in order to know how big the font i
         words = defstring

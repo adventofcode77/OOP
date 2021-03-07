@@ -12,7 +12,10 @@ class Word():
         self.totalsyls = totalsyls
         self.worder = worder
         self.name = key
-        self.meaning = [a for a in meaning.split() if a is not None] # remove the empty strings
+        self.meaning = meaning.split()
+        for i in range(len(self.meaning)):
+            if not self.meaning[i]:
+                self.meaning.insert(i,"...")
         self.txtsilben = txtsilben
         Word.all_syls.append(txtsilben)
         self.bits = self.info.get_bits(self.meaning, len(self.txtsilben))
@@ -23,24 +26,15 @@ class Word():
     def make_silben(self, rgb):
         order = self.totalsyls # make class attribute?
         syls = []
-        if len(self.txtsilben)>len(self.bits): # change to a counter?
-            smaller = len(self.bits)
-            bigger = len(self.txtsilben)
-        else:
-            smaller = len(self.bits) # changed
-            bigger = len(self.txtsilben)
-        for i in range(smaller):
+        for i in range(len(self.txtsilben)):
             order += 1
-            bit = self.bits[i]
             it = self.txtsilben[i]
+            if i < len(self.bits):
+                bit = self.bits[i]
+            else:
+                bit = [...]
             word = self.name
             silbe1 = silbe.Silbe(it,word,bit,order, self.worder, self.info, rgb)
             syls.append(silbe1)
-        for i in range(smaller,bigger):
             order += 1
-            bit = "..."
-            it = self.txtsilben[i]
-            word = self.name
-            silbe1 = silbe.Silbe(it, word, bit, order,self.worder, self.info, rgb)
-            syls.append(silbe1)
         return syls

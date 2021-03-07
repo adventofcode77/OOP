@@ -13,6 +13,7 @@ class Settings:
         self.screen_copy = self.screen_via_display_set_mode.copy()
         self.large_surface = self.screen_via_display_set_mode.copy()
         self.large_surface = pg.transform.scale(self.large_surface,(7000,7000))
+        self.identation_surface_cut = 2000
         # how is making a copy different than making a second screen (which didn't work)
         self.screenw, self.screenh = self.screen_copy.get_rect().size
         self.midtop = self.screen_copy.get_rect().midtop
@@ -37,20 +38,23 @@ class Settings:
         self.tiny_font = font.SysFont("Arial", self.screen_surface // 45)
         self.invisible = self.default_font.render("o", False, self.black)
 
-
-
-    def get_bits(self, string, num_parts):
-        definition = string
-        #print(definition)
-        list_of_lists = [] # list of strings
-        num_syls = num_parts if num_parts > 0 else 1
-        advancement = m.ceil(len(definition)/num_syls)
+    def get_bits(self,alist, num_parts): #goal: divide a list into roughly equal parts such that no part is empty
+        list_of_lists = []
+        while len(alist) < num_parts:
+            alist += ["..."]
+        advancement = (len(alist) // num_parts)
         if advancement == 0:
             advancement = 1
-        while definition:
-            list_of_lists.append(definition[:advancement])
-            definition = definition[advancement:]
-        #print("get bits listoflists",list_of_lists)
+        while alist:
+            if len(alist) < advancement or len(list_of_lists) >= num_parts-1:
+                list_of_lists.append(alist)
+                alist = []
+            else:
+                list_of_lists.append(alist[:advancement])
+                alist = alist[advancement:]
+        if len(list_of_lists) > num_parts:
+            print("get_bits() outputs more list parts than the parameter specifies")
+            quit()
         return list_of_lists # DO NOT FORGET RETURN
 
     def scale_click(self, click, orig_screen, current_screen): # cut and via

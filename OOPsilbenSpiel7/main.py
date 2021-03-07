@@ -5,7 +5,7 @@ from OOPsilbenSpiel7 import game
 
 class Main:
     file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml' #make a failsafe
-    code = f"Wir entdecken einen PC, der anscheinend einen Countdown anzeigt, ein anderer PC fordert uns"
+    code = f"zwei woerter"
     print(len(code.split()))
     score = 0
     def __init__(self):
