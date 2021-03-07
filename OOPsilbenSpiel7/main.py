@@ -5,7 +5,7 @@ from OOPsilbenSpiel7 import game
 
 class Main:
     file_path = '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml' #make a failsafe
-    code = "1951 oh"
+    code = "The secret code is in english"
     score = 0
     def __init__(self):
         self.newgame(Main.code, Main.score)

@@ -158,6 +158,8 @@ class Game(globale_variablen.Settings):
             elif i == len(words)-1: # append the last part
                 list_lines_img.append(line_img)
             height,width = line_img.get_rect().h, line_img.get_rect().w
+        print("def",defstring)
+        print("last line",line)
         spacing = height
         last_line_y = 0
         for i in range(len(list_lines_img)):
