@@ -16,6 +16,9 @@ class Gameloop():
         self.click = False
         self.win_first_click = False
         self.win_second_click = False
+        self.corrected_subsurface = self.info.screen_copy.copy()
+        self.resized_copied_surface = self.info.screen_copy.copy()
+        self.padding = 0
         self.mainloop() # call last
 
     def mainloop(self):
@@ -40,13 +43,16 @@ class Gameloop():
                         self.fall = True
                     elif e.key == K_c: # see a random definition
                         self.info.screen_copy.fill(self.info.black)
-                        if (self.info.words):
+                        if self.info.words:
                             tolist = f'cheating costs 5 seconds! one of the words means... {" ".join(random.choice(self.info.words).meaning)}'.split()
                             self.info.blit_string_word_by_word(tolist, self.info.white,
                                                                self.info.screen_copy.get_rect().midtop)
-                        else:
+                        elif self.info.woerter.code_words:
                             self.info.blit_string_word_by_word(f'cheating costs 5 seconds! one piece of the puzzle is...'
                                                        f'{" ".join(random.choice(self.info.woerter.code_words).meaning)}'.split(), self.info.white,
+                                                               self.info.screen_copy.get_rect().midtop)
+                        else:
+                            self.info.blit_string_word_by_word(f'cheating costs 5 seconds! Put the words in the right order'.split(), self.info.white,
                                                                self.info.screen_copy.get_rect().midtop)
                         self.info.screen_transfer()
                         time.wait(5000)
@@ -78,29 +84,26 @@ class Gameloop():
                     rects_code_words = []
                     int_rect = self.info.default_font.render('99 ', False, self.info.white).get_rect()
                     spacing = int_rect.h
-                    print("win spacing",spacing)
                     for i in range(len_code_words): # make a visual list of rects for the positions
                         num_image = self.info.default_font.render(f'{i}', False, self.info.white)
                         num_rect = num_image.get_rect()
-                        rects_code_words.append(num_rect)
                         num_rect.x, num_rect.y = self.info.right + i*int_rect.w, self.info.down
-                        surface_cut.blit(num_image,num_rect)
+                        rects_code_words.append(num_rect)
+                        surface_cut.blit(num_image,num_rect) # on large_surface it's at 2000+...
                     height_of_all += self.info.down + int_rect.h + spacing
-                    print("h of all after the nums", height_of_all,"down",self.info.down)
                     # PROMPT USER TO CHANGE THEIR ORDER
                     blit_h = self.info.blit_string_word_by_word(f'To change the order of the code_string words, click on the position'
                                                        f'of a word, then click on its new position. Use the key v to verify your choice.'.split()
                                                        , self.info.white, (self.info.midtop[0],height_of_all), screen=surface_cut)
                     height_of_all = blit_h + spacing
-                    print("h of all after the instructions", height_of_all)
-                    if self.win_first_click and self.win_second_click:
-                        first_click = self.win_first_click
-                        second_click = self.win_second_click
+                    if self.win_first_click and self.win_second_click: # need to scale them to surface_cut
+                        self.win_first_click = self.scale_click(self.win_first_click,self.corrected_subsurface,self.info.screen_via_display_set_mode)
+                        self.win_second_click = self.scale_click(self.win_second_click,self.corrected_subsurface,self.info.screen_via_display_set_mode)
+                        first_click_rect = Rect(self.win_first_click[0]-self.padding,self.win_first_click[1],1,1) # the padding is taken out so it doens't need to be added to the rects
+                        second_click_rect = Rect(self.win_second_click[0]-self.padding,self.win_second_click[1],1,1)
                         self.win_first_click = False
                         self.win_second_click = False
-                        first_click_rect = Rect(first_click[0],first_click[1],1,1)
-                        second_click_rect = Rect(second_click[0],second_click[1],1,1)
-                        first_index = first_click_rect.collidelist(rects_code_words)
+                        first_index = first_click_rect.collidelist(rects_code_words) #the actual rect positions have been shifted by padding, but to compensate this padding is taken out from the click x coordinate
                         second_index = second_click_rect.collidelist(rects_code_words)
                         if first_index is not -1 and second_index is not -1:
                             first_num = first_index
@@ -110,7 +113,6 @@ class Gameloop():
                     code_string = " ".join([word.name for word in self.info.guessed_code_words])
                     blit_h = self.info.blit_string_word_by_word(code_string.split(), self.info.yellow, (self.info.midtop[0], height_of_all),screen=surface_cut) # replace distance with a font sample height unit
                     height_of_all = blit_h + spacing
-                    print("h of all after the string", height_of_all)
                     list_code_meanings = [word.meaning for word in self.info.guessed_code_words]
                     explanation = " ".join(list_code_meanings[self.next_counter])
                     blit_h = self.info.blit_string_word_by_word(explanation.split(),self.info.yellow,(self.info.midtop[0],height_of_all),screen=surface_cut)
@@ -125,18 +127,14 @@ class Gameloop():
                         orig_width,orig_height = self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h
                         new_height = height_of_all
                         ratio = new_height / orig_height
-                        print("ratio",ratio)
                         new_width = orig_width * ratio
-                        padding = (new_width - orig_width) // 2 # indents the cut to the left so the new width can take black background proportionately from left and right
-                        corrected_subsurface = pg.Surface.subsurface(self.info.large_surface,pg.Rect((2000 - padding,0,new_width,new_height)))
-                        print("corrected subsurface",corrected_subsurface.get_rect())
-                        resized_copied_surface = pg.transform.scale(corrected_subsurface, (self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
-                        print("resized",resized_copied_surface.get_rect())
-                        self.info.screen_copy.blit(resized_copied_surface,(0,0))
+                        self.padding = (new_width - orig_width) // 2 # indents the cut to the left so the new width can take black background proportionately from left and right
+                        self.corrected_subsurface = pg.Surface.subsurface(self.info.large_surface,pg.Rect((2000 - self.padding,0,new_width,new_height)))
+                        self.resized_copied_surface = pg.transform.scale(self.corrected_subsurface, (self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
+                        self.info.screen_copy.blit(self.resized_copied_surface,(0,0))
                     else:
-                        print("h of al",height_of_all,"orig h",self.info.screen_copy.get_rect().h)
-                        corrected_subsurface = pg.Surface.subsurface(self.info.large_surface,pg.Rect(2000,0,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
-                        self.info.screen_copy.blit(corrected_subsurface,(0,0))
+                        self.resized_copied_surface = pg.Surface.subsurface(self.info.large_surface,pg.Rect(2000,0,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
+                        self.info.screen_copy.blit(self.resized_copied_surface,(0,0))
                     self.info.screen_transfer()
 
 
@@ -175,7 +173,21 @@ class Gameloop():
                         current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh
                         x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh
                         self.click = (x, y)
+                    #self.info.large_surface.fill(self.info.black)
                     self.info.desk(self.click)
                     self.click = False
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # ONE LOOP
+
+    def scale_click(self, click, orig_screen, current_screen): # cut and via
+        current_x, current_y = click # clicked on via
+        print("the click on via:",current_x, current_y)
+        orig_screenw, orig_screenh = orig_screen.get_rect().w, orig_screen.get_rect().h # the cut x,y
+        print("the cut w,h",orig_screenw, orig_screenh)
+        current_screenw, current_screenh = current_screen.get_rect().size # the via x,y
+        print("the via w,h",current_screenw, current_screenh)
+        current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh # where in via x,y were
+        print("where in via were x,y",current_x_ratio, current_y_ratio)
+        x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh # where in cut they are
+        print("where in cut are x,y",x, y)
+        return (x,y)
