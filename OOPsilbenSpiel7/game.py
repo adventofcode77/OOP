@@ -23,7 +23,7 @@ class Game(globale_variablen.Settings):
         self.syls = random.sample(syls, len(syls))
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
-        self.syl_speed = 0
+        self.syl_pos_change = 0
         self.deleted_word_bool = False
         self.deleted_code_word_bool = False
         self.deletedlist = []
@@ -34,7 +34,8 @@ class Game(globale_variablen.Settings):
         self.guessed_code_words = []
         self.corrected_subsurface = self.screen_copy.copy()
         self.padding = 0
-        self.testbool = False
+        self.syl_speed_change = 10
+        self.initial_syl_speed_change = self.syl_speed_change
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
@@ -48,7 +49,7 @@ class Game(globale_variablen.Settings):
             x,y = click
             x -= self.padding # change padding back to 0 when the text no longer goes over the original screen size
             for syl in syls:
-                print(syl.inhalt,syl.rect.x,syl.rect.y)
+                #print(syl.inhalt,syl.rect.x,syl.rect.y)
                 if syl.rect.collidepoint(x,y):
                     for item in self.player.my_silben: #next()?
                         if item.tuple == syl.tuple: # couldn't find syl objects in lists where i'd previously put them (& collidelist didn't work)
@@ -156,8 +157,6 @@ class Game(globale_variablen.Settings):
                 list_lines_img.append(line_img)
                 line = ""
             elif i == len(words)-1:
-                print("def",defstring)
-                print("last line",line)
                 list_lines_img.append(line_img) # append the last part
             height,width = line_img.get_rect().h, line_img.get_rect().w
         spacing = height
@@ -215,7 +214,7 @@ class Game(globale_variablen.Settings):
         poslist = []
         tenth = self.screenh // 10
         pos = self.screenh - tenth
-        while pos >=0-self.syl_speed:
+        while pos >=0-self.syl_pos_change:
             poslist.append(pos)
             pos -= tenth
         return poslist
@@ -231,16 +230,23 @@ class Game(globale_variablen.Settings):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
                 if syl.visible == True:
-                    self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_speed))
+                    self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                 else:
-                    self.screen_copy.blit(self.invisible, (syl.rect.x, self.pos_list[i] + self.syl_speed))
-                syl.rect.y = self.pos_list[i] + self.syl_speed
-        self.syl_speed += self.screenh // 100
-        if self.syl_speed >= self.screenh // 10:
-            self.syl_speed = 0
+                    self.screen_copy.blit(self.invisible, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
+                syl.rect.y = self.pos_list[i] + self.syl_pos_change
+        self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
+        # print("syl pos change", self.syl_pos_change,"speed change",self.syl_speed_change,"rest",self.screenh/1000)
+        # print("syl speed change",self.syl_speed_change)
+        if self.syl_pos_change >= self.screenh // 10:
+            self.syl_pos_change = 0
             self.start_syls_cut_at += 1
             if self.start_syls_cut_at > len(self.syls)-1: # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = 0
+        elif self.syl_pos_change <= - self.screenh // 10:
+            self.syl_pos_change = 0
+            self.start_syls_cut_at -= 1
+            if self.start_syls_cut_at < 1: # "==" doesn't work after words get deleted
+                self.start_syls_cut_at = len(self.syls)-1
         self.screen_copy.blit(self.player.image, self.player.rect)
         self.screen_transfer()
 
