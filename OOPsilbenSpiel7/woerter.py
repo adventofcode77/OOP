@@ -9,7 +9,6 @@ class Woerter():
     all_syls = []
     def __init__(self,game_instance, input_code):
         self.info = game_instance
-        #self.rect = pg.Rect(0,0,20,20)
         self.dictwithkeyname = self.get_bank()
         self.totalsyls = 0
         self.worder = 0
@@ -62,16 +61,12 @@ class Woerter():
     def get_code_words_and_syls(self, string): # https://www.sttmedia.com/syllablefrequency-german
         words = string.split()
         bits_counter = 0
-        print("len list words",len(words))
-        print("len code text bits", len(self.code_word_text_bits))
         for i in range(len(words)):
             self.worder += 1
             aword = words[i]
             syls = self.split_word_syls(aword)
             len_syls = len(syls)
             word_bit_string = " ".join(self.code_word_text_bits[i])
-            print("word_bit_string for word number",i,",",aword,",:",word_bit_string)
-            #bits = " ".join([bit for bits in listofbits for bit in bits])
             word_object = word.Word(aword, word_bit_string, syls, self.worder, self.totalsyls, self.info)
             self.code_words.append(word_object)
             bits_counter += len_syls

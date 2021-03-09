@@ -126,7 +126,6 @@ class Gameloop():
 
                 # MAIN LOOP
                 elif self.fall == True:
-                    print([word.meaning for word in self.info.guessed_code_words])
                     if " ".join([word.name for word in self.info.guessed_code_words]) == main.Main.code:
                         self.info.screen_copy.fill(self.info.black)
                         image_win = self.info.bigger_font.render(f'YOU WON!', False, self.info.white)
