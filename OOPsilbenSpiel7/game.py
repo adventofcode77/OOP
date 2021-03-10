@@ -7,6 +7,7 @@ from OOPsilbenSpiel7 import globale_variablen
 from OOPsilbenSpiel7 import silbe
 from OOPsilbenSpiel7 import spieler
 from OOPsilbenSpiel7 import gameloop
+from OOPsilbenSpiel7 import menu
 
 
 class Game(globale_variablen.Settings):
@@ -19,6 +20,7 @@ class Game(globale_variablen.Settings):
         # variables above are needed to initialise other classes' instances
         self.player = spieler.Spieler(self) # takes the game object as parameter
         self.woerter = woerter.Woerter(self, input_code)
+
         self.words = self.woerter.words
         self.score = 0
         syls = self.woerter.silben + self.woerter.code_syls
@@ -37,6 +39,7 @@ class Game(globale_variablen.Settings):
         self.guessed_code_words = []
         self.corrected_subsurface = self.screen_copy.copy()
         self.padding = 0
+        self.menu = menu.Menu(self)
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
@@ -120,7 +123,7 @@ class Game(globale_variablen.Settings):
             else:
                 farbe = (self.lime, self.cyan)
                 wordstring = "".join([a.inhalt for a in self.player.appendlist])
-        blit_h = self.blit_string_word_by_word(self.make_def_list(), farbe[1], self.screen_copy.get_rect().center,screen=surface_cut) # starts one line below the blitted word per the function
+        blit_h = self.blit_string_words(self.make_def_list(), farbe[1], self.screen_copy.get_rect().center, screen=surface_cut) # starts one line below the blitted word per the function
         height_of_all = blit_h
         word_image = self.default_font.render(wordstring, False, farbe[0])
         wordrect = word_image.get_rect()
@@ -141,8 +144,8 @@ class Game(globale_variablen.Settings):
         self.resized_copied_surface = pg.transform.scale(self.corrected_subsurface, (screen_copy.get_rect().w,screen_copy.get_rect().h))
         screen_copy.blit(self.resized_copied_surface,(0,0))
 
-    def blit_string_word_by_word(self, defstring, color, midtop, font = None,screen=None):  # does it need to get the image in order to know how big the font i
-        words = defstring
+    def blit_string_words(self, list_ps, color, midtop, font = None, screen=None):  # does it need to get the image in order to know how big the font i
+        words = list_ps
         line = ""
         list_lines_img = []
         height,width = 0,0
@@ -255,5 +258,6 @@ class Game(globale_variablen.Settings):
         resized_screen_copy = pg.transform.scale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
         pg.display.flip()
+        self.large_surface.fill(self.black)
 
 
