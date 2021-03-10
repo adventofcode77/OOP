@@ -14,6 +14,9 @@ class Game(globale_variablen.Settings):
         super().__init__()
         self.input_code = input_code
         self.output_code = ""
+        self.syl_speed_change = 10
+        self.initial_syl_speed_change = self.syl_speed_change
+        # variables above are needed to initialise other classes' instances
         self.player = spieler.Spieler(self) # takes the game object as parameter
         self.woerter = woerter.Woerter(self, input_code)
         self.words = self.woerter.words
@@ -34,8 +37,6 @@ class Game(globale_variablen.Settings):
         self.guessed_code_words = []
         self.corrected_subsurface = self.screen_copy.copy()
         self.padding = 0
-        self.syl_speed_change = 10
-        self.initial_syl_speed_change = self.syl_speed_change
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
