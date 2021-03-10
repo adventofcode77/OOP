@@ -11,9 +11,7 @@ class Spieler():
         self.my_silben = []
         self.txt = self.info.default_font.render("player", False, self.info.black)
         self.image = transform.scale(image.load('blue_player3.svg'),(self.rect.w,self.rect.h))
-        self.speed_unit = max(int(self.info.screen_surface/200),2) # abhängig von fps
-        print("speed unit player",self.speed_unit)
-        self.speed = round(10*self.speed_unit,2)
+        self.speed = round(self.info.initial_syl_speed_change*1.5,2) # currently depends on fps too
         self.initial_speed = self.speed
         self.appendlist = []
         self.loop_down = True
@@ -35,6 +33,7 @@ class Spieler():
                 syl.visible = True
             self.my_silben = []
             self.appendlist = []
+        # change speed of itself (changes speed/direction of the loop too)
         if self.loop_down:
             if keys[K_EQUALS]:
                 self.speed = round(1.1 * self.speed,2) if self.speed <= self.initial_speed * 3 else self.speed
