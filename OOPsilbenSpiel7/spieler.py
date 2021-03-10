@@ -26,8 +26,6 @@ class Spieler():
             self.rect.top = 0 if self.rect.top - self.speed < 0 else self.rect.top - self.speed
         elif keys[K_DOWN] or keys[K_s]:
             self.rect.bottom = self.info.screenh if self.rect.bottom + self.speed > self.info.screenh else self.rect.bottom + self.speed
-        elif keys[K_SPACE]:
-            return False
         elif keys[K_2]:
             for syl in self.my_silben:
                 syl.visible = True

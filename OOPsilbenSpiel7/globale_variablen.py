@@ -36,7 +36,12 @@ class Settings:
         self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)
         self.smaller_font = font.SysFont("Arial", self.screen_surface // 20)
         self.tiny_font = font.SysFont("Arial", self.screen_surface // 45)
+        self.space = self.font_spacing(self.default_font)
         self.invisible = self.default_font.render("o", False, self.black)
+
+    def font_spacing(self,font):
+        img = font.render("A|&%)<QY",False,self.black)
+        return img.get_rect().h
 
     def get_bits(self,alist, num_parts): #goal: divide a list into roughly equal parts such that no part is empty
         list_of_lists = []
