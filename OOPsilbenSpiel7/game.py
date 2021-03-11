@@ -38,6 +38,7 @@ class Game(globale_variablen.Settings):
         self.guessed_code_words = []
         self.corrected_subsurface = self.screen_copy.copy()
         self.padding = 0
+        self.language = None
         self.menu = menu.Menu(self)
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
@@ -145,36 +146,39 @@ class Game(globale_variablen.Settings):
 
     def blit_string_words(self, list_ps, color, midtop, font = None, screen=None):  # does it need to get the image in order to know how big the font i
         words = list_ps
-        line = ""
-        list_lines_img = []
-        height,width = 0,0
+        lines_counter = 1
+        if type(words) == str:
+            words = words.split()
         color_copy = color
         if font is None:
             font = self.smaller_font
+        spacing = self.font_spacing(font)
         if not screen:
             screen = self.screen_copy
+        last_line_height = midtop[1]
+        last_word_right = 0.25 * self.screen_copy.get_rect().w
         for i in range(len(words)):
             word = words[i]
             if word.isupper() or word[0].isdigit():
                 color = self.lime
-            line += word + " "
-            line_img = font.render(line, False, color)
-            if line_img.get_rect().w >= 0.5 * self.screen_copy.get_rect().w:
-                list_lines_img.append(line_img)
-                line = ""
-                color = color_copy
-            elif i == len(words)-1:
-                list_lines_img.append(line_img) # append the last part
-            height,width = line_img.get_rect().h, line_img.get_rect().w
-        spacing = height
-        last_line_y = 0
-        for i in range(len(list_lines_img)):
-            line_img = list_lines_img[i]
-            line_rect = line_img.get_rect()
-            line_rect.center = (midtop[0], (midtop[1] + spacing * (i + 1)))  # spacing needs to increase with each line
-            screen.blit(line_img, line_rect)
-            last_line_y = line_rect.y
-        return last_line_y+spacing # how far down the screen there is curently text
+            word_img = font.render(word+" ", False, color)
+            color = color_copy
+            if last_word_right >= 0.75 * self.screen_copy.get_rect().w:
+                last_word_right = 0.25 * self.screen_copy.get_rect().w
+                last_line_height += spacing
+                screen.blit(word_img, (last_word_right,last_line_height))
+                last_word_right += word_img.get_rect().w
+                lines_counter += 1
+            else:
+                screen.blit(word_img, (last_word_right,last_line_height))
+                last_word_right += word_img.get_rect().w
+            if word[-1] == ".":
+                last_word_right = 0.25 * self.screen_copy.get_rect().w
+                last_line_height += spacing * 1.5
+
+        return last_line_height + last_line_height // lines_counter # how far down the screen there is curently text
+
+
 
     def check_word(self):
         temp_bool = True

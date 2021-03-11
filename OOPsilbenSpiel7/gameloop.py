@@ -17,11 +17,12 @@ class Gameloop():
         self.win_first_click = False
         self.win_second_click = False
         self.resized_copied_surface = self.info.screen_copy.copy()
+        self.lang_choice = None
         self.mainloop() # call last
 
     def mainloop(self):
         while True:
-            self.info.score -= 0.005  # quicker play wins more
+            self.info.score -= 0.005
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
                     self.info.screen_copy.fill(self.info.black)
@@ -54,9 +55,9 @@ class Gameloop():
                     elif e.key == K_v: # open win screen
                         self.win = True
                         self.next_counter = 0
-                    elif e.key == K_UP: # show next code_string explanation installment
+                    elif e.key == K_LEFT: # show next code_string explanation installment
                         self.next_counter -= 1
-                    elif e.key == K_DOWN: # show next code_string explanation installment
+                    elif e.key == K_RIGHT: # show next code_string explanation installment
                         self.next_counter += 1
                     elif e.key == K_s:
                         self.menu = False
@@ -67,6 +68,10 @@ class Gameloop():
                             item.clicked_on = False
                     elif e.key == K_i:
                         self.menu = True
+                    elif e.key == K_d:
+                        self.info.language = 1
+                    elif e.key == K_e:
+                        self.info.language = 2
                 elif e.type == MOUSEBUTTONDOWN:
                     if self.win:
                         if self.win_first_click:
@@ -80,8 +85,11 @@ class Gameloop():
             # AFTER GOING THROUGH THE EVENTS LIST
             else:
                 if self.menu:
-                    next = self.info.menu.tutorial(self.next_counter)
-                    self.next_counter = next
+                    if self.info.language:
+                        next = self.info.menu.tutorial(self.next_counter, self.info.language)
+                        self.next_counter = next
+                    else:
+                        self.info.menu.choose_language()
                 # GUESSED WORDS WINDOW
                 elif self.win and self.info.guessed_code_words:
                     self.info.screen_copy.fill(self.info.black)
