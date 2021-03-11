@@ -22,7 +22,7 @@ class Gameloop():
     def mainloop(self):
         while True:
             self.info.score -= 0.005  # quicker play wins more
-            for e in event.get():  # CAN QUIT ONCE A LOOP
+            for e in event.get():  # how to clear events?
                 if e.type == QUIT:
                     self.info.screen_copy.fill(self.info.black)
                     image_end = self.info.default_font.render("GAME OVER", False, self.info.white)
@@ -35,10 +35,6 @@ class Gameloop():
                 elif e.type == KEYDOWN:
                     if e.key == K_SPACE: # go to the desk
                         self.fall = False
-                    elif e.key == K_a: # return from the desk
-                        for item in self.info.player.my_silben:
-                            item.clicked_on = False
-                        self.fall = True
                     elif e.key == K_c: # see a random definition
                         self.info.screen_copy.fill(self.info.black)
                         if self.info.words:
@@ -57,8 +53,6 @@ class Gameloop():
                         time.delay(5000)
                     elif e.key == K_w: # open win screen
                         self.win = True
-                    elif e.key == K_e: # close win screen
-                        self.win = False
                         self.next_counter = 0
                     elif e.key == K_UP: # show next code_string explanation installment
                         self.next_counter -= 1
@@ -66,8 +60,11 @@ class Gameloop():
                         self.next_counter += 1
                     elif e.key == K_s:
                         self.menu = False
+                        self.win = False
                         self.next_counter = 0
                         self.fall = True
+                        for item in self.info.player.my_silben:
+                            item.clicked_on = False
                     elif e.key == K_i:
                         self.menu = True
                 elif e.type == MOUSEBUTTONDOWN:
@@ -153,9 +150,7 @@ class Gameloop():
                         time.delay(3000)
                         return self.info.score
                     else:
-                        action = self.info.player.act()  # PLAYER MOVES ONCE A LOOP
-                        if action == 1:  # from web result
-                            self.fall = False
+                        self.info.player.act()  # PLAYER MOVES ONCE A LOOP
                         self.info.player.pick(self.info.syls)
                         self.info.blit_loop()
                 # PICKED SYLS WINDOW

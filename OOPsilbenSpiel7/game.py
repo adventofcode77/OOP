@@ -24,7 +24,6 @@ class Game(globale_variablen.Settings):
         self.words = self.woerter.words
         self.score = 0
         syls = self.woerter.silben + self.woerter.code_syls
-        print([syl.bit for syl in self.woerter.code_syls])
         self.syls = random.sample(syls, len(syls))
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
@@ -258,6 +257,5 @@ class Game(globale_variablen.Settings):
         resized_screen_copy = pg.transform.scale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
         pg.display.flip()
-        self.large_surface.fill(self.black)
 
 

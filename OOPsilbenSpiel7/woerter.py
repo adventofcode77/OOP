@@ -31,7 +31,7 @@ class Woerter():
     def get_escape_game_text(self):
         with open('escape_game_text', 'r') as file:
             # "with" takes care of closing the file # replace absolute paths with relative?
-            text = file.read().replace('\n', '')
+            text = file.read().replace('\n', ' ')
         return text
 
     def get_bank(self):
