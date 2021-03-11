@@ -23,7 +23,7 @@ class Settings:
         self.down = self.screenh // 12
         self.black = (0,0,0)
         self.white = (255,255,255)
-        self.zuff = (200,200,200)
+        self.zuff = (200,255,200)
         self.gold = (212,175,55)
         self.lila = (125,33,200)
         self.lime = (0,255,0)
@@ -34,7 +34,7 @@ class Settings:
         self.fps = 30 # keine konstante geschwindigkeit
         self.default_font = font.SysFont("Arial", self.screen_surface // 20) # make one rendering function?
         self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)
-        self.smaller_font = font.SysFont("Arial", self.screen_surface // 20)
+        self.smaller_font = font.SysFont("Arial", self.screen_surface // 30)
         self.tiny_font = font.SysFont("Arial", self.screen_surface // 45)
         self.space = self.font_spacing(self.default_font)
         self.invisible = self.default_font.render("o", False, self.black)
