@@ -51,7 +51,7 @@ class Gameloop():
                                                         self.info.screen_copy.get_rect().midtop)
                         self.info.screen_transfer()
                         time.delay(5000)
-                    elif e.key == K_w: # open win screen
+                    elif e.key == K_v: # open win screen
                         self.win = True
                         self.next_counter = 0
                     elif e.key == K_UP: # show next code_string explanation installment

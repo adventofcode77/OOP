@@ -148,17 +148,21 @@ class Game(globale_variablen.Settings):
         line = ""
         list_lines_img = []
         height,width = 0,0
+        color_copy = color
         if font is None:
             font = self.smaller_font
         if not screen:
             screen = self.screen_copy
         for i in range(len(words)):
             word = words[i]
+            if word.isupper() or word[0].isdigit():
+                color = self.lime
             line += word + " "
             line_img = font.render(line, False, color)
             if line_img.get_rect().w >= 0.5 * self.screen_copy.get_rect().w:
                 list_lines_img.append(line_img)
                 line = ""
+                color = color_copy
             elif i == len(words)-1:
                 list_lines_img.append(line_img) # append the last part
             height,width = line_img.get_rect().h, line_img.get_rect().w
