@@ -1,4 +1,3 @@
-import wiktionary_de_parser
 from wiktionary_de_parser import Parser
 import random
 import globale_variablen
@@ -6,8 +5,10 @@ import re
 
 class Woerterbuch(globale_variablen.Settings):
     # replace with escape game file / rewrite using wiktionary_de_parser's method
-    def __init__(self):
+    def __init__(self, file_path, lang):
         super().__init__()
+        self.file_path = file_path
+        self.lang = lang
         self.listofrecords = []
         self.list_records()
         self.parsed = self.quick_get(10) # why do too few words lead to syls starting to fall from the middle
@@ -44,7 +45,11 @@ class Woerterbuch(globale_variablen.Settings):
     def getaword(self):
         j = random.randrange(0,1000)
         record = self.listofrecords[j]
-        if 'langCode' not in record or record['langCode'] != 'de':
+        if self.lang == 0:
+            lang_var = 'de'
+        else:
+            lang_var = 'en'
+        if 'langCode' not in record or record['langCode'] != lang_var:
             return self.getaword()
         result = self.iterate(record)
         if result:

@@ -7,19 +7,19 @@ import random
 
 class Woerter():
     all_syls = []
-    def __init__(self,game_instance, input_code):
+    def __init__(self, game_instance):
         self.info = game_instance
         self.dictwithkeyname = self.get_bank()
         self.totalsyls = 0
         self.worder = 0
         self.words = self.get_words(self.dictwithkeyname)
         self.silben = self.get_silben()
-        self.num_syls = self.get_num_code_syls(input_code)
+        self.num_syls = self.get_num_code_syls(self.info.input_code)
         self.placeholder_code_text = self.get_escape_game_text()
-        self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(input_code.split()))
+        self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(self.info.input_code.split()))
         self.code_words = []
         self.code_syls = []
-        self.get_code_words_and_syls(input_code)
+        self.get_code_words_and_syls(self.info.input_code)
 
     def get_num_code_syls(self, input_code):
         num_syls = 0
@@ -35,7 +35,7 @@ class Woerter():
         return text
 
     def get_bank(self):
-        parser = woerterbuch.Woerterbuch()
+        parser = woerterbuch.Woerterbuch(self.info.file_path, self.info.language)
         return parser.parsed
 
     def get_words(self,source):

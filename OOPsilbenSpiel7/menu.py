@@ -1,7 +1,4 @@
 import pygame as pg
-from pygame import *
-from pygame.locals import *
-import math
 
 class Menu():
     def __init__(self, game_instance):
@@ -48,7 +45,9 @@ class Menu():
 
     def list_lists_instructions(self):
         dict = {}
-        start = f"Deutsch to the Game Tutorial! Press {self.next} to Continue or {self.back} to go Back. To SKIP the tutorial, press {self.main_loop}."
+        start = f"Willkommen zum Spielanleitung! Drücke {self.next} um fortzufahren oder {self.back} um zurückzugehen. Um die Anleitung zu SKIPPEN, drücke {self.main_loop}."
+        prerequisites = f"Wenn du das Spiel in einem Editor geöffnet hast, installiere Python v.3+, Pygame und wiktionary_de_parser. " \
+                        f"Probiere die Verzeichnissnamen anzupassen, wenn sie als nicht gefundene bezeichnet werden. Drücke run in file main."
         goal = f"The goal of this game is to find a secret code. The code is in the form of a sentence. " \
                    "To assemble the code, first collect objects. The objects that make up a word all have the same color." \
                "You need to collect them them in the right order to form a word. After you have all the code words, " \
@@ -75,9 +74,11 @@ class Menu():
                       f"To see the instructions during the game, press {self.instructions}. Press {self.main_loop} to go back to the main game window at any point. " \
                       f"To start playing, press {self.main_loop} now."
 
-        list_de = [start, goal, move,pick,word_composing,code_word_composing,word_guessing,verify_code,cheating, game_window]
+        list_de = [start, prerequisites, goal, move,pick,word_composing,code_word_composing,word_guessing,verify_code,cheating, game_window]
 
         start = f"Welcome to the Game Tutorial! Press {self.next} to Continue or {self.back} to go Back. To skip the tutorial, press {self.main_loop}."
+        prerequisites = f"If you have the game open in an editor, install Python v.3+, Pygame and the module wiktextract." \
+                        f"Try to adjust the names of the directories if they are shown as not found. Run the program from file main."
         goal = f"The goal of this game is to assemble a secret code. The code is in the form of a sentence. " \
                    "To find the code, first collect objects. The objects that make up a word all have the same color." \
                "You need to collect them them in the right order to form a word. After you have all the code words, " \
@@ -103,7 +104,7 @@ class Menu():
         game_window = f"To exit the game, close the window using the X button. To resize the window, click on the edges and drag. " \
                       f"To see the instructions during the game, press {self.instructions}. Press {self.main_loop} to go back to the main game window at any point. " \
                       f"To start playing, press {self.main_loop} now."
-        list_en = [start, goal, move,pick,word_composing,code_word_composing,word_guessing,verify_code,cheating, game_window]
+        list_en = [start, prerequisites, goal, move,pick,word_composing,code_word_composing,word_guessing,verify_code,cheating, game_window]
 
 
         list_lists = [list_de,list_en]

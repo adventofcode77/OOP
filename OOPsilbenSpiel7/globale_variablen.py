@@ -7,7 +7,6 @@ import main
 
 class Settings:
     def __init__(self): #
-        self.file_path = main.Main.file_path # filter unsuitable words
         #self.gameloop_instance = gameloop.Gameloop()
         self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
