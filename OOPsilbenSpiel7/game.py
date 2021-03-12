@@ -11,15 +11,19 @@ from OOPsilbenSpiel7 import menu
 
 
 class Game(globale_variablen.Settings):
-    def __init__(self, input_code):
+    def __init__(self, input_codes, file_paths):
         super().__init__()
-        self.input_code = input_code
+        self.input_codes = input_codes
         self.output_code = ""
+        self.language = None # make language freely choosable?
+        self.menu = menu.Menu(self)
+        self.input_code = input_codes[self.language] if self.language else input_codes[1]
+        self.file_path = file_paths[self.language] if self.language else file_paths[0]
         self.syl_speed_change = 10
         self.initial_syl_speed_change = self.syl_speed_change
         # variables above are needed to initialise other classes' instances
         self.player = spieler.Spieler(self) # takes the game object as parameter
-        self.woerter = woerter.Woerter(self, input_code)
+        self.woerter = woerter.Woerter(self)
 
         self.words = self.woerter.words
         self.score = 0
@@ -38,8 +42,6 @@ class Game(globale_variablen.Settings):
         self.guessed_code_words = []
         self.corrected_subsurface = self.screen_copy.copy()
         self.padding = 0
-        self.language = None
-        self.menu = menu.Menu(self)
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 

@@ -8,8 +8,8 @@ class Gameloop():
     def __init__(self, game_instance):
         self.info = game_instance
         self.clock = pg.time.Clock()  # speed depends on cpu
-        self.fall = False
-        self.win = False
+        self.main_loop = False
+        self.verify_code = False
         self.menu = True
         self.next_counter = 0
         print([each.name for each in self.info.words])
@@ -35,7 +35,7 @@ class Gameloop():
                     return self.info.score
                 elif e.type == KEYDOWN:
                     if e.key == K_SPACE: # go to the desk
-                        self.fall = False
+                        self.main_loop = False
                     elif e.key == K_c: # see a random definition
                         self.info.screen_copy.fill(self.info.black)
                         if self.info.words:
@@ -53,7 +53,7 @@ class Gameloop():
                         self.info.screen_transfer()
                         time.delay(5000)
                     elif e.key == K_v: # open win screen
-                        self.win = True
+                        self.verify_code = True
                         self.next_counter = 0
                     elif e.key == K_LEFT: # show next code_string explanation installment
                         self.next_counter -= 1
@@ -61,9 +61,9 @@ class Gameloop():
                         self.next_counter += 1
                     elif e.key == K_s:
                         self.menu = False
-                        self.win = False
+                        self.verify_code = False
                         self.next_counter = 0
-                        self.fall = True
+                        self.main_loop = True
                         for item in self.info.player.my_silben:
                             item.clicked_on = False
                     elif e.key == K_i:
@@ -73,7 +73,7 @@ class Gameloop():
                     elif e.key == K_e:
                         self.info.language = 2
                 elif e.type == MOUSEBUTTONDOWN:
-                    if self.win:
+                    if self.verify_code:
                         if self.win_first_click:
                             self.win_second_click = mouse.get_pos()
                         else:
@@ -91,7 +91,7 @@ class Gameloop():
                     else:
                         self.info.menu.choose_language()
                 # GUESSED WORDS WINDOW
-                elif self.win and self.info.guessed_code_words:
+                elif self.verify_code and self.info.guessed_code_words:
                     self.info.screen_copy.fill(self.info.black)
                     self.info.large_surface.fill(self.info.black)
                     surface_cut = pg.Surface.subsurface(self.info.large_surface,pg.Rect(2000,0,3000,3000))
@@ -141,8 +141,8 @@ class Gameloop():
                     self.info.screen_transfer()
 
                 # MAIN LOOP
-                elif self.fall == True:
-                    if " ".join([word.name for word in self.info.guessed_code_words]) == main.Main.code:
+                elif self.main_loop == True:
+                    if " ".join([word.name for word in self.info.guessed_code_words]) == main.Main.codes[self.info.language-1]:
                         self.info.screen_copy.fill(self.info.black)
                         image_win = self.info.bigger_font.render(f'YOU WON!', False, self.info.white)
                         image_score = self.info.bigger_font.render(f'YOUR SCORE IS {round(self.info.score, 2)}', False,
