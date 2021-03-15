@@ -19,11 +19,10 @@ class Game(globale_variablen.Settings):
         self.test_next_counter = 0
         self.menu = menu.Menu(self)
         self.language = self.choose_language()
-        print("here...")
         self.file_path = file_paths[self.language-1]
         self.syl_speed_change = 10
         self.initial_syl_speed_change = self.syl_speed_change
-        # variables above are needed to initialise other classes' instances
+        # variables above may be needed to initialise other classes' instances
         self.player = spieler.Spieler(self) # takes the game object as parameter
         self.woerter = woerter.Woerter(self)
         self.words = self.woerter.words
@@ -41,7 +40,7 @@ class Game(globale_variablen.Settings):
         self.pos_list = self.get_pos_list()
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
-        self.corrected_subsurface = self.screen_copy.copy()
+        #self.corrected_subsurface = self.screen_copy.copy()
         self.padding = 0
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
@@ -61,7 +60,7 @@ class Game(globale_variablen.Settings):
         self.screen_copy.fill(self.black)
         syls = self.draw_desk() # copies; copy of the desk surface so far (syls are hardcoded on surface cut)
         if click:
-            click = self.scale_click(click,self.corrected_subsurface,self.screen_copy)
+            click = self.scale_click(click,self.screen_copy,self.screen_copy)
             x,y = click
             x -= self.padding # change padding back to 0 when the text no longer goes over the original screen size
             for syl in syls:
