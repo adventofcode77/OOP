@@ -14,12 +14,15 @@ class Woerter():
         self.worder = 0
         self.words = self.get_words(self.dictwithkeyname)
         self.silben = self.get_silben()
-        self.num_syls = self.get_num_code_syls(self.info.input_code)
+        self.input_code = self.info.input_codes[self.info.language-1]
+        print("input code",self.input_code)
+        print("self info language",self.info.language)
+        self.num_syls = self.get_num_code_syls(self.input_code)
         self.placeholder_code_text = self.get_escape_game_text()
-        self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(self.info.input_code.split()))
+        self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(self.input_code.split()))
         self.code_words = []
         self.code_syls = []
-        self.get_code_words_and_syls(self.info.input_code)
+        self.get_code_words_and_syls(self.input_code)
 
     def get_num_code_syls(self, input_code):
         num_syls = 0
@@ -35,7 +38,9 @@ class Woerter():
         return text
 
     def get_bank(self):
+        print("in get bank",self.info.file_path)
         parser = woerterbuch.Woerterbuch(self.info.file_path, self.info.language)
+        print("get bank works?")
         return parser.parsed
 
     def get_words(self,source):
@@ -105,6 +110,7 @@ class Woerter():
             if char in vowels: #u
                 if encountered_vowel:
                     encountered_vowel = False
+                    next_part = None
                     if index_last_vowel+1 == i:
                         ks = word[index_last_vowel:i+1]
                         split = split_ks(ks)
