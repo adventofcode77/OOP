@@ -11,13 +11,13 @@ class Gameloop():
         self.main_loop = False
         self.verify_code = False
         self.menu = True
-        self.next_counter = 0
-        print([each.name for each in self.info.words])
+        #self.next_counter = 0
         self.click = False
         self.win_first_click = False
         self.win_second_click = False
         self.resized_copied_surface = self.info.screen_copy.copy()
         self.lang_choice = None
+        self.no_language_chosen = True
         self.mainloop() # call last
 
     def mainloop(self):
@@ -54,24 +54,25 @@ class Gameloop():
                         time.delay(5000)
                     elif e.key == K_v: # open win screen
                         self.verify_code = True
-                        self.next_counter = 0
                     elif e.key == K_LEFT: # show next code_string explanation installment
-                        self.next_counter -= 1
+                        print("info next counter before",self.info.test_next_counter)
+                        self.info.next_counter -= 1
+                        self.info.test_next_counter -= 1
+                        print("info next counter after",self.info.test_next_counter)
                     elif e.key == K_RIGHT: # show next code_string explanation installment
-                        self.next_counter += 1
+                        print("info next counter before",self.info.test_next_counter)
+                        self.info.next_counter += 1
+                        self.info.test_next_counter += 1
+                        print("info next counter after ",self.info.test_next_counter)
                     elif e.key == K_s:
                         self.menu = False
                         self.verify_code = False
-                        self.next_counter = 0
+                        self.info.next_counter = 0
                         self.main_loop = True
                         for item in self.info.player.my_silben:
                             item.clicked_on = False
                     elif e.key == K_i:
                         self.menu = True
-                    elif e.key == K_d:
-                        self.info.language = 1
-                    elif e.key == K_e:
-                        self.info.language = 2
                 elif e.type == MOUSEBUTTONDOWN:
                     if self.verify_code:
                         if self.win_first_click:
@@ -86,15 +87,14 @@ class Gameloop():
             else:
                 if self.menu:
                     if self.info.language:
-                        next = self.info.menu.tutorial(self.next_counter, self.info.language)
-                        self.next_counter = next
+                        self.no_language_chosen = False
+                        next = self.info.menu.tutorial(self.info.next_counter, self.info.language)
+                        self.info.next_counter = next
                     else:
                         self.info.menu.choose_language()
                 # GUESSED WORDS WINDOW
                 elif self.verify_code and self.info.guessed_code_words:
                     self.info.screen_copy.fill(self.info.black)
-                    self.info.large_surface.fill(self.info.black)
-                    surface_cut = pg.Surface.subsurface(self.info.large_surface,pg.Rect(2000,0,3000,3000))
                     height_of_all = 0
                     len_code_words = len(self.info.guessed_code_words)
                     rects_code_words = []
@@ -105,12 +105,12 @@ class Gameloop():
                         num_rect = num_image.get_rect()
                         num_rect.x, num_rect.y = self.info.right + i*int_rect.w, self.info.down
                         rects_code_words.append(num_rect)
-                        surface_cut.blit(num_image,num_rect) # on large_surface it's at 2000+...
+                        self.info.screen_copy.blit(num_image,num_rect) # on large_surface it's at 2000+...
                     height_of_all += self.info.down + int_rect.h + spacing
                     # PROMPT USER TO CHANGE THEIR ORDER
-                    blit_h = self.info.blit_string_words(f'To change the order of the code_string words, click on the position'
+                    blit_h = self.info.blit_string_words(f'To change the order of the code words, click on the position'
                                                        f'of a word, then click on its new position. Use the key v to verify your choice.'.split()
-                                                         , self.info.white, (self.info.midtop[0],height_of_all), screen=surface_cut)
+                                                         , self.info.white, (self.info.midtop[0],height_of_all))
                     height_of_all = blit_h + spacing
                     if self.win_first_click and self.win_second_click: # need to scale them to surface_cut
                         self.win_first_click = self.scale_click(self.win_first_click,self.info.corrected_subsurface,self.info.screen_via_display_set_mode)
@@ -127,17 +127,12 @@ class Gameloop():
                             taken = self.info.guessed_code_words.pop(first_num)
                             self.info.guessed_code_words.insert(second_num,taken)
                     code_string = " ".join([word.name for word in self.info.guessed_code_words])
-                    blit_h = self.info.blit_string_words(code_string.split(), self.info.yellow, (self.info.midtop[0], height_of_all), screen=surface_cut) # replace distance with a font sample height unit
+                    blit_h = self.info.blit_string_words(code_string.split(), self.info.yellow, (self.info.midtop[0], height_of_all)) # replace distance with a font sample height unit
                     height_of_all = blit_h + spacing
-                    list_code_meanings = [word.meaning for word in self.info.guessed_code_words]
-                    if self.next_counter > len(list_code_meanings)-1:
-                        self.next_counter = 0
-                    elif self.next_counter < 0:
-                        self.next_counter = len(list_code_meanings)-1
-                    explanation = " ".join(list_code_meanings[self.next_counter])
-                    blit_h = self.info.blit_string_words(explanation.split(), self.info.yellow, (self.info.midtop[0], height_of_all), screen=surface_cut)
-                    height_of_all = blit_h + spacing
-                    self.info.text_wrap(self.info.screen_copy,self.info.large_surface,self.info.identation_surface_cut,height_of_all)
+                    list_code_meanings = [" ".join(word.meaning) for word in self.info.guessed_code_words]
+                    explanation = " ".join(list_code_meanings)
+                    print("explanation",explanation)
+                    blit_h = self.info.blit_string_words(explanation.split(), self.info.yellow, (self.info.midtop[0], height_of_all))
                     self.info.screen_transfer()
 
                 # MAIN LOOP

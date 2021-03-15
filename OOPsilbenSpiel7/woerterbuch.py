@@ -8,9 +8,13 @@ class Woerterbuch(globale_variablen.Settings):
     def __init__(self, file_path, lang):
         super().__init__()
         self.file_path = file_path
+        print("w afte file path?")
         self.lang = lang
+        print("w after lang?")
         self.listofrecords = []
+        print("w after empty list?")
         self.list_records()
+        print("woerterbuch here?")
         self.parsed = self.quick_get(10) # why do too few words lead to syls starting to fall from the middle
             # save a sample in case the imported parser stops working
     def iterate(self,record):
@@ -45,11 +49,11 @@ class Woerterbuch(globale_variablen.Settings):
     def getaword(self):
         j = random.randrange(0,1000)
         record = self.listofrecords[j]
-        if self.lang == 0:
-            lang_var = 'de'
-        else:
-            lang_var = 'en'
-        if 'langCode' not in record or record['langCode'] != lang_var:
+        # if self.lang == 0:
+        #     lang_var = 'de'
+        # else:
+        #     lang_var = 'en'
+        if 'langCode' not in record or record['langCode'] != 'de':
             return self.getaword()
         result = self.iterate(record)
         if result:
