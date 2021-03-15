@@ -17,7 +17,7 @@ class Main:
         game1 = game.Game(input_codes, file_paths)
         score += round(game1.score, 2)
         code = game1.output_code
-        print(f'score: {score},code: {code}')
+        print(f'score: {score},code: {code}') # dgjsoidfhd
 
 if __name__ == '__main__':
      Main()
