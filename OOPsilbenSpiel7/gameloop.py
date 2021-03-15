@@ -18,6 +18,7 @@ class Gameloop():
         self.resized_copied_surface = self.info.screen_copy.copy()
         self.lang_choice = None
         self.no_language_chosen = True
+        self.verified_choice = False
         self.mainloop() # call last
 
     def mainloop(self):
@@ -55,15 +56,11 @@ class Gameloop():
                     elif e.key == K_v: # open win screen
                         self.verify_code = True
                     elif e.key == K_LEFT: # show next code_string explanation installment
-                        print("info next counter before",self.info.test_next_counter)
                         self.info.next_counter -= 1
                         self.info.test_next_counter -= 1
-                        print("info next counter after",self.info.test_next_counter)
                     elif e.key == K_RIGHT: # show next code_string explanation installment
-                        print("info next counter before",self.info.test_next_counter)
                         self.info.next_counter += 1
                         self.info.test_next_counter += 1
-                        print("info next counter after ",self.info.test_next_counter)
                     elif e.key == K_s:
                         self.menu = False
                         self.verify_code = False
@@ -73,6 +70,8 @@ class Gameloop():
                             item.clicked_on = False
                     elif e.key == K_i:
                         self.menu = True
+                    elif e.key == K_v:
+                        self.verified_choice = True
                 elif e.type == MOUSEBUTTONDOWN:
                     if self.verify_code:
                         if self.win_first_click:
@@ -112,9 +111,10 @@ class Gameloop():
                                                        f'of a word, then click on its new position. Use the key v to verify your choice.'.split()
                                                          , self.info.white, (self.info.midtop[0],height_of_all))
                     height_of_all = blit_h + spacing
-                    if self.win_first_click and self.win_second_click: # need to scale them to surface_cut
-                        self.win_first_click = self.scale_click(self.win_first_click,self.info.corrected_subsurface,self.info.screen_via_display_set_mode)
-                        self.win_second_click = self.scale_click(self.win_second_click,self.info.corrected_subsurface,self.info.screen_via_display_set_mode)
+                    if self.win_first_click and self.win_second_click and self.verified_choice: # need to scale them to surface_cut
+                        self.verified_choice = False
+                        self.win_first_click = self.scale_click(self.win_first_click,self.info.screen_copy,self.info.screen_via_display_set_mode)
+                        self.win_second_click = self.scale_click(self.win_second_click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                         first_click_rect = Rect(self.win_first_click[0]-self.info.padding,self.win_first_click[1],1,1) # the padding is taken out so it doens't need to be added to the rects
                         second_click_rect = Rect(self.win_second_click[0]-self.info.padding,self.win_second_click[1],1,1)
                         self.win_first_click = False
