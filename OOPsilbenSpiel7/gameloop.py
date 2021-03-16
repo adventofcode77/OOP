@@ -95,12 +95,13 @@ class Gameloop():
                 elif self.verify_code and self.info.guessed_code_words:
                     self.info.screen_copy.fill(self.info.black)
                     height_of_all = 0
-                    len_code_words = len(self.info.guessed_code_words)
                     rects_code_words = []
                     int_rect = self.info.default_font.render('99 ', False, self.info.white).get_rect()
                     spacing = int_rect.h
-                    for i in range(len_code_words): # make a visual list of rects for the positions
-                        num_image = self.info.default_font.render(f'{i}', False, self.info.white)
+                    for i in range(len(self.info.guessed_code_words)): # the code?
+                        code_number_at_this_index =
+                        if self.info.guessed_code_words[i] == self.info.woerter.input_code.split()[i]:
+                            num_image = self.info.default_font.render(f'{code_number_at_this_index}', False, self.info.white)
                         num_rect = num_image.get_rect()
                         num_rect.x, num_rect.y = self.info.right + i*int_rect.w, self.info.down
                         rects_code_words.append(num_rect)
@@ -143,8 +144,8 @@ class Gameloop():
                     font = self.info.default_font
                     copy_screen = self.info.screen_copy.copy()
                     list_snapshots_to_blit = {}
-                    for i in range(len(self.info.guessed_code_words)):
-                        color = self.info.cyan if self.verified_choice else self.info.lime if i == clicked1 or i == clicked2 else self.info.gold
+                    for i in range(len(self.info.guessed_code_words)): # combine w blit string?
+                        color = self.info.cyan if self.verified_choice else self.info.lime if i == clicked1 or i == clicked2 else self.info.cyan
                         word = self.info.guessed_code_words[i]
                         word_img = font.render(word.name + " ", False, color)
                         word_rect = word_img.get_rect()
@@ -153,7 +154,7 @@ class Gameloop():
                                 last_word_right = 0.25 * screen_rect.w
                                 last_line_down += spacing
                                 word_rect.x, word_rect.y = last_word_right, last_line_down
-                                copy_screen.blit(word_img, (last_word_right, last_line_down))
+                                copy_screen.blit(word_img, word_rect)
                                 last_word_right += word_rect.w
                             else:
                                 copy_screen = self.info.screen_copy.copy()
@@ -161,30 +162,27 @@ class Gameloop():
                                 last_word_right = 0.25 * copy_screen.get_rect().w
                                 window_counter += 1
                                 word_rect.x, word_rect.y = last_word_right, last_line_down
-                                copy_screen.blit(word_img, (last_word_right, last_line_down))
+                                copy_screen.blit(word_img, word_rect)
                                 last_word_right += word_rect.w
                         else:
                             word_rect.x, word_rect.y = last_word_right, last_line_down
-                            copy_screen.blit(word_img, (last_word_right, last_line_down))
+                            copy_screen.blit(word_img, word_rect)
                             last_word_right += word_rect.w
                         list_snapshots_to_blit[window_counter] = copy_screen.copy()
                         word.image = word_img
                         word.rect = word_rect
                     if len(list_snapshots_to_blit) == 0:
                         list_snapshots_to_blit[window_counter] = self.info.screen_copy.copy()
-                    if self.info.test_next_counter < 0:  # temp? counter adjusts the text window counter without changing it, so that it doesnt keep resetting to the first or last window when it's outside the bounds
+                    if self.info.test_next_counter < 0:
                         temp_counter = len(list_snapshots_to_blit) - 1 - (
                                     self.info.test_next_counter % len(list_snapshots_to_blit))
                     else:
                         temp_counter = self.info.test_next_counter % len(list_snapshots_to_blit)
                     self.info.screen_copy.blit(list_snapshots_to_blit[temp_counter], (0, 0))
 
-
-
                     height_of_all = last_line_down + spacing
                     list_code_meanings = [" ".join(word.meaning) for word in self.info.guessed_code_words]
                     explanation = " ".join(list_code_meanings)
-                    print("explanation",explanation)
                     blit_h = self.info.blit_string_words(explanation.split(), self.info.yellow, (self.info.midtop[0], height_of_all))
                     self.info.screen_transfer()
 
