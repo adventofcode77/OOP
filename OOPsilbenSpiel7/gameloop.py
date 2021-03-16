@@ -19,6 +19,9 @@ class Gameloop():
         self.lang_choice = None
         self.no_language_chosen = True
         self.verified_choice = False
+        self.gewonnen = False
+        self.binary_click = False
+        self.list_index_binary_click_words = []
         self.mainloop() # call last
 
     def mainloop(self):
@@ -74,6 +77,8 @@ class Gameloop():
                         self.verified_choice = True
                 elif e.type == MOUSEBUTTONDOWN:
                     if self.verify_code:
+                        if self.gewonnen == True:
+                            self.binary_click = mouse.get_pos()
                         if self.win_first_click:
                             self.win_second_click = mouse.get_pos()
                         else:
@@ -101,17 +106,12 @@ class Gameloop():
                     for i in range(len(self.info.woerter.input_code.split())): # the code?
                         if i < len(self.info.guessed_code_words):
                             code_number_at_this_index = list(self.info.binary_code)[i]
-                            print("code number at this index", code_number_at_this_index)
                             opposite = 0 if code_number_at_this_index == '1' else 1
-                            print("opposite", opposite)
                             if self.info.guessed_code_words[i].name == self.info.woerter.input_code.split()[i]:
-                                print("same:", self.info.guessed_code_words[i].name, self.info.woerter.input_code.split()[i])
                                 num_image = self.info.default_font.render(f'{code_number_at_this_index}', False, self.info.white)
                             else:
                                 num_image = self.info.default_font.render(f'{opposite}', False,
                                                                           self.info.white)
-                                print("different:", self.info.guessed_code_words[i].name,
-                                      self.info.woerter.input_code.split()[i])
                         else:
                             num_image = self.info.default_font.render(f'{random.randrange(2)}', False,self.info.white)
                         num_rect = num_image.get_rect()
@@ -120,8 +120,8 @@ class Gameloop():
                         self.info.screen_copy.blit(num_image,num_rect) # on large_surface it's at 2000+...
                     height_of_all += self.info.down + int_rect.h + spacing
                     # PROMPT USER TO CHANGE THEIR ORDER
-                    blit_h = self.info.blit_string_words(f'To change the order of the code words, click on the position'
-                                                       f'of a word, then click on its new position. Use the key Y to verify your choice.'.split()
+                    blit_h = self.info.blit_string_words(f'Druecke auf ein Wort und danach auf dem Platz, wo du es umstellen willst. '
+                                                         f'Zum Bestätigen der Auswahl, druecke auf Y'.split()
                                                          , self.info.white, (self.info.midtop[0],height_of_all))
                     height_of_all = blit_h + spacing
 
@@ -134,7 +134,6 @@ class Gameloop():
                         first_index = first_click_rect.collidelist([word.rect for word in self.info.guessed_code_words])
                         if first_index != -1:
                             clicked1 = first_index
-                            print("first click on",self.info.guessed_code_words[clicked1])
                     if self.win_second_click:
                         self.win_second_click = self.scale_click(self.win_second_click, self.info.screen_copy,
                                                                  self.info.screen_via_display_set_mode)
@@ -143,16 +142,12 @@ class Gameloop():
                             [word.rect for word in self.info.guessed_code_words])
                         if second_index != -1:
                             clicked2 = second_index
-                            print("second click on", self.info.guessed_code_words[clicked2])
                         if self.verified_choice:
                             self.verified_choice = False
                             self.win_first_click = False
                             self.win_second_click = False
-                            print("orig string:",[word.name for word in self.info.guessed_code_words])
                             to_move = self.info.guessed_code_words.pop(first_index)
-                            print("to move",to_move)
                             self.info.guessed_code_words.insert(second_index, to_move)
-                            print("changed string:", [word.name for word in self.info.guessed_code_words])
 
 
                     last_line_down = height_of_all
@@ -163,7 +158,7 @@ class Gameloop():
                     copy_screen = self.info.screen_copy.copy()
                     list_snapshots_to_blit = {}
                     for i in range(len(self.info.guessed_code_words)): # combine w blit string?
-                        color = self.info.cyan if self.verified_choice else self.info.lime if i == clicked1 else self.info.zuff if  i == clicked2 else self.info.cyan
+                        color = self.info.green if i == clicked1 else self.info.red if  i == clicked2 else self.info.gold if i in self.list_index_binary_click_words else self.info.cyan
                         word = self.info.guessed_code_words[i]
                         word_img = font.render(word.name + " ", False, color)
                         word_rect = word_img.get_rect()
@@ -199,32 +194,44 @@ class Gameloop():
                     self.info.screen_copy.blit(list_snapshots_to_blit[temp_counter], (0, 0))
 
                     height_of_all = last_line_down + spacing
-                    list_code_meanings = [" ".join(word.meaning) for word in self.info.guessed_code_words]
-                    explanation = " ".join(list_code_meanings)
-                    blit_h = self.info.blit_string_words(explanation.split(), self.info.yellow, (self.info.midtop[0], height_of_all))
+                    if not self.gewonnen:
+                        list_code_meanings = [" ".join(word.meaning) for word in self.info.guessed_code_words]
+                        explanation = " ".join(list_code_meanings)
+                        blit_h = self.info.blit_string_words(explanation.split(), self.info.yellow, (self.info.midtop[0], height_of_all))
                     self.info.screen_transfer()
+
+                    if " ".join([word.name for word in self.info.guessed_code_words]) == main.Main.codes[self.info.language-1]:
+                        self.gewonnen = True
+                        indices_ones = []
+                        for i in range(len(self.info.binary_code)):
+                            num = self.info.binary_code[i]
+                            if num == "1":
+                                indices_ones.append(i)
+                        self.info.screen_copy.fill(self.info.black,Rect(0,height_of_all,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
+                        self.info.blit_string_words(f'Du hast den Code-Satz fast erhalten! Die binärische Representation'
+                                                    f'zeigt die {len(indices_ones)} Schluessel-Woerter. Wähle sie aus.', self.info.gold,(self.info.midtop[0],height_of_all))
+                        if self.binary_click:
+                            binary_click_rect = Rect(self.binary_click[0],self.binary_click[1],1,1)
+                            self.binary_click = False
+                            index = binary_click_rect.collidelist(self.info.guessed_code_words)
+                            if index != -1:
+                                self.list_index_binary_click_words.append(index)
+                        if self.list_index_binary_click_words == indices_ones:
+                            self.info.screen_copy.fill(self.info.black,Rect(0,height_of_all,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
+                            self.info.blit_string_words(f'RICHTIG',self.info.gold,self.info.midtop)
+                            self.info.screen_transfer()
+                            time.delay(10000)
+                            return self.info.score
+                        self.info.screen_transfer()
+
+
+
 
                 # MAIN LOOP
                 elif self.main_loop == True:
-                    if " ".join([word.name for word in self.info.guessed_code_words]) == main.Main.codes[self.info.language-1]:
-                        self.info.screen_copy.fill(self.info.black)
-                        image_win = self.info.bigger_font.render(f'YOU WON!', False, self.info.white)
-                        image_score = self.info.bigger_font.render(f'YOUR SCORE IS {round(self.info.score, 2)}', False,
-                                                              self.info.white)
-                        image_win_rect = image_win.get_rect()
-                        image_score_rect = image_score.get_rect()
-                        image_win_rect.center = self.info.screen_copy.get_rect().center
-                        image_score_rect.center = self.info.screen_copy.get_rect().center
-                        image_score_rect.y += image_win_rect.h * 1.5
-                        self.info.screen_copy.blit(image_win, image_win_rect)
-                        self.info.screen_copy.blit(image_score, image_score_rect)
-                        self.info.screen_transfer()
-                        time.delay(3000)
-                        return self.info.score
-                    else:
-                        self.info.player.act()  # PLAYER MOVES ONCE A LOOP
-                        self.info.player.pick(self.info.syls)
-                        self.info.blit_loop()
+                    self.info.player.act()  # PLAYER MOVES ONCE A LOOP
+                    self.info.player.pick(self.info.syls)
+                    self.info.blit_loop()
                 # PICKED SYLS WINDOW
                 else: #this broke after the subscreen changes
                     if self.click:  # scale the mouseclick coordinates back to the original screen size
