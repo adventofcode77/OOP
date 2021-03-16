@@ -187,7 +187,6 @@ class Game(globale_variablen.Settings):
         else:
             temp_counter = self.test_next_counter % len(list_snapshots_to_blit)
         screen.blit(list_snapshots_to_blit[temp_counter],(0,0))
-        print("num snapshots",len(list_snapshots_to_blit),"next",self.test_next_counter)
         return last_line_down + self.font_spacing(font) # how far down the screen there is curently text
 
     def check_word(self):
