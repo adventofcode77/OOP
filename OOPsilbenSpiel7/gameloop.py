@@ -70,7 +70,7 @@ class Gameloop():
                             item.clicked_on = False
                     elif e.key == K_i:
                         self.menu = True
-                    elif e.key == K_v:
+                    elif e.key == K_y:
                         self.verified_choice = True
                 elif e.type == MOUSEBUTTONDOWN:
                     if self.verify_code:
@@ -115,8 +115,8 @@ class Gameloop():
                         self.verified_choice = False
                         self.win_first_click = self.scale_click(self.win_first_click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                         self.win_second_click = self.scale_click(self.win_second_click,self.info.screen_copy,self.info.screen_via_display_set_mode)
-                        first_click_rect = Rect(self.win_first_click[0]-self.info.padding,self.win_first_click[1],1,1) # the padding is taken out so it doens't need to be added to the rects
-                        second_click_rect = Rect(self.win_second_click[0]-self.info.padding,self.win_second_click[1],1,1)
+                        first_click_rect = Rect(self.win_first_click[0],self.win_first_click[1],1,1) # the padding is taken out so it doens't need to be added to the rects
+                        second_click_rect = Rect(self.win_second_click[0],self.win_second_click[1],1,1)
                         self.win_first_click = False
                         self.win_second_click = False
                         first_index = first_click_rect.collidelist(rects_code_words) #the actual rect positions have been shifted by padding, but to compensate this padding is taken out from the click x coordinate
@@ -126,9 +126,45 @@ class Gameloop():
                             second_num = second_index
                             taken = self.info.guessed_code_words.pop(first_num)
                             self.info.guessed_code_words.insert(second_num,taken)
-                    code_string = " ".join([word.name for word in self.info.guessed_code_words])
-                    blit_h = self.info.blit_string_words(code_string.split(), self.info.yellow, (self.info.midtop[0], height_of_all)) # replace distance with a font sample height unit
-                    height_of_all = blit_h + spacing
+
+                    last_line_down = height_of_all
+                    screen_rect = self.info.screen_copy.get_rect()
+                    last_word_right = 0.25 * screen_rect.w
+                    window_counter = 0
+                    font = self.info.default_font
+                    copy_screen = self.info.screen_copy.copy()
+                    list_snapshots_to_blit = {}
+                    for i in range(len(self.info.guessed_code_words)):
+                        word = self.info.guessed_code_words[i]
+                        word_img = font.render(word.name + " ", False, self.info.gold)
+                        word_rect = word_img.get_rect()
+                        if last_word_right >= 0.75 * screen_rect.w:
+                            if last_line_down < screen_rect.h - spacing * 3:  # twice the highest spacing?
+                                last_word_right = 0.25 * screen_rect.w
+                                last_line_down += spacing
+                                word_rect.x, word_rect.y = last_word_right, last_line_down
+                                copy_screen.blit(word_img, (last_word_right, last_line_down))
+                                last_word_right += word_rect.w
+                            else:
+                                copy_screen = self.info.screen_copy.copy()
+                                last_line_down = height_of_all
+                                last_word_right = 0.25 * copy_screen.get_rect().w
+                                window_counter += 1
+                                word_rect.x, word_rect.y = last_word_right, last_line_down
+                                copy_screen.blit(word_img, (last_word_right, last_line_down))
+                                last_word_right += word_rect.w
+                        else:
+                            word_rect.x, word_rect.y = last_word_right, last_line_down
+                            copy_screen.blit(word_img, (last_word_right, last_line_down))
+                            last_word_right += word_rect.w
+                        if word[-1] in ".!?":
+                            last_word_right = 0.25 * copy_screen.get_rect().w
+                            last_line_down += spacing * 1.5
+                        list_snapshots_to_blit[window_counter] = copy_screen.copy()
+                        word.image = word_img
+                        word.rect = word_rect
+
+                    height_of_all = last_line_down + spacing
                     list_code_meanings = [" ".join(word.meaning) for word in self.info.guessed_code_words]
                     explanation = " ".join(list_code_meanings)
                     print("explanation",explanation)

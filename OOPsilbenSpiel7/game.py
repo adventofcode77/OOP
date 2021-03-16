@@ -18,7 +18,7 @@ class Game(globale_variablen.Settings):
         self.next_counter = 0
         self.test_next_counter = 0
         self.menu = menu.Menu(self)
-        self.language = self.choose_language()
+        self.language = 1 # self.choose_language()
         self.file_path = file_paths[self.language-1]
         self.syl_speed_change = 10
         self.initial_syl_speed_change = self.syl_speed_change
@@ -40,8 +40,6 @@ class Game(globale_variablen.Settings):
         self.pos_list = self.get_pos_list()
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
-        #self.corrected_subsurface = self.screen_copy.copy()
-        self.padding = 0
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
@@ -62,7 +60,6 @@ class Game(globale_variablen.Settings):
         if click:
             click = self.scale_click(click,self.screen_copy,self.screen_copy)
             x,y = click
-            x -= self.padding # change padding back to 0 when the text no longer goes over the original screen size
             for syl in syls:
                 #print(syl.inhalt,syl.rect.x,syl.rect.y)
                 if syl.rect.collidepoint(x,y):
@@ -160,23 +157,24 @@ class Game(globale_variablen.Settings):
             if word.isupper() or word[0].isdigit():
                 color = self.lime
             word_img = font.render(word+" ", False, color)
+            word_rect = word_img.get_rect()
             color = color_copy
             if last_word_right >= 0.75 * copy_screen.get_rect().w:
                 if last_line_down < screen_rect.h-spacing*3: # twice the highest spacing?
                     last_word_right = 0.25 * copy_screen.get_rect().w
                     last_line_down += spacing
                     copy_screen.blit(word_img, (last_word_right,last_line_down))
-                    last_word_right += word_img.get_rect().w
+                    last_word_right += word_rect.w
                 else:
                     copy_screen = screen.copy()
                     last_line_down = midtop[1]
                     last_word_right = 0.25 * copy_screen.get_rect().w
                     window_counter += 1
                     copy_screen.blit(word_img, (last_word_right,last_line_down))
-                    last_word_right += word_img.get_rect().w
+                    last_word_right += word_rect.w
             else:
                 copy_screen.blit(word_img, (last_word_right,last_line_down))
-                last_word_right += word_img.get_rect().w
+                last_word_right += word_rect.w
             if word[-1] in ".!?":
                 last_word_right = 0.25 * copy_screen.get_rect().w
                 last_line_down += spacing * 1.5

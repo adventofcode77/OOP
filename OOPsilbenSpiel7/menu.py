@@ -9,6 +9,7 @@ class Menu():
         # keys
         self.move = "AWDS / LEFT RIGHT UP DOWN"
         self.verification_window = "V"
+        self.verify_choice = "Y"
         self.workspace_window = "SPACE"
         self.cheating = "C"
         self.main_loop = "S"
