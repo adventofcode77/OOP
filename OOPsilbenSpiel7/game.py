@@ -11,8 +11,9 @@ from OOPsilbenSpiel7 import menu
 
 
 class Game(globale_variablen.Settings):
-    def __init__(self, input_codes, file_paths):
+    def __init__(self, input_codes, file_paths, binary_code):
         super().__init__()
+        self.binary_code = binary_code
         self.input_codes = input_codes
         self.output_code = ""
         self.next_counter = 0
