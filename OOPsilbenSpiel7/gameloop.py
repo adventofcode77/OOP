@@ -98,10 +98,22 @@ class Gameloop():
                     rects_code_words = []
                     int_rect = self.info.default_font.render('99 ', False, self.info.white).get_rect()
                     spacing = int_rect.h
-                    for i in range(len(self.info.guessed_code_words)): # the code?
-                        code_number_at_this_index =
-                        if self.info.guessed_code_words[i] == self.info.woerter.input_code.split()[i]:
-                            num_image = self.info.default_font.render(f'{code_number_at_this_index}', False, self.info.white)
+                    for i in range(len(self.info.woerter.input_code.split())): # the code?
+                        if i < len(self.info.guessed_code_words):
+                            code_number_at_this_index = list(self.info.binary_code)[i]
+                            print("code number at this index", code_number_at_this_index)
+                            opposite = 0 if code_number_at_this_index == '1' else 1
+                            print("opposite", opposite)
+                            if self.info.guessed_code_words[i].name == self.info.woerter.input_code.split()[i]:
+                                print("same:", self.info.guessed_code_words[i].name, self.info.woerter.input_code.split()[i])
+                                num_image = self.info.default_font.render(f'{code_number_at_this_index}', False, self.info.white)
+                            else:
+                                num_image = self.info.default_font.render(f'{opposite}', False,
+                                                                          self.info.white)
+                                print("different:", self.info.guessed_code_words[i].name,
+                                      self.info.woerter.input_code.split()[i])
+                        else:
+                            num_image = self.info.default_font.render(f'{random.randrange(2)}', False,self.info.white)
                         num_rect = num_image.get_rect()
                         num_rect.x, num_rect.y = self.info.right + i*int_rect.w, self.info.down
                         rects_code_words.append(num_rect)
@@ -122,6 +134,7 @@ class Gameloop():
                         first_index = first_click_rect.collidelist([word.rect for word in self.info.guessed_code_words])
                         if first_index != -1:
                             clicked1 = first_index
+                            print("first click on",self.info.guessed_code_words[clicked1])
                     if self.win_second_click:
                         self.win_second_click = self.scale_click(self.win_second_click, self.info.screen_copy,
                                                                  self.info.screen_via_display_set_mode)
@@ -130,12 +143,17 @@ class Gameloop():
                             [word.rect for word in self.info.guessed_code_words])
                         if second_index != -1:
                             clicked2 = second_index
+                            print("second click on", self.info.guessed_code_words[clicked2])
                         if self.verified_choice:
                             self.verified_choice = False
                             self.win_first_click = False
                             self.win_second_click = False
+                            print("orig string:",[word.name for word in self.info.guessed_code_words])
                             to_move = self.info.guessed_code_words.pop(first_index)
+                            print("to move",to_move)
                             self.info.guessed_code_words.insert(second_index, to_move)
+                            print("changed string:", [word.name for word in self.info.guessed_code_words])
+
 
                     last_line_down = height_of_all
                     screen_rect = self.info.screen_copy.get_rect()
@@ -145,7 +163,7 @@ class Gameloop():
                     copy_screen = self.info.screen_copy.copy()
                     list_snapshots_to_blit = {}
                     for i in range(len(self.info.guessed_code_words)): # combine w blit string?
-                        color = self.info.cyan if self.verified_choice else self.info.lime if i == clicked1 or i == clicked2 else self.info.cyan
+                        color = self.info.cyan if self.verified_choice else self.info.lime if i == clicked1 else self.info.zuff if  i == clicked2 else self.info.cyan
                         word = self.info.guessed_code_words[i]
                         word_img = font.render(word.name + " ", False, color)
                         word_rect = word_img.get_rect()
