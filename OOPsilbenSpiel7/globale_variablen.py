@@ -3,9 +3,11 @@ import math as m
 from pygame import *
 import math
 import random
+import pygame.freetype
 
 class Settings:
     def __init__(self): #
+        pg.freetype.init()
         #self.gameloop_instance = gameloop.Gameloop()
         self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
@@ -32,10 +34,10 @@ class Settings:
         self.green = (0,205,0)
         self.red = (255,0,0)
         self.fps = 30 # keine konstante geschwindigkeit
-        self.default_font = font.SysFont("Arial", self.screen_surface // 20) # make one rendering function?
-        self.bigger_font = font.SysFont("Arial", self.screen_surface // 10)
-        self.smaller_font = font.SysFont("Arial", self.screen_surface // 30)
-        self.tiny_font = font.SysFont("Arial", self.screen_surface // 45)
+        self.default_font = font.SysFont("script", self.screen_surface // 20) # make one rendering function?
+        self.bigger_font = font.SysFont("script", self.screen_surface // 10)
+        self.smaller_font = font.SysFont("script", self.screen_surface // 30)
+        self.tiny_font = font.SysFont("script", self.screen_surface // 45)
         self.space = self.font_spacing(self.default_font)
         self.invisible = self.default_font.render("o", False, self.black)
 

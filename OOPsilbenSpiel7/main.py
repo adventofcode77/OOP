@@ -15,6 +15,7 @@ class Main:
 
     def newgame(self,input_codes,score, file_paths, binary_code):
         pg.init()
+        #print(pg.font.get_fonts())
         game1 = game.Game(input_codes, file_paths, binary_code)
         score += round(game1.score, 2)
         code = game1.output_code

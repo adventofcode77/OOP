@@ -1,7 +1,7 @@
 import pygame as pg
 import random
 from OOPsilbenSpiel7 import spieler
-import globale_variablen
+from OOPsilbenSpiel7 import globale_variablen
 from itertools import *
 import math
 
@@ -13,7 +13,7 @@ class Silbe(): #do with sprites
         self.inhalt = it
         self.word = word
         self.rgb = rgb
-        self.image = self.info.default_font.render(self.inhalt, False, tuple(rgb))
+        self.image = self.info.default_font.render(self.inhalt, True, tuple(rgb))
         self.rect = self.image.get_rect() # or text.get_rect()?
         self.rect.x = random.randrange(0,self.info.screenw-self.rect.w,self.info.screenw//10)
         self.clicked_on = False
