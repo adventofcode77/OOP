@@ -113,7 +113,7 @@ class Gameloop():
                                 num_image = self.info.default_font.render(f'{opposite}', False,
                                                                           self.info.white)
                         else:
-                            num_image = self.info.default_font.render(f'{random.randrange(2)}', False,self.info.white)
+                            num_image = self.info.default_font.render(f'{0 if i%2==0 else 1}', False,self.info.white)
                         num_rect = num_image.get_rect()
                         num_rect.x, num_rect.y = self.info.right + i*int_rect.w, self.info.down
                         rects_code_words.append(num_rect)
@@ -158,7 +158,7 @@ class Gameloop():
                     copy_screen = self.info.screen_copy.copy()
                     list_snapshots_to_blit = {}
                     for i in range(len(self.info.guessed_code_words)): # combine w blit string?
-                        color = self.info.green if i == clicked1 else self.info.red if  i == clicked2 else self.info.gold if i in self.list_index_binary_click_words else self.info.cyan
+                        color = self.info.green if i == clicked1 else self.info.red if  i == clicked2 else self.info.yellow if i in self.list_index_binary_click_words else self.info.cyan
                         word = self.info.guessed_code_words[i]
                         word_img = font.render(word.name + " ", False, color)
                         word_rect = word_img.get_rect()

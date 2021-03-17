@@ -1,20 +1,16 @@
 from wiktionary_de_parser import Parser
 import random
-import globale_variablen
 import re
+from OOPsilbenSpiel7 import globale_variablen
 
 class Woerterbuch(globale_variablen.Settings):
     # replace with escape game file / rewrite using wiktionary_de_parser's method
     def __init__(self, file_path, lang):
         super().__init__()
         self.file_path = file_path
-        print("w afte file path?")
         self.lang = lang
-        print("w after lang?")
         self.listofrecords = []
-        print("w after empty list?")
         self.list_records()
-        print("woerterbuch here?")
         self.parsed = self.quick_get(10) # why do too few words lead to syls starting to fall from the middle
             # save a sample in case the imported parser stops working
     def iterate(self,record):
