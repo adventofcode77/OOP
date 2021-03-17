@@ -30,7 +30,7 @@ class Gameloop():
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
                     self.info.screen_copy.fill(self.info.black)
-                    image_end = self.info.default_font.render("GAME OVER", False, self.info.white)
+                    image_end = self.info.default_font.render("GAME OVER", True, self.info.white)
                     image_end_rect = image_end.get_rect()
                     image_end_rect.center = self.info.screen_copy.get_rect().center
                     self.info.screen_copy.blit(image_end, image_end_rect)
@@ -101,19 +101,19 @@ class Gameloop():
                     self.info.screen_copy.fill(self.info.black)
                     height_of_all = 0
                     rects_code_words = []
-                    int_rect = self.info.default_font.render('99 ', False, self.info.white).get_rect()
+                    int_rect = self.info.default_font.render('99 ', True, self.info.white).get_rect()
                     spacing = int_rect.h
                     for i in range(len(self.info.woerter.input_code.split())): # the code?
                         if i < len(self.info.guessed_code_words):
                             code_number_at_this_index = list(self.info.binary_code)[i]
                             opposite = 0 if code_number_at_this_index == '1' else 1
                             if self.info.guessed_code_words[i].name == self.info.woerter.input_code.split()[i]:
-                                num_image = self.info.default_font.render(f'{code_number_at_this_index}', False, self.info.white)
+                                num_image = self.info.default_font.render(f'{code_number_at_this_index}', True, self.info.white)
                             else:
-                                num_image = self.info.default_font.render(f'{opposite}', False,
+                                num_image = self.info.default_font.render(f'{opposite}', True,
                                                                           self.info.white)
                         else:
-                            num_image = self.info.default_font.render(f'{0 if i%2==0 else 1}', False,self.info.white)
+                            num_image = self.info.default_font.render(f'{0 if i%2==0 else 1}', True,self.info.white)
                         num_rect = num_image.get_rect()
                         num_rect.x, num_rect.y = self.info.right + i*int_rect.w, self.info.down
                         rects_code_words.append(num_rect)
@@ -160,7 +160,7 @@ class Gameloop():
                     for i in range(len(self.info.guessed_code_words)): # combine w blit string?
                         color = self.info.green if i == clicked1 else self.info.red if  i == clicked2 else self.info.yellow if i in self.list_index_binary_click_words else self.info.cyan
                         word = self.info.guessed_code_words[i]
-                        word_img = font.render(word.name + " ", False, color)
+                        word_img = font.render(word.name + " ", True, color)
                         word_rect = word_img.get_rect()
                         if last_word_right >= 0.75 * screen_rect.w:
                             if last_line_down < screen_rect.h - spacing * 3:  # twice the highest spacing?

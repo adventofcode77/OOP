@@ -20,7 +20,7 @@ class Word():
         Word.all_syls.append(txtsilben)
         self.bits = self.info.get_bits(self.meaning, len(self.txtsilben))
         self.syls = self.make_silben(self.info.make_rgb())
-        self.image = self.info.default_font.render(self.name, False, self.info.gold)
+        self.image = self.info.default_font.render(self.name, True, self.info.gold)
         self.rect = self.image.get_rect() # draw_rect()?
 
     def make_silben(self, rgb):

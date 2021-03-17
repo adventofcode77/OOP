@@ -89,9 +89,9 @@ class Game(globale_variablen.Settings):
                     copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0], syl.tuple[1], syl.info, syl.rgb)
                     # why didn't syl.copy() work?
                     if syl.clicked_on:
-                        copy.image = self.default_font.render(copy.inhalt, False, self.lime)
+                        copy.image = self.default_font.render(copy.inhalt, True, self.lime)
                     else:
-                        copy.image = self.default_font.render(copy.inhalt, False, self.white)
+                        copy.image = self.default_font.render(copy.inhalt, True, self.white)
                     copy.rect.x,copy.rect.y = x,y
                     self.screen_copy.blit(copy.image, copy.rect)
                     desk_syls.append(copy) #copy whole syl
@@ -130,7 +130,7 @@ class Game(globale_variablen.Settings):
             word_string = "".join([a.inhalt for a in self.player.appendlist])
         if not surface:
             surface = self.screen_copy
-        word_image = self.default_font.render(word_string, False, farbe[0])
+        word_image = self.default_font.render(word_string, True, farbe[0])
         word_rect = word_image.get_rect()
         word_rect.center = self.screen_copy.get_rect().center
         surface.blit(word_image, (word_rect.x, word_rect.y))
@@ -157,7 +157,7 @@ class Game(globale_variablen.Settings):
             word = words[i]
             if word.isupper() or word[0].isdigit():
                 color = self.lime
-            word_img = font.render(word+" ", False, color)
+            word_img = font.render(word+" ", True, color)
             word_rect = word_img.get_rect()
             color = color_copy
             if last_word_right >= 0.75 * copy_screen.get_rect().w:
