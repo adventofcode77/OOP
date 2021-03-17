@@ -15,8 +15,6 @@ class Woerter():
         self.words = self.get_words(self.dictwithkeyname)
         self.silben = self.get_silben()
         self.input_code = self.info.input_codes[self.info.language-1]
-        print("input code",self.input_code)
-        print("self info language",self.info.language)
         self.num_syls = self.get_num_code_syls(self.input_code)
         self.placeholder_code_text = self.get_escape_game_text()
         self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(self.input_code.split()))
@@ -38,9 +36,7 @@ class Woerter():
         return text
 
     def get_bank(self):
-        print("in get bank",self.info.file_path)
         parser = woerterbuch.Woerterbuch(self.info.file_path, self.info.language)
-        print("get bank works?")
         return parser.parsed
 
     def get_words(self,source):
