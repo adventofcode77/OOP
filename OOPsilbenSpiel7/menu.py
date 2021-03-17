@@ -34,7 +34,7 @@ class Menu():
         elif next_counter < 0:
             next_counter = len(self.list_instructions[lang-1]) - 1
         blit_h = self.info.blit_string_words(self.list_instructions[lang-1][next_counter], self.info.zuff, (self.info.midtop[0],
-                                                self.info.midtop[1] + self.info.down * 2), font=self.info.smaller_font)
+                                                self.info.midtop[1] + self.info.down * 2))
         self.info.screen_transfer()
         return next_counter
 

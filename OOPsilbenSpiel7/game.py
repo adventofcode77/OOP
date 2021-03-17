@@ -89,11 +89,11 @@ class Game(globale_variablen.Settings):
                     copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0], syl.tuple[1], syl.info, syl.rgb)
                     # why didn't syl.copy() work?
                     if syl.clicked_on:
-                        copy.image = self.default_font.render(copy.inhalt, True, self.lime)
+                        copy.color = self.lime
                     else:
-                        copy.image = self.default_font.render(copy.inhalt, True, self.white)
+                        copy.color = self.white
                     copy.rect.x,copy.rect.y = x,y
-                    self.screen_copy.blit(copy.image, copy.rect)
+                    self.silbenfont.render_to(self.screen_copy,copy.rect,copy.inhalt,fgcolor=copy.color)
                     desk_syls.append(copy) #copy whole syl
                     index += 1
                     x += copy.rect.w
@@ -130,10 +130,10 @@ class Game(globale_variablen.Settings):
             word_string = "".join([a.inhalt for a in self.player.appendlist])
         if not surface:
             surface = self.screen_copy
-        word_image = self.default_font.render(word_string, True, farbe[0])
-        word_rect = word_image.get_rect()
+        word_image, word_rect = self.default_font.render(word_string, farbe[0])
         word_rect.center = self.screen_copy.get_rect().center
         surface.blit(word_image, (word_rect.x, word_rect.y))
+        word_rect = self.default_font.render_to(self.screen_copy,word_rect,word_string,fgcolor=farbe[0])
         height_of_all = word_rect.y + self.font_spacing(self.default_font)
         blit_h = self.blit_string_words(self.make_def_list(), farbe[1], (self.screen_copy.get_rect().center[0],height_of_all), screen=surface) # starts one line below the blitted word per the function
 
@@ -149,7 +149,7 @@ class Game(globale_variablen.Settings):
             words = words.split()
         color_copy = color
         if font is None:
-            font = self.smaller_font
+            font = self.default_font
         spacing = self.font_spacing(font)
         last_line_down = midtop[1]
         last_word_right = 0.25 * copy_screen.get_rect().w
@@ -157,24 +157,23 @@ class Game(globale_variablen.Settings):
             word = words[i]
             if word.isupper() or word[0].isdigit():
                 color = self.lime
-            word_img = font.render(word+" ", True, color)
-            word_rect = word_img.get_rect()
-            color = color_copy
+            else:
+                color = color_copy
             if last_word_right >= 0.75 * copy_screen.get_rect().w:
                 if last_line_down < screen_rect.h-spacing*3: # twice the highest spacing?
                     last_word_right = 0.25 * copy_screen.get_rect().w
                     last_line_down += spacing
-                    copy_screen.blit(word_img, (last_word_right,last_line_down))
+                    word_rect = font.render_to(screen,(last_word_right,last_line_down),word+" ",fgcolor=color)
                     last_word_right += word_rect.w
                 else:
                     copy_screen = screen.copy()
                     last_line_down = midtop[1]
                     last_word_right = 0.25 * copy_screen.get_rect().w
                     window_counter += 1
-                    copy_screen.blit(word_img, (last_word_right,last_line_down))
+                    word_rect = font.render_to(screen,(last_word_right,last_line_down),word+" ",fgcolor=color)
                     last_word_right += word_rect.w
             else:
-                copy_screen.blit(word_img, (last_word_right,last_line_down))
+                word_rect = font.render_to(screen,(last_word_right,last_line_down),word+" ",fgcolor=color)
                 last_word_right += word_rect.w
             if word[-1] in ".!?":
                 last_word_right = 0.25 * copy_screen.get_rect().w
@@ -250,13 +249,9 @@ class Game(globale_variablen.Settings):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
                 if syl.visible == True:
-                    self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
-                else:
-                    self.screen_copy.blit(self.invisible, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
+                    self.silbenfont.render_to(self.screen_copy,(syl.rect.x, self.pos_list[i] + self.syl_pos_change), syl.inhalt,fgcolor=syl.color)
                 syl.rect.y = self.pos_list[i] + self.syl_pos_change
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
-        # print("syl pos change", self.syl_pos_change,"speed change",self.syl_speed_change,"rest",self.screenh/1000)
-        # print("syl speed change",self.syl_speed_change)
         if self.syl_pos_change >= self.screenh // 10:
             self.syl_pos_change = 0
             self.start_syls_cut_at += 1

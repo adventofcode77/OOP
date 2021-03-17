@@ -34,16 +34,15 @@ class Settings:
         self.green = (0,205,0)
         self.red = (255,0,0)
         self.fps = 30 # keine konstante geschwindigkeit
-        self.default_font = font.SysFont("script", self.screen_surface // 20) # make one rendering function?
-        self.bigger_font = font.SysFont("script", self.screen_surface // 10)
-        self.smaller_font = font.SysFont("script", self.screen_surface // 30)
-        self.tiny_font = font.SysFont("script", self.screen_surface // 45)
+        self.default_font = pygame.freetype.SysFont("script", self.screen_surface // 20) # make one rendering function?
+        self.bigger_font = pygame.freetype.SysFont("script", self.screen_surface // 10)
+        self.smaller_font = pygame.freetype.SysFont("script", self.screen_surface // 30)
+        self.tiny_font = pygame.freetype.SysFont("script", self.screen_surface // 45)
+        self.silbenfont = pygame.freetype.SysFont("script", self.screen_surface // 20)
         self.space = self.font_spacing(self.default_font)
-        self.invisible = self.default_font.render("o", False, self.black)
 
     def font_spacing(self,font):
-        img = font.render("A|&%)<QY",False,self.black)
-        return img.get_rect().h
+        return font.get_rect("A|&%)<QY").h
 
     def get_bits(self,alist, num_parts): #goal: divide a list into roughly equal parts such that no part is empty
         list_of_lists = []
