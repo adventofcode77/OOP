@@ -8,7 +8,7 @@ from OOPsilbenSpiel7 import silbe
 from OOPsilbenSpiel7 import spieler
 from OOPsilbenSpiel7 import gameloop
 from OOPsilbenSpiel7 import menu
-
+from OOPsilbenSpiel7 import word
 
 class Game(globale_variablen.Settings):
     def __init__(self, input_codes, file_paths, binary_code):
@@ -41,6 +41,7 @@ class Game(globale_variablen.Settings):
         self.pos_list = self.get_pos_list()
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
+        self.buttons = []
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
@@ -135,9 +136,9 @@ class Game(globale_variablen.Settings):
         word_rect.center = self.screen_copy.get_rect().center
         surface.blit(word_image, (word_rect.x, word_rect.y))
         height_of_all = word_rect.y + self.font_spacing(self.default_font)
-        blit_h = self.blit_string_words(self.make_def_list(), farbe[1], (self.screen_copy.get_rect().center[0],height_of_all), screen=surface) # starts one line below the blitted word per the function
+        blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (self.screen_copy.get_rect().center[0], height_of_all), screen=surface) # starts one line below the blitted word per the function
 
-    def blit_string_words(self, lst, color, midtop, font = None, screen=None):  # does it need to get the image in order to know how big the font i
+    def blit_clickable_words(self, lst, color, midtop, font = None, screen=None, space_after_word=" "):  # does it need to get the image in order to know how big the font i
         window_counter = 0
         if not screen:
             screen = self.screen_copy
@@ -145,6 +146,7 @@ class Game(globale_variablen.Settings):
         copy_screen = screen.copy()
         list_snapshots_to_blit = {}
         words = lst
+        self.buttons = []
         if type(words) == str:
             words = words.split()
         color_copy = color
@@ -154,29 +156,38 @@ class Game(globale_variablen.Settings):
         last_line_down = midtop[1]
         last_word_right = 0.25 * copy_screen.get_rect().w
         for i in range(len(words)):
-            word = words[i]
-            if word.isupper() or word[0].isdigit():
+            aword = words[i]
+            if type(aword) is not str:
+                if aword.color:
+                    color = aword.color
+            elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
-            word_img = font.render(word+" ", True, color)
+            word_img = font.render(aword+space_after_word, True, color)
             word_rect = word_img.get_rect()
             color = color_copy
             if last_word_right >= 0.75 * copy_screen.get_rect().w:
                 if last_line_down < screen_rect.h-spacing*3: # twice the highest spacing?
                     last_word_right = 0.25 * copy_screen.get_rect().w
                     last_line_down += spacing
-                    copy_screen.blit(word_img, (last_word_right,last_line_down))
+                    word_rect.x, word_rect.y = last_word_right,last_line_down
+                    self.buttons.append(word.Button(aword,word_img, word_rect))
+                    copy_screen.blit(word_img, word_rect)
                     last_word_right += word_rect.w
                 else:
                     copy_screen = screen.copy()
                     last_line_down = midtop[1]
                     last_word_right = 0.25 * copy_screen.get_rect().w
                     window_counter += 1
-                    copy_screen.blit(word_img, (last_word_right,last_line_down))
+                    word_rect.x, word_rect.y = last_word_right, last_line_down
+                    self.buttons.append(word.Button(aword,word_img, word_rect))
+                    copy_screen.blit(word_img, word_rect)
                     last_word_right += word_rect.w
             else:
-                copy_screen.blit(word_img, (last_word_right,last_line_down))
+                word_rect.x, word_rect.y = last_word_right, last_line_down
+                self.buttons.append(word.Button(aword,word_img, word_rect))
+                copy_screen.blit(word_img, word_rect)
                 last_word_right += word_rect.w
-            if word[-1] in ".!?":
+            if aword[-1] in ".!?":
                 last_word_right = 0.25 * copy_screen.get_rect().w
                 last_line_down += spacing * 1.5
             list_snapshots_to_blit[window_counter] = copy_screen.copy()
@@ -187,6 +198,7 @@ class Game(globale_variablen.Settings):
         else:
             temp_counter = self.test_next_counter % len(list_snapshots_to_blit)
         screen.blit(list_snapshots_to_blit[temp_counter],(0,0))
+        print("buttons", [(button.text, button.rect) for button in self.buttons])
         return last_line_down + self.font_spacing(font) # how far down the screen there is curently text
 
     def check_word(self):
