@@ -21,8 +21,8 @@ class Menu():
 
     def choose_language(self):
         self.info.large_surface.fill(self.info.black)
-        blit_h1 = self.info.blit_string_words(f"Drücke D für Deutsch",self.info.zuff,(self.info.midtop[0],
-                            self.info.midtop[1]+self.info.down*2))
+        blit_h1 = self.info.blit_clickable_words(f"Drücke D für Deutsch", self.info.zuff, (self.info.midtop[0],
+                                                                                           self.info.midtop[1] + self.info.down * 2))
         #blit_h2 = self.info.blit_string_words(f"Press E for English (nicht fertig)",self.info.zuff,(self.info.midtop[0],
         #                    self.info.midtop[1]+ blit_h1))
         self.info.screen_transfer()
@@ -33,8 +33,8 @@ class Menu():
             next_counter = 0
         elif next_counter < 0:
             next_counter = len(self.list_instructions[lang-1]) - 1
-        blit_h = self.info.blit_string_words(self.list_instructions[lang-1][next_counter], self.info.zuff, (self.info.midtop[0],
-                                                self.info.midtop[1] + self.info.down * 2), font=self.info.smaller_font)
+        blit_h = self.info.blit_clickable_words(self.list_instructions[lang - 1][next_counter], self.info.zuff, (self.info.midtop[0],
+                                                                                                                 self.info.midtop[1] + self.info.down * 2), font=self.info.smaller_font)
         self.info.screen_transfer()
         return next_counter
 

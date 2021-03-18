@@ -44,16 +44,16 @@ class Gameloop():
                         self.info.screen_copy.fill(self.info.black)
                         if self.info.words:
                             tolist = f'cheating costs 5 seconds! one of the words means... {" ".join(random.choice(self.info.words).meaning)}'.split()
-                            self.info.blit_string_words(tolist, self.info.white,
-                                                        self.info.screen_copy.get_rect().midtop)
+                            self.info.blit_clickable_words(tolist, self.info.white,
+                                                           self.info.screen_copy.get_rect().midtop)
                         elif self.info.woerter.code_words:
                             n = random.randint(0,len(self.info.woerter.code_words)-1)
-                            self.info.blit_string_words(f'cheating costs 5 seconds! The {n} code word\'s instruction bit is...'
+                            self.info.blit_clickable_words(f'cheating costs 5 seconds! The {n} code word\'s instruction bit is...'
                                                        f'{" ".join(self.info.woerter.code_words[n].meaning)}'.split(), self.info.white,
-                                                        self.info.screen_copy.get_rect().midtop)
+                                                           self.info.screen_copy.get_rect().midtop)
                         else:
-                            self.info.blit_string_words(f'cheating costs 5 seconds! Put the words in the right order'.split(), self.info.white,
-                                                        self.info.screen_copy.get_rect().midtop)
+                            self.info.blit_clickable_words(f'cheating costs 5 seconds! Put the words in the right order'.split(), self.info.white,
+                                                           self.info.screen_copy.get_rect().midtop)
                         self.info.screen_transfer()
                         time.delay(5000)
                     elif e.key == K_v: # open win screen
@@ -120,9 +120,9 @@ class Gameloop():
                         self.info.screen_copy.blit(num_image,num_rect) # on large_surface it's at 2000+...
                     height_of_all += self.info.down + int_rect.h + spacing
                     # PROMPT USER TO CHANGE THEIR ORDER
-                    blit_h = self.info.blit_string_words(f'Druecke auf ein Wort und danach auf dem Platz, wo du es umstellen willst. '
+                    blit_h = self.info.blit_clickable_words(f'Druecke auf ein Wort und danach auf dem Platz, wo du es umstellen willst. '
                                                          f'Zum Bestätigen der Auswahl, druecke auf Y'.split()
-                                                         , self.info.white, (self.info.midtop[0],height_of_all))
+                                                            , self.info.white, (self.info.midtop[0],height_of_all))
                     height_of_all = blit_h + spacing
 
                     clicked1, clicked2 = None, None
@@ -150,54 +150,17 @@ class Gameloop():
                             self.info.guessed_code_words.insert(second_index, to_move)
 
 
-                    last_line_down = height_of_all
-                    screen_rect = self.info.screen_copy.get_rect()
-                    last_word_right = 0.25 * screen_rect.w
-                    window_counter = 0
-                    font = self.info.default_font
-                    copy_screen = self.info.screen_copy.copy()
-                    list_snapshots_to_blit = {}
                     for i in range(len(self.info.guessed_code_words)): # combine w blit string?
-                        color = self.info.green if i == clicked1 else self.info.red if  i == clicked2 else self.info.yellow if i in self.list_index_binary_click_words else self.info.cyan
                         word = self.info.guessed_code_words[i]
-                        word_img = font.render(word.name + " ", True, color)
-                        word_rect = word_img.get_rect()
-                        if last_word_right >= 0.75 * screen_rect.w:
-                            if last_line_down < screen_rect.h - spacing * 3:  # twice the highest spacing?
-                                last_word_right = 0.25 * screen_rect.w
-                                last_line_down += spacing
-                                word_rect.x, word_rect.y = last_word_right, last_line_down
-                                copy_screen.blit(word_img, word_rect)
-                                last_word_right += word_rect.w
-                            else:
-                                copy_screen = self.info.screen_copy.copy()
-                                last_line_down = height_of_all
-                                last_word_right = 0.25 * copy_screen.get_rect().w
-                                window_counter += 1
-                                word_rect.x, word_rect.y = last_word_right, last_line_down
-                                copy_screen.blit(word_img, word_rect)
-                                last_word_right += word_rect.w
-                        else:
-                            word_rect.x, word_rect.y = last_word_right, last_line_down
-                            copy_screen.blit(word_img, word_rect)
-                            last_word_right += word_rect.w
-                        list_snapshots_to_blit[window_counter] = copy_screen.copy()
-                        word.image = word_img
-                        word.rect = word_rect
-                    if len(list_snapshots_to_blit) == 0:
-                        list_snapshots_to_blit[window_counter] = self.info.screen_copy.copy()
-                    if self.info.test_next_counter < 0:
-                        temp_counter = len(list_snapshots_to_blit) - 1 - (
-                                    self.info.test_next_counter % len(list_snapshots_to_blit))
-                    else:
-                        temp_counter = self.info.test_next_counter % len(list_snapshots_to_blit)
-                    self.info.screen_copy.blit(list_snapshots_to_blit[temp_counter], (0, 0))
+                        word.color = self.info.green if i == clicked1 else self.info.red if  i == clicked2 else self.info.yellow if i in self.list_index_binary_click_words else self.info.cyan
+                    guessed_words_string = " ".join([word.name for word in self.info.guessed_code_words])
+                    blit_h = self.info.blit_clickable_words(guessed_words_string,self.info.yellow,(0,height_of_all))
 
-                    height_of_all = last_line_down + spacing
+                    height_of_all = blit_h + spacing
                     if not self.gewonnen:
                         list_code_meanings = [" ".join(word.meaning) for word in self.info.guessed_code_words]
                         explanation = " ".join(list_code_meanings)
-                        blit_h = self.info.blit_string_words(explanation.split(), self.info.yellow, (self.info.midtop[0], height_of_all))
+                        blit_h = self.info.blit_clickable_words(explanation.split(), self.info.yellow, (self.info.midtop[0], height_of_all))
                     self.info.screen_transfer()
 
                     if " ".join([word.name for word in self.info.guessed_code_words]) == main.Main.codes[self.info.language-1]:
@@ -208,8 +171,8 @@ class Gameloop():
                             if num == "1":
                                 indices_ones.append(i)
                         self.info.screen_copy.fill(self.info.black,Rect(0,height_of_all,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
-                        self.info.blit_string_words(f'Du hast den Code-Satz fast erhalten! Die binärische Representation'
-                                                    f'zeigt die {len(indices_ones)} Schluessel-Woerter. Wähle sie aus.', self.info.gold,(self.info.midtop[0],height_of_all))
+                        self.info.blit_clickable_words(f'Du hast den Code-Satz fast erhalten! Die binärische Representation'
+                                                    f'zeigt die {len(indices_ones)} Schluessel-Woerter. Wähle sie aus.', self.info.gold, (self.info.midtop[0],height_of_all))
                         if self.binary_click:
                             binary_click_rect = Rect(self.binary_click[0],self.binary_click[1],1,1)
                             self.binary_click = False
@@ -218,7 +181,7 @@ class Gameloop():
                                 self.list_index_binary_click_words.append(index)
                         if self.list_index_binary_click_words == indices_ones:
                             self.info.screen_copy.fill(self.info.black,Rect(0,height_of_all,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
-                            self.info.blit_string_words(f'RICHTIG',self.info.gold,self.info.midtop)
+                            self.info.blit_clickable_words(f'RICHTIG', self.info.gold, self.info.midtop)
                             self.info.screen_transfer()
                             time.delay(10000)
                             return self.info.score

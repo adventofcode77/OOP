@@ -6,8 +6,7 @@ import math, random
 
 class Word():
     all_syls = []
-    def __init__(self, key, meaning,txtsilben,worder,totalsyls,info):
-        super().__init__()
+    def __init__(self, key, meaning,txtsilben,worder,totalsyls,info,color=None):
         self.info = info
         self.totalsyls = totalsyls
         self.worder = worder
@@ -38,3 +37,10 @@ class Word():
             syls.append(silbe1)
             order += 1
         return syls
+
+class Button():
+    def __init__(self, word_string,word_img,word_rect):
+        self.text = word_string
+        self.img = word_img
+        self.rect = word_rect
+
