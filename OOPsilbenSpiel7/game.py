@@ -267,7 +267,9 @@ class Game(globale_variablen.Settings):
         self.screen_transfer()
 
     def screen_transfer(self): # corrently resizes the current display image, but objects are no longer clickable at the right coordinates
+        print("screen transfer first thing",self.screen_via_display_set_mode.get_rect())
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
+        print(resized_screen_copy.get_rect(),self.screen_copy.get_rect(),self.screen_via_display_set_mode.get_rect())
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
         pg.display.flip()
 
