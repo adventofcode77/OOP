@@ -131,15 +131,16 @@ class Gameloop():
                         self.win_first_click = self.scale_click(self.win_first_click, self.info.screen_copy,
                                                                 self.info.screen_via_display_set_mode)
                         first_click_rect = Rect(self.win_first_click[0], self.win_first_click[1], 1, 1)
-                        first_index = first_click_rect.collidelist([word.rect for word in self.info.guessed_code_words])
+                        first_index = first_click_rect.collidelist(self.info.buttons)
+                        print("first index",first_index)
                         if first_index != -1:
                             clicked1 = first_index
                     if self.win_second_click:
                         self.win_second_click = self.scale_click(self.win_second_click, self.info.screen_copy,
                                                                  self.info.screen_via_display_set_mode)
                         second_click_rect = Rect(self.win_second_click[0], self.win_second_click[1], 1, 1)
-                        second_index = second_click_rect.collidelist(
-                            [word.rect for word in self.info.guessed_code_words])
+                        second_index = second_click_rect.collidelist(self.info.buttons)
+                        print("second index", second_index)
                         if second_index != -1:
                             clicked2 = second_index
                         if self.verified_choice:
@@ -153,8 +154,7 @@ class Gameloop():
                     for i in range(len(self.info.guessed_code_words)): # combine w blit string?
                         word = self.info.guessed_code_words[i]
                         word.color = self.info.green if i == clicked1 else self.info.red if  i == clicked2 else self.info.yellow if i in self.list_index_binary_click_words else self.info.cyan
-                    guessed_words_string = " ".join([word.name for word in self.info.guessed_code_words])
-                    blit_h = self.info.blit_clickable_words(guessed_words_string,self.info.yellow,(0,height_of_all))
+                    blit_h = self.info.blit_clickable_words(self.info.guessed_code_words,self.info.yellow,(0,height_of_all),no_buttons=False)
 
                     height_of_all = blit_h + spacing
                     if not self.gewonnen:

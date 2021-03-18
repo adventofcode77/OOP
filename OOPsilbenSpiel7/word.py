@@ -39,8 +39,9 @@ class Word():
         return syls
 
 class Button():
-    def __init__(self, word_string,word_img,word_rect):
+    def __init__(self, word_string,word_img,word_rect,word_index):
         self.text = word_string
         self.img = word_img
         self.rect = word_rect
+        self.index = word_index
 
