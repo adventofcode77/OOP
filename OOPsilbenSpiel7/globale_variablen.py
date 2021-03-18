@@ -10,10 +10,8 @@ class Settings:
         pg.freetype.init()
         #self.gameloop_instance = gameloop.Gameloop()
         self.screen_via_display_set_mode = pg.display.set_mode((320, 180), RESIZABLE|DOUBLEBUF)
-        print("right after making it",self.screen_via_display_set_mode.get_rect())
         self.screen_copy = self.screen_via_display_set_mode.copy()
         self.screen_copy = pg.transform.scale(self.screen_copy, (1920, 1080))
-        # how is making a copy different than making a second screen (which didn't work)
         self.screenw, self.screenh = self.screen_copy.get_rect().size
         self.midtop = self.screen_copy.get_rect().midtop
         self.screen_surface = int(math.sqrt(self.screenw * self.screenh))

@@ -2,7 +2,7 @@ import pygame as pg
 from pygame import *
 from pygame.locals import *
 import random
-import main
+from OOPsilbenSpiel7 import main
 
 class Gameloop():
     def __init__(self, game_instance):
@@ -27,9 +27,8 @@ class Gameloop():
     def mainloop(self):
 
         while True:
-            print("in gameloop",self.info.screen_via_display_set_mode.get_rect())
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
-            self.clock.tick(self.info.fps)  # ONE LOOP
+            self.clock.tick(self.info.fps)  # one loop
             self.info.score -= 0.005
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
@@ -90,7 +89,6 @@ class Gameloop():
                     else:
                         self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
-                    print("first size",self.info.screen_via_display_set_mode.get_rect())
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
             # AFTER GOING THROUGH THE EVENTS LIST
             else:
@@ -153,7 +151,6 @@ class Gameloop():
                             to_move = self.info.guessed_code_words.pop(first_index)
                             self.info.guessed_code_words.insert(second_index, to_move)
 
-
                     for i in range(len(self.info.guessed_code_words)): # combine w blit string?
                         word = self.info.guessed_code_words[i]
                         word.color = self.info.green if i == clicked1 else self.info.red if  i == clicked2 else self.info.yellow if i in self.list_index_binary_click_words else self.info.cyan
@@ -186,12 +183,9 @@ class Gameloop():
                             self.info.screen_copy.fill(self.info.black,Rect(0,height_of_all,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
                             self.info.blit_clickable_words(f'RICHTIG', self.info.gold, self.info.midtop)
                             self.info.screen_transfer()
-                            time.delay(10000)
+                            time.delay(5000)
                             return self.info.score
                         self.info.screen_transfer()
-
-
-
 
                 # MAIN LOOP
                 elif self.main_loop == True:
@@ -199,7 +193,7 @@ class Gameloop():
                     self.info.player.pick(self.info.syls)
                     self.info.blit_loop()
                 # PICKED SYLS WINDOW
-                else: #this broke after the subscreen changes
+                else:
                     if self.click:  # scale the mouseclick coordinates back to the original screen size
                         self.click = self.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                     self.info.desk(self.click)
