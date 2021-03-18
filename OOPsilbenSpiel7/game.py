@@ -56,51 +56,29 @@ class Game(globale_variablen.Settings):
                         return 2
 
     def desk(self,click): # the click is adjusted for where it'd be on screen_copy
-        # the event loop didn't work inside of this function
         self.screen_copy.fill(self.black)
-        syls = self.draw_desk() # copies; copy of the desk surface so far (syls are hardcoded on surface cut)
+        height_of_all = self.draw_desk()
         if click:
             click = self.scale_click(click,self.screen_copy,self.screen_copy)
             x,y = click
-            for syl in syls:
-                #print(syl.inhalt,syl.rect.x,syl.rect.y)
-                if syl.rect.collidepoint(x,y):
-                    for item in self.player.my_silben: #next()?
-                        if item.tuple == syl.tuple: # couldn't find syl objects in lists where i'd previously put them (& collidelist didn't work)
-                            if item.clicked_on:
-                                item.clicked_on = False
-                                for i in range(len(self.player.appendlist)):
-                                    off = self.player.appendlist[i]
-                                    if item.tuple == off.tuple:
-                                        del self.player.appendlist[i]
-                                        break
-                            else:
-                                item.clicked_on = True
-                                self.draw_word(syl)
-        self.draw_word()
-
-    def draw_desk(self): # origs
-        mysilben = self.player.my_silben
-        desk_syls = []
-        index = 0
-        for y in range(self.down,self.down*4,self.down):
-            for x in range(self.right,self.right*5,self.right):
-                if index < len(mysilben):
-                    syl = mysilben[index]
-                    copy = silbe.Silbe(syl.inhalt, syl.word, syl.bit, syl.tuple[0], syl.tuple[1], syl.info, syl.rgb)
-                    # why didn't syl.copy() work?
+            for syl_button in self.buttons:
+                if syl_button.rect.collidepoint(x,y):
+                    syl = self.player.my_silben[syl_button.index]
                     if syl.clicked_on:
-                        copy.image = self.default_font.render(copy.inhalt, True, self.lime)
+                        syl.clicked_on = False
+                        index = self.player.appendlist.index(syl)
+                        del self.player.appendlist[index]
                     else:
-                        copy.image = self.default_font.render(copy.inhalt, True, self.white)
-                    copy.rect.x,copy.rect.y = x,y
-                    self.screen_copy.blit(copy.image, copy.rect)
-                    desk_syls.append(copy) #copy whole syl
-                    index += 1
-                    x += copy.rect.w
-        return desk_syls
+                        syl.clicked_on = True
+                        self.draw_word(height_of_all, syl)
 
-    def draw_word(self,syl=None):
+        self.draw_word(height_of_all)
+
+    def draw_desk(self):
+        blit_h = self.blit_clickable_words(self.player.my_silben, self.white,(0,self.down),space_after_word="  ",no_buttons=False)
+        return blit_h
+
+    def draw_word(self,height_of_all,syl=None):
         if syl:
             #self.blit_word(farbe=(self.lila, self.lila)) #draws over word and def
             self.player.appendlist.append(syl)
@@ -110,7 +88,7 @@ class Game(globale_variablen.Settings):
                 self.deletedlist = []
                 self.deleted_word = ""
             self.check_word()
-        self.blit_word()
+        self.blit_word(height_of_all)
 
     def make_def_list(self):
         if self.deleted_word_bool or self.deleted_code_word_bool:
@@ -119,7 +97,7 @@ class Game(globale_variablen.Settings):
             bitlists = [word for a in self.player.appendlist[:] for word in a.bit]
         return bitlists
 
-    def blit_word(self, surface=None, farbe=None): # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
+    def blit_word(self, height_of_all,surface=None, farbe=None): # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
         if self.deleted_word_bool:
             farbe = (self.purple, self.purple)
             word_string = self.deleted_word
@@ -133,8 +111,8 @@ class Game(globale_variablen.Settings):
             surface = self.screen_copy
         word_image = self.default_font.render(word_string, True, farbe[0])
         word_rect = word_image.get_rect()
-        word_rect.center = self.screen_copy.get_rect().center
-        surface.blit(word_image, (word_rect.x, word_rect.y))
+        word_rect.centerx, word_rect.y = self.screen_copy.get_rect().centerx, height_of_all
+        surface.blit(word_image, word_rect)
         height_of_all = word_rect.y + self.font_spacing(self.default_font)
         blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (self.screen_copy.get_rect().center[0], height_of_all), screen=surface) # starts one line below the blitted word per the function
 
@@ -159,10 +137,13 @@ class Game(globale_variablen.Settings):
         last_word_right = 0.25 * copy_screen.get_rect().w
         for i in range(len(words)):
             aword = words[i]
-            if type(aword) is not str:
+            if type(aword) is word.Word:
                 if aword.color:
                     color = aword.color
                     aword = aword.name
+            elif type(aword) is silbe.Silbe:
+                color = self.lime if aword.clicked_on else self.white
+                aword = aword.inhalt
             elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
             word_img = font.render(aword+space_after_word, True, color)
