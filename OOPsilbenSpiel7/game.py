@@ -253,8 +253,6 @@ class Game(globale_variablen.Settings):
                     self.screen_copy.blit(self.invisible, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                 syl.rect.y = self.pos_list[i] + self.syl_pos_change
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
-        # print("syl pos change", self.syl_pos_change,"speed change",self.syl_speed_change,"rest",self.screenh/1000)
-        # print("syl speed change",self.syl_speed_change)
         if self.syl_pos_change >= self.screenh // 10:
             self.syl_pos_change = 0
             self.start_syls_cut_at += 1
@@ -269,7 +267,7 @@ class Game(globale_variablen.Settings):
         self.screen_transfer()
 
     def screen_transfer(self): # corrently resizes the current display image, but objects are no longer clickable at the right coordinates
-        resized_screen_copy = pg.transform.scale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
+        resized_screen_copy = pg.transform.smoothscale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
         pg.display.flip()
 
