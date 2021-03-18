@@ -25,7 +25,11 @@ class Gameloop():
         self.mainloop() # call last
 
     def mainloop(self):
+
         while True:
+            print("in gameloop",self.info.screen_via_display_set_mode.get_rect())
+            self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
+            self.clock.tick(self.info.fps)  # ONE LOOP
             self.info.score -= 0.005
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
@@ -86,6 +90,7 @@ class Gameloop():
                     else:
                         self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
+                    print("first size",self.info.screen_via_display_set_mode.get_rect())
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
             # AFTER GOING THROUGH THE EVENTS LIST
             else:
@@ -132,7 +137,6 @@ class Gameloop():
                                                                 self.info.screen_via_display_set_mode)
                         first_click_rect = Rect(self.win_first_click[0], self.win_first_click[1], 1, 1)
                         first_index = first_click_rect.collidelist(self.info.buttons)
-                        print("first index",first_index)
                         if first_index != -1:
                             clicked1 = first_index
                     if self.win_second_click:
@@ -140,7 +144,6 @@ class Gameloop():
                                                                  self.info.screen_via_display_set_mode)
                         second_click_rect = Rect(self.win_second_click[0], self.win_second_click[1], 1, 1)
                         second_index = second_click_rect.collidelist(self.info.buttons)
-                        print("second index", second_index)
                         if second_index != -1:
                             clicked2 = second_index
                         if self.verified_choice:
@@ -201,8 +204,7 @@ class Gameloop():
                         self.click = self.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                     self.info.desk(self.click)
                     self.click = False
-            self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
-            self.clock.tick(self.info.fps)  # ONE LOOP
+
 
     def scale_click(self, click, orig_screen, current_screen): # corr and via
         current_x, current_y = click # clicked on via
