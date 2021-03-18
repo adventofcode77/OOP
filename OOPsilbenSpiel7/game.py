@@ -71,7 +71,6 @@ class Game(globale_variablen.Settings):
                     else:
                         syl.clicked_on = True
                         self.draw_word(height_of_all, syl)
-
         self.draw_word(height_of_all)
 
     def draw_desk(self):
@@ -109,11 +108,8 @@ class Game(globale_variablen.Settings):
             word_string = "".join([a.inhalt for a in self.player.appendlist])
         if not surface:
             surface = self.screen_copy
-        word_image = self.default_font.render(word_string, True, farbe[0])
-        word_rect = word_image.get_rect()
-        word_rect.centerx, word_rect.y = self.screen_copy.get_rect().centerx, height_of_all
-        surface.blit(word_image, word_rect)
-        height_of_all = word_rect.y + self.font_spacing(self.default_font)
+        blit_h = self.blit_clickable_words(word_string,farbe[0],(self.screen_copy.get_rect().centerx, height_of_all))
+        height_of_all += blit_h
         blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (self.screen_copy.get_rect().center[0], height_of_all), screen=surface) # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, font = None, screen=None, space_after_word=" ",no_buttons = True):  # does it need to get the image in order to know how big the font i
@@ -267,9 +263,7 @@ class Game(globale_variablen.Settings):
         self.screen_transfer()
 
     def screen_transfer(self): # corrently resizes the current display image, but objects are no longer clickable at the right coordinates
-        print("screen transfer first thing",self.screen_via_display_set_mode.get_rect())
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
-        print(resized_screen_copy.get_rect(),self.screen_copy.get_rect(),self.screen_via_display_set_mode.get_rect())
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
         pg.display.flip()
 
