@@ -9,7 +9,7 @@ class Settings:
     def __init__(self): #
         pg.freetype.init()
         #self.gameloop_instance = gameloop.Gameloop()
-        self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
+        self.screen_via_display_set_mode = pg.display.set_mode((320, 180), RESIZABLE|DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         self.large_surface = self.screen_via_display_set_mode.copy()
         self.large_surface = pg.transform.scale(self.large_surface,(7000,7000))
