@@ -29,7 +29,6 @@ class Gameloop():
         while True:
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
-            self.info.score -= 0.005
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
                     self.info.screen_copy.fill(self.info.black)
@@ -39,7 +38,7 @@ class Gameloop():
                     self.info.screen_copy.blit(image_end, image_end_rect)
                     self.info.screen_transfer()
                     time.delay(500)
-                    return self.info.score
+                    return "player quit"
                 elif e.type == KEYDOWN:
                     if e.key == K_SPACE: # go to the desk
                         self.main_loop = False
