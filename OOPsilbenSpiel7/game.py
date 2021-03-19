@@ -27,7 +27,6 @@ class Game(globale_variablen.Settings):
         self.player = spieler.Spieler(self) # takes the game object as parameter
         self.woerter = woerter.Woerter(self)
         self.words = self.woerter.words
-        self.score = 0
         syls = self.woerter.silben + self.woerter.code_syls
         self.syls = random.sample(syls, len(syls))
         #self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
@@ -44,16 +43,6 @@ class Game(globale_variablen.Settings):
         self.buttons = []
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
-
-    def choose_language(self):
-        while True:
-            self.menu.choose_language()
-            for ev in event.get():
-                if ev.type == KEYDOWN:
-                    if ev.key == K_d:
-                        return 1
-                    elif ev.key == K_e:
-                        return 2
 
     def desk(self,click): # the click is adjusted for where it'd be on screen_copy
         self.screen_copy.fill(self.black)
@@ -74,12 +63,11 @@ class Game(globale_variablen.Settings):
         self.draw_word(height_of_all)
 
     def draw_desk(self):
-        blit_h = self.blit_clickable_words(self.player.my_silben, self.white,(0,self.down),space_after_word="  ",no_buttons=False)
+        blit_h = self.blit_clickable_words(self.player.my_silben, self.white, (0,self.down), space_x= True, no_buttons=False)
         return blit_h
 
     def draw_word(self,height_of_all,syl=None):
         if syl:
-            #self.blit_word(farbe=(self.lila, self.lila)) #draws over word and def
             self.player.appendlist.append(syl)
             if self.deleted_word_bool or self.deleted_code_word_bool:
                 self.deleted_word_bool = False
@@ -109,10 +97,10 @@ class Game(globale_variablen.Settings):
         if not surface:
             surface = self.screen_copy
         blit_h = self.blit_clickable_words(word_string,farbe[0],(self.screen_copy.get_rect().centerx, height_of_all))
-        height_of_all += blit_h
-        blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (self.screen_copy.get_rect().center[0], height_of_all), screen=surface) # starts one line below the blitted word per the function
+        height_of_all += blit_h + self.font_spacing(self.default_font)
+        blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1],height_of_all)), screen=surface) # starts one line below the blitted word per the function
 
-    def blit_clickable_words(self, lst, color, midtop, font = None, screen=None, space_after_word=" ",no_buttons = True):  # does it need to get the image in order to know how big the font i
+    def blit_clickable_words(self, lst, color, midtop, afont = 12, screen=None, space_x=False, no_buttons = True):  # does it need to get the image in order to know how big the font i
         window_counter = 0
         if not screen:
             screen = self.screen_copy
@@ -126,9 +114,19 @@ class Game(globale_variablen.Settings):
         if type(words) == str:
             words = words.split()
         color_copy = color
-        if font is None:
-            font = self.smaller_font
-        spacing = self.font_spacing(font)
+        if afont == 12: # font = None gets recognised as existing font
+            print("no font")
+            afont = self.smaller_font
+        else:
+            print("font exists and it is...", afont, "of type", type(afont))
+        spacing = self.font_spacing(afont)
+        if space_x:
+            try:
+                space_x = max(self.right, max([aword.rect.w for aword in lst]))
+                spacing = self.down
+            except:
+                print(type(lst))
+                print("space was set to True despite the objects not being words")
         last_line_down = midtop[1]
         last_word_right = 0.25 * copy_screen.get_rect().w
         for i in range(len(words)):
@@ -142,7 +140,7 @@ class Game(globale_variablen.Settings):
                 aword = aword.inhalt
             elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
-            word_img = font.render(aword+space_after_word, True, color)
+            word_img = afont.render(aword, True, color)
             word_rect = word_img.get_rect()
             color = color_copy
             if last_word_right >= 0.75 * copy_screen.get_rect().w:
@@ -152,7 +150,7 @@ class Game(globale_variablen.Settings):
                     word_rect.x, word_rect.y = last_word_right,last_line_down
                     self.buttons.append(word.Button(aword,word_img, word_rect,i))
                     copy_screen.blit(word_img, word_rect)
-                    last_word_right += word_rect.w
+                    last_word_right = last_word_right + word_rect.w + space_x if space_x else last_word_right + word_rect.w + self.default_space_w
                 else:
                     copy_screen = screen.copy()
                     last_line_down = midtop[1]
@@ -161,12 +159,12 @@ class Game(globale_variablen.Settings):
                     word_rect.x, word_rect.y = last_word_right, last_line_down
                     self.buttons.append(word.Button(aword,word_img, word_rect,i))
                     copy_screen.blit(word_img, word_rect)
-                    last_word_right += word_rect.w
+                    last_word_right = last_word_right + word_rect.w + space_x if space_x else last_word_right + word_rect.w + self.default_space_w
             else:
                 word_rect.x, word_rect.y = last_word_right, last_line_down
                 self.buttons.append(word.Button(aword,word_img, word_rect,i))
                 copy_screen.blit(word_img, word_rect)
-                last_word_right += word_rect.w
+                last_word_right = last_word_right + word_rect.w + space_x if space_x else last_word_right + word_rect.w + self.default_space_w
             if aword[-1] in ".!?":
                 last_word_right = 0.25 * copy_screen.get_rect().w
                 last_line_down += spacing * 1.5
@@ -180,8 +178,7 @@ class Game(globale_variablen.Settings):
         screen.blit(list_snapshots_to_blit[temp_counter],(0,0))
         if no_buttons:
             self.buttons = copy_buttons
-        print("buttons", [(button.text, button.rect) for button in self.buttons])
-        return last_line_down + self.font_spacing(font) # how far down the screen there is curently text
+        return last_line_down + self.font_spacing(afont) # how far down the screen there is curently text
 
     def check_word(self):
         temp_bool = True
@@ -205,7 +202,6 @@ class Game(globale_variablen.Settings):
                     self.deleted_code_word_bool = True
 
     def delete_word(self): #same syl is actually different objects in different lists, why?
-        self.score += 5
         for this in self.player.appendlist:
             for syl in self.syls:
                 if this.tuple == syl.tuple:
