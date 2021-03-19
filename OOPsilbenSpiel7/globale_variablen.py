@@ -6,10 +6,8 @@ import random
 import pygame.freetype
 
 class Settings:
-    def __init__(self): #
-        pg.freetype.init()
-        #self.gameloop_instance = gameloop.Gameloop()
-        self.screen_via_display_set_mode = pg.display.set_mode((320, 180), RESIZABLE|DOUBLEBUF)
+    def __init__(self):
+        self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         self.screen_copy = pg.transform.scale(self.screen_copy, (1920, 1080))
         self.screenw, self.screenh = self.screen_copy.get_rect().size
@@ -29,16 +27,17 @@ class Settings:
         self.purple = (255,0,255)
         self.green = (0,205,0)
         self.red = (255,0,0)
-        self.fps = 30 # keine konstante geschwindigkeit
-        self.default_font = font.SysFont("script", self.screen_surface // 20) # make one rendering function?
-        self.bigger_font = font.SysFont("script", self.screen_surface // 10)
-        self.smaller_font = font.SysFont("script", self.screen_surface // 30)
-        self.tiny_font = font.SysFont("script", self.screen_surface // 45)
+        self.fps = 45 # keine konstante geschwindigkeit
+        self.default_font = font.SysFont("rockwell", self.screen_surface // 20) # make one rendering function? # try excepts
+        self.default_space_w = self.default_font.render(" ", True, (0,0,0)).get_rect().w
+        self.bigger_font = font.SysFont("rockwell", self.screen_surface // 10)
+        self.smaller_font = font.SysFont("rockwell", self.screen_surface // 30)
+        self.tiny_font = font.SysFont("msgothic", self.screen_surface // 45)
         self.space = self.font_spacing(self.default_font)
         self.invisible = self.default_font.render("o", False, self.black)
 
     def font_spacing(self,font):
-        img = font.render("A|&%)<QY",False,self.black)
+        img = font.render("A|&%)<QY",True,self.black)
         return img.get_rect().h
 
     def get_bits(self,alist, num_parts): #goal: divide a list into roughly equal parts such that no part is empty

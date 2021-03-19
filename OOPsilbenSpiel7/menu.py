@@ -33,7 +33,7 @@ class Menu():
         elif next_counter < 0:
             next_counter = len(self.list_instructions[lang-1]) - 1
         blit_h = self.info.blit_clickable_words(self.list_instructions[lang - 1][next_counter], self.info.zuff, (self.info.midtop[0],
-                                                                                                                 self.info.midtop[1] + self.info.down * 2), font=self.info.smaller_font)
+                                                                                                                 self.info.midtop[1] + self.info.down * 2), afont=self.info.smaller_font)
         self.info.screen_transfer()
         return next_counter
 
@@ -41,7 +41,6 @@ class Menu():
         pass
 
     def list_lists_instructions(self):
-        dict = {}
         start = f"Willkommen zum Spielanleitung! Drücke {self.next} um fortzufahren oder {self.back} um zurückzugehen. Um die Anleitung zu SKIPPEN, drücke {self.main_loop}. "
         prerequisites = f"Wenn du das Spiel in einem Editor geöffnet hast, installiere Python v.3+, Pygame und wiktionary_de_parser. " \
                         f"Probiere die Verzeichnissnamen anzupassen, wenn sie als nicht gefundene bezeichnet werden. Drücke run in file main. "
