@@ -10,10 +10,10 @@ class Silbe(): #do with sprites
     def __init__(self,it,word,bit,order,worder, info, rgb): #or make it inherit from word
         self.info = info
         self.order = order
-        self.inhalt = it
+        self.name = it
         self.word = word
         self.rgb = rgb
-        self.image = self.info.default_font.render(self.inhalt, True, tuple(rgb))
+        self.image = self.info.default_font.render(self.name, True, tuple(rgb))
         self.rect = self.image.get_rect() # or text.get_rect()?
         self.rect.x = random.randrange(0,self.info.screenw-self.rect.w,self.info.screenw//10)
         self.clicked_on = False

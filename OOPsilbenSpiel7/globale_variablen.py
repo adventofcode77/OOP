@@ -59,12 +59,12 @@ class Settings:
             quit()
         return list_of_lists # DO NOT FORGET RETURN
 
-    def scale_click(self, click, orig_screen, current_screen): # cut and via
-        current_x, current_y = click # clicked on via
-        orig_screenw, orig_screenh = orig_screen.get_rect().w, orig_screen.get_rect().h # the cut x,y
-        current_screenw, current_screenh = current_screen.get_rect().size # the via x,y
-        current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh # where in via x,y were
-        x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh # where in cut they are
+    def scale_click(self, click, orig_screen, current_screen):
+        current_x, current_y = click
+        orig_screenw, orig_screenh = orig_screen.get_rect().w, orig_screen.get_rect().h
+        current_screenw, current_screenh = current_screen.get_rect().size
+        current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh
+        x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh
         return (x,y)
 
     def make_rgb(self): # make three main hues, each for all in a word
