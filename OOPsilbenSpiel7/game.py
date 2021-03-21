@@ -96,8 +96,9 @@ class Game(globale_variablen.Settings):
             word_string = "".join([a.name for a in self.player.appendlist])
         if not surface:
             surface = self.screen_copy
-        blit_h = self.blit_clickable_words([word_string],farbe[0],(self.screen_copy.get_rect().centerx, height_of_all))
-        height_of_all += blit_h + self.font_spacing(self.default_font)
+        word_img = self.default_font.render(word_string,True,farbe[0])
+        self.screen_copy.blit(word_img,(self.screen_copy.get_rect().center[0]-word_img.get_rect().w//2, height_of_all+self.down))
+        height_of_all += self.down*2
         blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1],height_of_all)), screen=surface) # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont = 0, screen=None, space_x=False, no_buttons = True):  # does it need to get the image in order to know how big the font i
@@ -126,7 +127,6 @@ class Game(globale_variablen.Settings):
         last_line_down = midtop[1]
         last_word_right = 0.25 * copy_screen.get_rect().w
         for i in range(len(words)):
-
             aword = words[i]
             if not aword:
                 continue
