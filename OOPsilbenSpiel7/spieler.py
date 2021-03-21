@@ -33,7 +33,6 @@ class Spieler():
         # change speed of itself (changes speed/direction of the loop too)
         if self.loop_down:
             if keys[K_EQUALS] or keys[K_2]:
-                print("k equals")
                 self.speed = round(1.1 * self.speed,2) if self.speed <= self.initial_speed * 3 else self.speed
                 self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,2) if self.info.syl_speed_change <= self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
             elif keys[K_MINUS] or keys[K_1]:
@@ -44,7 +43,6 @@ class Spieler():
                     self.info.syl_speed_change = -self.info.syl_speed_change
         else:
             if keys[K_MINUS] or keys[K_1]:
-                print("k minus")
                 self.speed = round(1.1 * self.speed,2) if self.speed <= self.initial_speed * 3 else self.speed
                 self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,2) if self.info.syl_speed_change >= -self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
             elif keys[K_EQUALS] or keys[K_2]:
