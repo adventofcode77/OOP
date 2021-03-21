@@ -15,7 +15,7 @@ class Game(globale_variablen.Settings):
         super().__init__()
         self.binary_code = binary_code
         self.input_codes = input_codes
-        self.output_code = ""
+        self.output_code = "output code"
         self.next_counter = 0
         self.test_next_counter = 0
         self.menu = menu.Menu(self)
@@ -93,14 +93,14 @@ class Game(globale_variablen.Settings):
             word_string = self.deleted_word
         else:
             farbe = (self.lime, self.cyan)
-            word_string = "".join([a.inhalt for a in self.player.appendlist])
+            word_string = "".join([a.name for a in self.player.appendlist])
         if not surface:
             surface = self.screen_copy
-        blit_h = self.blit_clickable_words(word_string,farbe[0],(self.screen_copy.get_rect().centerx, height_of_all))
+        blit_h = self.blit_clickable_words([word_string],farbe[0],(self.screen_copy.get_rect().centerx, height_of_all))
         height_of_all += blit_h + self.font_spacing(self.default_font)
         blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1],height_of_all)), screen=surface) # starts one line below the blitted word per the function
 
-    def blit_clickable_words(self, lst, color, midtop, afont = 12, screen=None, space_x=False, no_buttons = True):  # does it need to get the image in order to know how big the font i
+    def blit_clickable_words(self, lst, color, midtop, afont = 0, screen=None, space_x=False, no_buttons = True):  # does it need to get the image in order to know how big the font i
         window_counter = 0
         if not screen:
             screen = self.screen_copy
@@ -112,13 +112,10 @@ class Game(globale_variablen.Settings):
             copy_buttons = self.buttons[:]
         self.buttons = []
         if type(words) == str:
-            words = words.split()
+            words = words.split(" ")
         color_copy = color
-        if afont == 12: # font = None gets recognised as existing font
-            print("no font")
+        if not afont: # font = None gets recognised as existing font
             afont = self.smaller_font
-        else:
-            print("font exists and it is...", afont, "of type", type(afont))
         spacing = self.font_spacing(afont)
         if space_x:
             try:
@@ -126,18 +123,20 @@ class Game(globale_variablen.Settings):
                 spacing = self.down
             except:
                 print(type(lst))
-                print("space was set to True despite the objects not being words")
         last_line_down = midtop[1]
         last_word_right = 0.25 * copy_screen.get_rect().w
         for i in range(len(words)):
+
             aword = words[i]
+            if not aword:
+                continue
             if type(aword) is word.Word:
                 if aword.color:
                     color = aword.color
                     aword = aword.name
             elif type(aword) is silbe.Silbe:
                 color = self.lime if aword.clicked_on else self.white
-                aword = aword.inhalt
+                aword = aword.name
             elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
             word_img = afont.render(aword, True, color)
