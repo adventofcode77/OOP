@@ -81,6 +81,8 @@ class Gameloop():
                     if self.verify_code:
                         if self.gewonnen == True:
                             self.binary_click = mouse.get_pos()
+                        elif self.win_second_click:
+                            self.win_first_click,self.win_second_click,clicked1,clicked2 = None, None, None, None
                         elif self.win_first_click:
                             self.win_second_click = mouse.get_pos()
                         else:
@@ -102,7 +104,6 @@ class Gameloop():
                 elif self.verify_code and self.info.guessed_code_words:
                     self.info.screen_copy.fill(self.info.black)
                     height_of_all = 0
-                    rects_code_words = []
                     int_rect = self.info.default_font.render('99 ', True, self.info.white).get_rect()
                     spacing = int_rect.h
                     binary_list = []
@@ -124,9 +125,7 @@ class Gameloop():
                                                             , self.info.white, (self.info.midtop[0],height_of_all))
                     height_of_all = blit_h + spacing
 
-
-
-                    if self.win_first_click:
+                    if self.win_first_click and clicked1 == None: # mistake: whenever it was set to 0, it was "not"
                         self.win_first_click = self.scale_click(self.win_first_click, self.info.screen_copy,
                                                                 self.info.screen_via_display_set_mode)
                         first_click_rect = Rect(self.win_first_click[0], self.win_first_click[1], 1, 1)
@@ -134,15 +133,19 @@ class Gameloop():
                         if first_index != -1:
                             clicked1 = first_index
                     if self.win_second_click:
-                        self.win_second_click = self.scale_click(self.win_second_click, self.info.screen_copy,
-                                                                 self.info.screen_via_display_set_mode)
-                        second_click_rect = Rect(self.win_second_click[0], self.win_second_click[1], 1, 1)
-                        second_index = second_click_rect.collidelist(self.info.buttons)
-                        if second_index != -1:
-                            clicked2 = second_index
-                        if self.verified_choice:
-                            self.verified_choice, self.win_first_click, self.win_second_click = False, False, False
+                        if clicked2 == None:
+                            self.win_second_click = self.scale_click(self.win_second_click, self.info.screen_copy,
+                                                                     self.info.screen_via_display_set_mode)
+                            second_click_rect = Rect(self.win_second_click[0], self.win_second_click[1], 1, 1)
+                            second_index = second_click_rect.collidelist(self.info.buttons)
+                            if second_index != -1:
+                                clicked2 = second_index
+                            else:
+                                self.win_second_click,self.win_first_click,clicked1,clicked2 = None, None, None, None
+                        elif self.verified_choice:
                             self.info.guessed_code_words.insert(clicked2, self.info.guessed_code_words.pop(clicked1))
+                            self.verified_choice, self.win_first_click, self.win_second_click,clicked1,clicked2 = None, None, None, None, None
+
 
                     for i in range(len(self.info.guessed_code_words)): # combine w blit string?
                         word = self.info.guessed_code_words[i]
@@ -162,9 +165,10 @@ class Gameloop():
                             explanation = " ".join(list_code_meanings)
                             blit_h = self.info.blit_clickable_words(explanation.split(), self.info.yellow, (self.info.midtop[0], height_of_all))
                         self.info.screen_transfer()
-                    elif self.list_index_binary_click_words == indices_ones:
+                    elif sorted(self.list_index_binary_click_words) == sorted(indices_ones):
                         self.info.screen_copy.fill(self.info.black,Rect(0,height_of_all,self.info.screen_copy.get_rect().w,self.info.screen_copy.get_rect().h))
-                        self.info.blit_clickable_words(f'RICHTIG', self.info.gold, self.info.screen_copy.get_rect().center)
+                        word_img = self.info.default_font.render('RICHTIG', True,self.info.gold)
+                        self.info.screen_copy.blit(word_img, (self.info.screen_copy.get_rect().center[0]-word_img.get_rect().w//2,height_of_all+self.info.down))
                         self.info.screen_transfer()
                         time.delay(5000)
                         return print("player won")
@@ -177,8 +181,12 @@ class Gameloop():
                             binary_click_rect = Rect(self.binary_click[0],self.binary_click[1],1,1)
                             index = binary_click_rect.collidelist(self.info.buttons)
                             if index != -1:
-                                self.list_index_binary_click_words.append(index)
+                                if index in self.list_index_binary_click_words:
+                                    self.list_index_binary_click_words.remove(index)
+                                else:
+                                    self.list_index_binary_click_words.append(index)
                             self.binary_click = False
+
 
                     self.info.screen_transfer()
 
