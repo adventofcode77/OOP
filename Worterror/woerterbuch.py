@@ -1,7 +1,7 @@
 from wiktionary_de_parser import Parser
 import random
 import re
-from OOPsilbenSpiel7 import globale_variablen
+import globale_variablen
 
 class Woerterbuch(globale_variablen.Settings):
     # replace with escape game file / rewrite using wiktionary_de_parser's method

@@ -1,9 +1,4 @@
-import pygame as pg
 import random
-from OOPsilbenSpiel7 import spieler
-from OOPsilbenSpiel7 import globale_variablen
-from itertools import *
-import math
 
 class Silbe(): #do with sprites
     silbe_all_syls = []

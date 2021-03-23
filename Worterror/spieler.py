@@ -1,8 +1,6 @@
 import pygame as pg
 from pygame import *
 from pygame.locals import *
-from OOPsilbenSpiel7 import globale_variablen
-import math
 
 class Spieler():
     def __init__(self,game_instance):
