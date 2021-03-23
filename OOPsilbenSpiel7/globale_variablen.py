@@ -28,13 +28,14 @@ class Settings:
         self.green = (0,205,0)
         self.red = (255,0,0)
         self.fps = 45 # keine konstante geschwindigkeit
-        self.default_font = font.SysFont("rockwell", self.screen_surface // 20) # make one rendering function? # try excepts
+        self.default_font = font.SysFont(None, self.screen_surface // 20) # make one rendering function? # try excepts
         self.default_space_w = self.default_font.render(" ", True, (0,0,0)).get_rect().w
-        self.bigger_font = font.SysFont("rockwell", self.screen_surface // 10)
-        self.smaller_font = font.SysFont("rockwell", self.screen_surface // 30)
-        self.tiny_font = font.SysFont("msgothic", self.screen_surface // 45)
+        self.bigger_font = font.SysFont(None, self.screen_surface // 10)
+        self.smaller_font = font.SysFont(None, self.screen_surface // 30)
+        self.tiny_font = font.SysFont(None, self.screen_surface // 45)
         self.space = self.font_spacing(self.default_font)
         self.invisible = self.default_font.render("o", False, self.black)
+        #self.dauer_img = self.smaller_font.render(f'{5}:{0}',True,self.white)
 
     def font_spacing(self,font):
         img = font.render("A|&%)<QY",True,self.black)
