@@ -2,7 +2,7 @@ import pygame as pg
 from pygame import *
 from pygame.locals import *
 import random
-from OOPsilbenSpiel7 import main
+import main
 
 class Gameloop():
     def __init__(self, game_instance):

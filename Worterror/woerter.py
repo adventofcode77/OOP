@@ -1,8 +1,8 @@
 import pygame as pg
 import random
-from OOPsilbenSpiel7 import woerterbuch
-from OOPsilbenSpiel7 import word
-from OOPsilbenSpiel7 import silbe
+import woerterbuch
+import word
+import silbe
 import random
 
 class Woerter():
