@@ -1,7 +1,7 @@
 import pygame as pg
 import sys, time, random
 from pygame import *
-from OOPsilbenSpiel7 import game
+import game
 
 class Main:
     file_paths = ['/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml',"/Users/ellie/Downloads/enwiktionary-20210220-pages-articles-multistream.xml"] # backup

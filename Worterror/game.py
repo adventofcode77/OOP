@@ -2,13 +2,13 @@ import pygame as pg
 from pygame import *
 from pygame.locals import *
 import random
-from OOPsilbenSpiel7 import woerter
-from OOPsilbenSpiel7 import globale_variablen
-from OOPsilbenSpiel7 import silbe
-from OOPsilbenSpiel7 import spieler
-from OOPsilbenSpiel7 import gameloop
-from OOPsilbenSpiel7 import menu
-from OOPsilbenSpiel7 import word
+import woerter
+import globale_variablen
+import silbe
+import spieler
+import gameloop
+import menu
+import word
 
 class Game(globale_variablen.Settings):
     def __init__(self, input_codes, file_paths, binary_code):

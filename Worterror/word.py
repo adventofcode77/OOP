@@ -1,8 +1,4 @@
-import pygame as pg
-from pygame import *
-from OOPsilbenSpiel7 import silbe
-import globale_variablen
-import math, random
+import silbe
 
 class Word():
     all_syls = []
