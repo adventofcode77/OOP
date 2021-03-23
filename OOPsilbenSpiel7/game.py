@@ -13,6 +13,7 @@ from OOPsilbenSpiel7 import word
 class Game(globale_variablen.Settings):
     def __init__(self, input_codes, file_paths, binary_code):
         super().__init__()
+        pg.font.init()
         self.binary_code = binary_code
         self.input_codes = input_codes
         self.output_code = "output code"
@@ -41,6 +42,7 @@ class Game(globale_variablen.Settings):
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
+        self.quit = False
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
@@ -257,7 +259,29 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(self.player.image, self.player.rect)
         self.screen_transfer()
 
-    def screen_transfer(self): # corrently resizes the current display image, but objects are no longer clickable at the right coordinates
+    def game_over(self):
+        self.screen_copy.fill(self.black)
+        image_end = self.default_font.render("GAME OVER", True, self.white)
+        image_end_rect = image_end.get_rect()
+        image_end_rect.center = self.screen_copy.get_rect().center
+        self.screen_copy.blit(image_end, image_end_rect)
+        self.screen_transfer(run=False)
+        time.delay(500)
+        quit()
+
+    def dauer(self):
+        dauer = 1*60000 - time.get_ticks()
+        if dauer < 0:
+            self.game_over()
+        seconds=int(dauer/1000 % 60)
+        minutes=int(dauer/60000 % 24)
+        dauer_text = f'{minutes}:{seconds}'
+        dauer_img = self.default_font.render(dauer_text,True,self.white)
+        self.screen_copy.blit(dauer_img,(self.screen_copy.get_rect().w-dauer_img.get_rect().w,self.screen_copy.get_rect().h-dauer_img.get_rect().h))
+
+    def screen_transfer(self,run=True): # corrently resizes the current display image, but objects are no longer clickable at the right coordinates
+        if run and self.default_font:
+            self.dauer()
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
         pg.display.flip()

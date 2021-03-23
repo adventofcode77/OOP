@@ -26,19 +26,13 @@ class Gameloop():
 
     def mainloop(self):
         clicked1, clicked2 = None, None
+        dauer,second,start = 0,0,0
         while True:
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
-                    self.info.screen_copy.fill(self.info.black)
-                    image_end = self.info.default_font.render("GAME OVER", True, self.info.white)
-                    image_end_rect = image_end.get_rect()
-                    image_end_rect.center = self.info.screen_copy.get_rect().center
-                    self.info.screen_copy.blit(image_end, image_end_rect)
-                    self.info.screen_transfer()
-                    time.delay(500)
-                    return print("player quit")
+                    self.info.game_over()
                 elif e.type == KEYDOWN:
                     if e.key == K_SPACE: # go to the desk
                         self.main_loop = False
