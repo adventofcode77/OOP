@@ -143,7 +143,7 @@ class Gameloop():
 
                     for i in range(len(self.info.guessed_code_words)): # combine w blit string?
                         word = self.info.guessed_code_words[i]
-                        word.color = self.info.green if i == clicked1 else self.info.red if  i == clicked2 else self.info.yellow if i in self.list_index_binary_click_words else self.info.cyan
+                        word.color = self.info.green if i == clicked1 else self.info.red if i == clicked2 else self.info.yellow if i in self.list_index_binary_click_words else self.info.cyan
                     blit_h = self.info.blit_clickable_words(self.info.guessed_code_words,self.info.yellow,(0,height_of_all),no_buttons=False)
                     height_of_all = blit_h + spacing
                     if not self.gewonnen:
@@ -180,8 +180,6 @@ class Gameloop():
                                 else:
                                     self.list_index_binary_click_words.append(index)
                             self.binary_click = False
-
-
                     self.info.screen_transfer()
 
                 # MAIN LOOP

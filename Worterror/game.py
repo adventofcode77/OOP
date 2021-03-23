@@ -1,14 +1,7 @@
 import pygame as pg
 from pygame import *
-from pygame.locals import *
 import random
-import woerter
-import globale_variablen
-import silbe
-import spieler
-import gameloop
-import menu
-import word
+import woerter, globale_variablen, silbe, spieler, gameloop, menu, word
 
 class Game(globale_variablen.Settings):
     def __init__(self, input_codes, file_paths, binary_code):
@@ -16,7 +9,7 @@ class Game(globale_variablen.Settings):
         pg.font.init()
         self.binary_code = binary_code
         self.input_codes = input_codes
-        self.output_code = "output code"
+        self.output_code = "Dame schlägt Bauer"
         self.next_counter = 0
         self.test_next_counter = 0
         self.menu = menu.Menu(self)
@@ -42,7 +35,6 @@ class Game(globale_variablen.Settings):
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
-        self.quit = False
         #gameloop should run last
         self.gameloop = gameloop.Gameloop(self) # starts the game
 
@@ -270,8 +262,8 @@ class Game(globale_variablen.Settings):
         quit()
 
     def dauer(self):
-        dauer = 1*60000 - time.get_ticks()
-        if dauer < 0:
+        dauer = 6*60000 - time.get_ticks()
+        if dauer < 0: # or verpixelung begins
             self.game_over()
         seconds=int(dauer/1000 % 60)
         minutes=int(dauer/60000 % 24)
@@ -280,7 +272,7 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(dauer_img,(self.screen_copy.get_rect().w-dauer_img.get_rect().w,self.screen_copy.get_rect().h-dauer_img.get_rect().h))
 
     def screen_transfer(self,run=True): # corrently resizes the current display image, but objects are no longer clickable at the right coordinates
-        if run and self.default_font:
+        if run:
             self.dauer()
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy, self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))

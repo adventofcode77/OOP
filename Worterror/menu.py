@@ -42,20 +42,16 @@ class Menu():
 
     def list_lists_instructions(self):
         start = f"Willkommen zum Spielanleitung! Drücke {self.next} um fortzufahren oder {self.back} um zurückzugehen. Um die Anleitung zu SKIPPEN, drücke {self.main_loop}. "
-        prerequisites = f"Wenn du das Spiel in einem Editor geöffnet hast, installiere Python v.3+, Pygame und wiktionary_de_parser. " \
-                        f"Probiere die Verzeichnissnamen anzupassen, wenn sie als nicht gefundene bezeichnet werden. Drücke run in file main. "
         move = f"Um dich zu bewegen, nutze die {self.move} Tasten. Um schneller oder langsamer zu werden, nutze {self.accelerate} oder {self.decelerate}. " \
                " Warnung: Alles auf der Schirm wird seine Geschwindigkeit aendern. "
         goal = f"Dein Ziel ist, ein Code zu finden. Der Code sieht aus wie ein Satz. " \
                    f"Um den Satz zu bekommen, musst du die richtige Woerter in der richtigen Reihenfolge zusammensetzen. " \
                f"Die Woerter findest du, indem du Silben sammelst und sie ebenso zusammensetzest. Du kannst bis 12 Silben sammeln. " \
                f"Um sie zu entlasen, druecke {self.drop_objects}. "
-
         word_composing = f"Um deine gesammelte Silben zu sehen, druecke {self.workspace_window}. " \
-                         f"Hier kannst du auf sie klicken, um aus denen ein Wort aufzubauen. Unter jedes Silbe wird Teil der Definition seines Wortes erscheinen. "
-        code_word_composing = f"Wenn das Wort Teil des Code-Satzes ist, wird es statt eine Definition eine Instruktion haben. "
-        word_guessing = f"Wenn ein Wort vollstaendig ist, aendert sich seine Farbe. Wenn Gold, ist es Teil des Code-Satzes. " \
-                        f"Wenn Lila, ist es nicht. Alle erratene Woerter verschwinden aus dem Schirm. "
+                         f"Hier kannst du auf sie klicken, um aus denen ein Wort aufzubauen. Unter jedes Silbe wird Text erscheinen. " \
+                         f"Dieser Text kann dir helfen."
+        word_guessing = f"Wenn ein Wort vollstaendig ist, aendert sich seine Farbe. Wenn Gold, ist es Teil des Code-Satzes. "
         verify_code = f"Um die erratene Woerter zu sehen, druecke {self.verification_window}. " \
                       f"Hier kannst du den Code-Satz aufbauen. Druecke auf dem Index vom Wort, das du umsetzen willst. " \
                       f"Dann druecke auf dem Index, an dem du es hinstellen willst. Druecke auf {self.back} und {self.next}, um die Instruktion zu sehen. "
@@ -64,7 +60,7 @@ class Menu():
                       f"Um diese Anleitung nochmals zu sehen, druecke {self.instructions}. Druecke {self.main_loop} um zurueck zum Spiel zu gehen." \
                       f"Um fortzufahren, druecke jetzt {self.main_loop}. "
 
-        list_de = [start, prerequisites, goal, move,word_composing,code_word_composing,word_guessing,verify_code,cheating, game_window]
+        list_de = [start, goal, move,word_composing,word_guessing,verify_code,cheating, game_window]
 
         start = f"Welcome to the Game Tutorial! Press {self.next} to Continue or {self.back} to go Back. To skip the tutorial, press {self.main_loop}."
         prerequisites = f"If you have the game open in an editor, install Python v.3+, Pygame and the module wiktextract." \
