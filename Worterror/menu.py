@@ -3,7 +3,6 @@ import pygame as pg
 class Menu():
     def __init__(self, game_instance):
         self.info = game_instance
-        #self.surface_cut = pg.Surface.subsurface(self.info.large_surface,pg.Rect(2000,0,3000,3000))
         self.offset = 0
         self.text_pos = (self.info.midtop[0], self.info.midtop[1] + self.offset + self.info.space)
         # keys
@@ -19,20 +18,13 @@ class Menu():
         self.instructions = "I"
         self.list_instructions = self.list_lists_instructions()
 
-    def choose_language(self):
-        blit_h1 = self.info.blit_clickable_words(f"Drücke D für Deutsch", self.info.zuff, (self.info.midtop[0],
-                                                                                           self.info.midtop[1] + self.info.down * 2))
-        #blit_h2 = self.info.blit_string_words(f"Press E for English (nicht fertig)",self.info.zuff,(self.info.midtop[0],
-        #                    self.info.midtop[1]+ blit_h1))
-        self.info.screen_transfer()
-
     def tutorial(self, next_counter, lang):
         self.info.screen_copy.fill(self.info.black)
         if next_counter > len(self.list_instructions[lang-1])-1:
             next_counter = 0
         elif next_counter < 0:
             next_counter = len(self.list_instructions[lang-1]) - 1
-        blit_h = self.info.blit_clickable_words(self.list_instructions[lang - 1][next_counter], self.info.zuff, (self.info.midtop[0],
+        blit_h = self.info.blit_clickable_words(self.list_instructions[lang - 1][next_counter], self.info.white, (self.info.midtop[0],
                                                                                                                  self.info.midtop[1] + self.info.down * 2), afont=self.info.smaller_font)
         self.info.screen_transfer()
         return next_counter

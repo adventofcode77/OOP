@@ -51,21 +51,16 @@ class Spieler():
                     self.info.syl_speed_change = -self.info.syl_speed_change
 
     def pick(self,sylobjects):
-        if len(self.my_silben) == 60:
-            pass #print("you can only pick 12 at a time!")
-        else:
-            index = self.rect.collidelist([a.rect for a in sylobjects])
-            if index is not -1:
-                picked = sylobjects[index]
-                if picked.visible == True:
-                    if picked in self.info.woerter.code_syls:
-                        self.info.gold_syls.append(picked)
-                        print("in code syls",[a.name for a in self.info.gold_syls])
-                    else:
-                        self.info.lila_syls.append(picked)
-                        print("in lila syls", [a.name for a in self.info.lila_syls])
-                    self.my_silben.append(picked)
-                    picked.visible = False
+        index = self.rect.collidelist([a.rect for a in sylobjects])
+        if index is not -1:
+            picked = sylobjects[index]
+            if picked.visible == True:
+                if picked in self.info.woerter.code_syls:
+                    self.info.gold_syls.append(picked)
+                else:
+                    self.info.lila_syls.append(picked)
+                self.my_silben.append(picked)
+                picked.visible = False
 
 
 
