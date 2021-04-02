@@ -8,6 +8,7 @@ class Game(globale_variablen.Settings):
     def __init__(self, input_codes, file_paths, binary_code):
         super().__init__()
         pg.font.init()
+        self.test = False
         self.binary_code = binary_code
         self.input_codes = input_codes
         self.output_code = "Dame schlägt Bauer"
@@ -37,15 +38,18 @@ class Game(globale_variablen.Settings):
         self.gold_syls, self.lila_syls = [], []
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // 10) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * (len(self.lila_syls) // 10 + 1)
-        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0, self.start_third_screen_part-self.end_first_screen_part,self.screenh)
+        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, self.down, self.start_third_screen_part-self.end_first_screen_part,self.screenh-self.down)
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
         # gameloop should run last
         self.gameloop = gameloop.Gameloop(self)  # starts the game
+        print("this line doesn't execute")
+
 
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
+        self.nums()
         self.tript2.fill(self.black)
         if click:
             click = self.scale_click(click, self.screen_copy, self.screen_copy)
@@ -86,8 +90,7 @@ class Game(globale_variablen.Settings):
             bitlists = [word for a in self.player.appendlist[:] for word in a.bit]
         return bitlists
 
-    def blit_word(self, height_of_all, surface=None,
-                  farbe=None):  # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
+    def blit_word(self, height_of_all=0, surface=None):  # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
         if self.deleted_word_bool or self.deleted_code_word_bool:
             farbe = (self.yellow, self.yellow)
             word_string = self.deleted_word
@@ -97,14 +100,14 @@ class Game(globale_variablen.Settings):
         if not surface:
             surface = self.screen_copy
         word_img = self.default_font.render(word_string, True, farbe[0])
-        self.screen_copy.blit(word_img, (
-        self.screen_copy.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all + self.down))
+        surface.blit(word_img, (
+        surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all + self.down))
         height_of_all += self.down * 2
         blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
         self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1], height_of_all)),
                                            screen=surface)  # starts one line below the blitted word per the function
 
-    def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None, space_x=False,
+    def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
                              no_buttons=True,wh=None):  # does it need to get the image in order to know how big the font i
         window_counter = 0
         if not screen:
@@ -124,15 +127,8 @@ class Game(globale_variablen.Settings):
         if type(words) == str:
             words = words.split(" ")
         color_copy = color
-        if not afont:  # font = None gets recognised as existing font
-            afont = self.smaller_font
+        afont = self.smaller_font
         spacing = self.font_spacing(afont)
-        if space_x:
-            try:
-                space_x = max(self.right, max([aword.rect.w for aword in lst]))
-                spacing = self.down
-            except:
-                print(type(lst))
         last_line_down = midtop[1]
         last_word_right = 0.25 * copy_screen_rect.w
         for i in range(len(words)):
@@ -158,7 +154,7 @@ class Game(globale_variablen.Settings):
                     word_rect.x, word_rect.y = last_word_right, last_line_down
                     self.buttons.append(word.Button(aword, word_img, word_rect, i))
                     copy_screen.blit(word_img, word_rect)
-                    last_word_right = last_word_right + word_rect.w + space_x if space_x else last_word_right + word_rect.w + self.default_space_w
+                    last_word_right = last_word_right + word_rect.w + self.default_space_w
                 else:
                     copy_screen = screen.copy()
                     last_line_down = midtop[1]
@@ -167,12 +163,12 @@ class Game(globale_variablen.Settings):
                     word_rect.x, word_rect.y = last_word_right, last_line_down
                     self.buttons.append(word.Button(aword, word_img, word_rect, i))
                     copy_screen.blit(word_img, word_rect)
-                    last_word_right = last_word_right + word_rect.w + space_x if space_x else last_word_right + word_rect.w + self.default_space_w
+                    last_word_right = last_word_right + word_rect.w + self.default_space_w
             else:
                 word_rect.x, word_rect.y = last_word_right, last_line_down
                 self.buttons.append(word.Button(aword, word_img, word_rect, i))
                 copy_screen.blit(word_img, word_rect)
-                last_word_right = last_word_right + word_rect.w + space_x if space_x else last_word_right + word_rect.w + self.default_space_w
+                last_word_right = last_word_right + word_rect.w + self.default_space_w
             if aword[-1] in ".!?":
                 last_word_right = 0.25 * copy_screen_rect.w
                 last_line_down += spacing * 1.5
@@ -238,7 +234,7 @@ class Game(globale_variablen.Settings):
         poslist = []
         tenth = self.screenh // 10
         pos = self.screenh - tenth
-        while pos >= 0 - self.syl_pos_change:
+        while pos >= self.down - self.syl_pos_change:
             poslist.append(pos)
             pos -= tenth
         return poslist
@@ -260,7 +256,7 @@ class Game(globale_variablen.Settings):
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part + self.screenw // 10, 0, (
                     self.start_third_screen_part - self.end_first_screen_part - self.screenw // 10), self.screenh)
         self.screen_syls = self.get_screensyls()
-        self.screen_copy.fill(self.black)
+        self.screen_copy.fill(self.black,rect=(0,self.down,self.screenw,self.screenh-self.down))
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
@@ -297,7 +293,7 @@ class Game(globale_variablen.Settings):
         self.screen_transfer()
 
     def game_over(self):
-        self.screen_copy.fill(self.black)
+        self.screen_copy.fill(self.black,rect=(0,self.down,self.screenw,self.screenh-self.down))
         image_end = self.default_font.render("GAME OVER", True, self.white)
         image_end_rect = image_end.get_rect()
         image_end_rect.center = self.screen_copy.get_rect().center
@@ -316,6 +312,8 @@ class Game(globale_variablen.Settings):
         dauer_img = self.default_font.render(dauer_text, True, self.white)
         self.screen_copy.blit(dauer_img, (
         self.screen_copy.get_rect().w - dauer_img.get_rect().w, self.screen_copy.get_rect().h - dauer_img.get_rect().h))
+        #self.blit_clickable_words(self.binary_code, self.white,
+        #                          (self.midtop[0], self.midtop[1] + self.down))
 
     def screen_transfer(self, run=True):
         if run:
@@ -324,3 +322,21 @@ class Game(globale_variablen.Settings):
                                                        self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
         pg.display.flip()
+
+    def nums(self):
+        self.test = True
+        print("test is true........")
+        binary_list = []
+        for i in range(len(self.woerter.input_code.split())):  # the code?
+            if i < len(self.guessed_code_words):
+                code_number_at_this_index = list(self.binary_code)[i]
+                opposite = 0 if code_number_at_this_index == '1' else 1
+                if self.guessed_code_words[i].name == self.woerter.input_code.split()[i]:
+                    binary_list.append(f'{code_number_at_this_index} ')
+                else:
+                    binary_list.append(
+                        f'{opposite} ')  # append an empty space so the blitting function splits them based on it
+            else:
+                binary_list.append(f'{0 if i % 2 == 0 else 1} ')
+        blit_h = self.blit_clickable_words(binary_list, self.white,(self.screenw//2, 0))
+        self.top = blit_h
