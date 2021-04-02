@@ -23,6 +23,7 @@ class Gameloop():
                 if e.type == QUIT:
                     self.info.game_over()
                 elif e.type == KEYDOWN: # enum instead of if/else? dict with states and functions
+                    ln = len(self.info.guessed_code_words)
                     if e.key == K_SPACE: # go to the desk
                         if self.main_loop:
                             self.main_loop = False
@@ -33,20 +34,29 @@ class Gameloop():
                             for item in self.info.player.my_silben:
                                 item.clicked_on = False
                     elif e.key == K_LEFT: # show next code_string explanation installment
-                        if self.info.move_word:
-                            print("move this word in gameloop:",self.info.move_word)
-                            if self.info.move_word > 0:
+                        if self.info.move_word is not None:
+                            if self.info.move_word > 0 and self.info.move_word < ln:
                                 self.info.guessed_code_words.insert(self.info.move_word,self.info.guessed_code_words.pop(self.info.move_word-1))
                                 self.info.move_word -= 1
-                            else:
+                            elif self.info.move_word == 0:
                                 self.info.guessed_code_words.insert(len(self.info.guessed_code_words)-1,self.info.guessed_code_words.pop(0))
                                 self.info.move_word = len(self.info.guessed_code_words)-1
+                            else:
+                                print("clicked on word whose index was more than the collected code words")
                         else:
                             self.info.next_counter -= 1
                             self.info.test_next_counter -= 1
                     elif e.key == K_RIGHT: # show next code_string explanation installment
-                        if self.info.move_word:
-                            self.info.move_word -= 1
+                        if self.info.move_word is not None:
+                            if self.info.move_word < ln-1:
+                                self.info.guessed_code_words.insert(self.info.move_word,
+                                                                    self.info.guessed_code_words.pop(
+                                                                        self.info.move_word + 1))
+                                self.info.move_word += 1
+                            elif self.info.move_word == ln-1:
+                                self.info.guessed_code_words.insert(0, self.info.guessed_code_words.pop(
+                                    len(self.info.guessed_code_words) - 1))
+                                self.info.move_word = 0
                         else:
                             self.info.next_counter += 1
                             self.info.test_next_counter += 1
@@ -68,16 +78,10 @@ class Gameloop():
             else:
 
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
-                    self.click = self.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
+                    self.click = self.info.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                 self.info.desk(self.click)
                 self.click = False
 
-    def scale_click(self, click, orig_screen, current_screen): # corr and via
-        current_x, current_y = click # clicked on via
-        orig_screenw, orig_screenh = orig_screen.get_rect().w, orig_screen.get_rect().h # the cut x,y
-        current_screenw, current_screenh = current_screen.get_rect().size # the via x,y
-        current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh # where in via x,y were
-        x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh # where in corr they are
-        return (x,y)
+
 
 

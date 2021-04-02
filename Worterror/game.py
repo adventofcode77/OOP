@@ -54,13 +54,9 @@ class Game(globale_variablen.Settings):
         self.nums()
         if click:
             self.check_num_buttons(click)
-            click = self.scale_click(click, self.screen_copy, self.screen_copy)
             x, y = click
-            print("x,y", x, y)
             for syl in self.gold_syls + self.lila_syls:
-                print(syl.name, " ", syl.rect)
                 if syl.rect.collidepoint(x, y):
-                    print("clicked on", syl.name)
                     if syl.clicked_on:
                         syl.clicked_on = False
                         index = self.player.appendlist.index(syl)
@@ -238,7 +234,7 @@ class Game(globale_variablen.Settings):
         poslist = []
         tenth = self.screenh // 10
         pos = self.screenh - tenth
-        while pos >= self.down - self.syl_pos_change:
+        while pos >= 0 - self.syl_pos_change:
             poslist.append(pos)
             pos -= tenth
         return poslist
@@ -333,10 +329,7 @@ class Game(globale_variablen.Settings):
     def nums(self):
         binary_list = {}
         splitinput = self.woerter.input_code.split()
-        print("input code", splitinput)
-        print("guessed code words",self.guessed_code_words)
         for i in range(len(splitinput)):  # the code?
-            print("i", i)
             code_number_at_this_index = list(self.binary_code)[i]
             opposite = 0 if code_number_at_this_index == '1' else 1
             if i < len(self.guessed_code_words):
@@ -346,20 +339,22 @@ class Game(globale_variablen.Settings):
                     binary_list[f'{self.guessed_code_words[i].name} '] = f'{opposite} '
             else:
                 binary_list[f'{i} '] = f'{opposite} '
-        print("list keys", list(binary_list.keys()))
-        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0))
+        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0), screen=self.tript2)
         blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,100)]], self.white,
-                                           (self.screenw // 2, blit_h), no_buttons=False)
+                                           (self.screenw // 2, blit_h), no_buttons=False, screen=self.tript2)
         self.top = blit_h
 
 
-    def check_num_buttons(self,click):
+    def check_num_buttons(self,click): # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
+        click = self.scale_click(click,self.tript2,self.screen_copy)
         click_rect = Rect(click[0],click[1],1,1)
         index = click_rect.collidelist([a.rect for a in self.buttons])
         if index and index != -1:
-            print("index clicked nums",index)
             self.move_word = index
-            print("move this word:",self.move_word)
+            print(self.move_word)
+        else:
+            self.move_word = None
+
 
 
 
