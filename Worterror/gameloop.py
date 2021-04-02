@@ -15,37 +15,44 @@ class Gameloop():
         self.binary_click = False
         self.mainloop() # call last
 
-
-
     def mainloop(self):
-
         while True:
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
                     self.info.game_over()
-                elif e.type == KEYDOWN:
+                elif e.type == KEYDOWN: # enum instead of if/else? dict with states and functions
                     if e.key == K_SPACE: # go to the desk
                         if self.main_loop:
                             self.main_loop = False
                         else:
                             self.menu = False
-                            self.verify_code = False
                             self.info.next_counter = 0
                             self.main_loop = True
                             for item in self.info.player.my_silben:
                                 item.clicked_on = False
                     elif e.key == K_LEFT: # show next code_string explanation installment
-                        self.info.next_counter -= 1
-                        self.info.test_next_counter -= 1
+                        if self.info.move_word:
+                            print("move this word in gameloop:",self.info.move_word)
+                            if self.info.move_word > 0:
+                                self.info.guessed_code_words.insert(self.info.move_word,self.info.guessed_code_words.pop(self.info.move_word-1))
+                                self.info.move_word -= 1
+                            else:
+                                self.info.guessed_code_words.insert(len(self.info.guessed_code_words)-1,self.info.guessed_code_words.pop(0))
+                                self.info.move_word = len(self.info.guessed_code_words)-1
+                        else:
+                            self.info.next_counter -= 1
+                            self.info.test_next_counter -= 1
                     elif e.key == K_RIGHT: # show next code_string explanation installment
-                        self.info.next_counter += 1
-                        self.info.test_next_counter += 1
+                        if self.info.move_word:
+                            self.info.move_word -= 1
+                        else:
+                            self.info.next_counter += 1
+                            self.info.test_next_counter += 1
                     elif e.key == K_i:
                         self.menu = True
                 elif e.type == MOUSEBUTTONDOWN:
-                    print("self click is not NONE!!!")
                     self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)

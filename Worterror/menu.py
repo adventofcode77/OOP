@@ -19,7 +19,7 @@ class Menu():
         self.list_instructions = self.list_lists_instructions()
 
     def tutorial(self, next_counter, lang):
-        self.info.screen_copy.fill(self.info.black,rect=(0,self.info.down,self.info.screenw,self.info.screenh-self.info.down))
+        self.info.screen_copy.fill(self.info.black)
         if next_counter > len(self.list_instructions[lang-1])-1:
             next_counter = 0
         elif next_counter < 0:
