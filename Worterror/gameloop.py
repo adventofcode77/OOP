@@ -15,7 +15,10 @@ class Gameloop():
         self.binary_click = False
         self.mainloop() # call last
 
+
+
     def mainloop(self):
+
         while True:
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
@@ -42,6 +45,7 @@ class Gameloop():
                     elif e.key == K_i:
                         self.menu = True
                 elif e.type == MOUSEBUTTONDOWN:
+                    print("self click is not NONE!!!")
                     self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
@@ -50,10 +54,12 @@ class Gameloop():
                 next = self.info.menu.tutorial(self.info.next_counter, self.info.language)
                 self.info.next_counter = next
             elif self.main_loop:
+
                 self.info.player.act()  # PLAYER MOVES ONCE A LOOP
                 self.info.player.pick(self.info.syls)
                 self.info.blit_loop()
             else:
+
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     self.click = self.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                 self.info.desk(self.click)
@@ -66,3 +72,5 @@ class Gameloop():
         current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh # where in via x,y were
         x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh # where in corr they are
         return (x,y)
+
+
