@@ -34,29 +34,31 @@ class Game(globale_variablen.Settings):
         self.deleted_word = ""
         self.start_syls_cut_at = 0
         self.pos_list = self.get_pos_list()
-        print("len post list",len(self.pos_list))
+        print("len post list", len(self.pos_list))
         self.gold_syls, self.lila_syls = [], []
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // 10) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * (len(self.lila_syls) // 10 + 1)
-        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, self.down, self.start_third_screen_part-self.end_first_screen_part,self.screenh-self.down)
+        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, self.down,
+                                                  self.start_third_screen_part - self.end_first_screen_part,
+                                                  self.screenh - self.down)
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
+        self.move_word = None
         # gameloop should run last
         self.gameloop = gameloop.Gameloop(self)  # starts the game
         print("this line doesn't execute")
 
-
-
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
-        self.nums()
         self.tript2.fill(self.black)
+        self.nums()
         if click:
+            self.check_num_buttons(click)
             click = self.scale_click(click, self.screen_copy, self.screen_copy)
             x, y = click
-            print("x,y",x,y)
-            for syl in self.gold_syls+self.lila_syls:
-                print(syl.name," ",syl.rect)
+            print("x,y", x, y)
+            for syl in self.gold_syls + self.lila_syls:
+                print(syl.name, " ", syl.rect)
                 if syl.rect.collidepoint(x, y):
                     print("clicked on", syl.name)
                     if syl.clicked_on:
@@ -65,10 +67,10 @@ class Game(globale_variablen.Settings):
                         del self.player.appendlist[index]
                     else:
                         syl.clicked_on = True
-                        self.draw_word(syl=syl,screen=self.tript2)
+                        self.draw_word(syl=syl, screen=self.tript2)
         self.draw_word(screen=self.tript2)
 
-    def draw_word(self, height_of_all=None,syl=None,screen=None):
+    def draw_word(self, height_of_all=None, syl=None, screen=None):
         if not height_of_all:
             height_of_all = self.down
         if syl:
@@ -81,7 +83,7 @@ class Game(globale_variablen.Settings):
             self.check_word()
         if not screen:
             screen = self.screen_copy
-        self.blit_word(height_of_all,surface=screen)
+        self.blit_word(height_of_all, surface=screen)
 
     def make_def_list(self):
         if self.deleted_word_bool or self.deleted_code_word_bool:
@@ -90,7 +92,8 @@ class Game(globale_variablen.Settings):
             bitlists = [word for a in self.player.appendlist[:] for word in a.bit]
         return bitlists
 
-    def blit_word(self, height_of_all=0, surface=None):  # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
+    def blit_word(self, height_of_all=0,
+                  surface=None):  # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
         if self.deleted_word_bool or self.deleted_code_word_bool:
             farbe = (self.yellow, self.yellow)
             word_string = self.deleted_word
@@ -101,20 +104,21 @@ class Game(globale_variablen.Settings):
             surface = self.screen_copy
         word_img = self.default_font.render(word_string, True, farbe[0])
         surface.blit(word_img, (
-        surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all + self.down))
+            surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all + self.down))
         height_of_all += self.down * 2
         blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
-        self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1], height_of_all)),
+            self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1], height_of_all)),
                                            screen=surface)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
-                             no_buttons=True,wh=None):  # does it need to get the image in order to know how big the font i
+                             no_buttons=True,
+                             wh=None):  # does it need to get the image in order to know how big the font i
         window_counter = 0
         if not screen:
             screen = self.screen_copy
         copy_screen = screen.copy()
         if wh:
-            screen_rect = Rect(0,0,wh[0],wh[1])
+            screen_rect = Rect(0, 0, wh[0], wh[1])
             copy_screen_rect = Rect(0, 0, wh[0], wh[1])
         else:
             screen_rect = screen.get_rect()
@@ -245,18 +249,20 @@ class Game(globale_variablen.Settings):
         for syl in to_return:
             if syl.visible == True:
                 if syl.rect.x <= self.end_first_screen_part:
-                    syl.rect.x = syl.rect.x + self.end_first_screen_part if self.end_first_screen_part < self.start_third_screen_part else self.start_third_screen_part-self.screenw//10
+                    syl.rect.x = syl.rect.x + self.end_first_screen_part if self.end_first_screen_part < self.start_third_screen_part else self.start_third_screen_part - self.screenw // 10
                 elif syl.rect.x >= self.start_third_screen_part:
-                    syl.rect.x = self.start_third_screen_part - (self.screenw-syl.rect.x) if self.start_third_screen_part - (self.screenw-syl.rect.x) > self.end_first_screen_part else self.end_first_screen_part + self.screenw//10
+                    syl.rect.x = self.start_third_screen_part - (
+                                self.screenw - syl.rect.x) if self.start_third_screen_part - (
+                                self.screenw - syl.rect.x) > self.end_first_screen_part else self.end_first_screen_part + self.screenw // 10
         return syls[:len(self.pos_list)]  # (now syls should always be bigger than this cut)
 
     def blit_loop(self):  # why is there some trembling? especially after downsizing screen
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // 10) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * (len(self.lila_syls) // 10 + 1)
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part + self.screenw // 10, 0, (
-                    self.start_third_screen_part - self.end_first_screen_part - self.screenw // 10), self.screenh)
+                self.start_third_screen_part - self.end_first_screen_part - self.screenw // 10), self.screenh)
         self.screen_syls = self.get_screensyls()
-        self.screen_copy.fill(self.black,rect=(0,self.down,self.screenw,self.screenh-self.down))
+        self.screen_copy.fill(self.black)
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
@@ -268,12 +274,12 @@ class Game(globale_variablen.Settings):
             gold = self.gold_syls[:]
             lil = self.lila_syls[:]
             ln = len(self.pos_list)
-            for j in range(i,len(lil),ln):
+            for j in range(i, len(lil), ln):
                 syl = lil[j]
-                syl.rect.x = self.screenw - (1 + j//ln) * self.screenw // 10
-                syl.rect.y = (1+i)*self.screenh//10
+                syl.rect.x = self.screenw - (1 + j // ln) * self.screenw // 10
+                syl.rect.y = (1 + i) * self.screenh // 10
                 self.screen_copy.blit(syl.image, syl.rect)
-            for k in range(i,len(gold),ln):
+            for k in range(i, len(gold), ln):
                 syl = gold[k]
                 syl.rect.x = (1 + k // ln) * self.screenw // 10
                 syl.rect.y = (1 + i) * self.screenh // 10
@@ -293,7 +299,7 @@ class Game(globale_variablen.Settings):
         self.screen_transfer()
 
     def game_over(self):
-        self.screen_copy.fill(self.black,rect=(0,self.down,self.screenw,self.screenh-self.down))
+        self.screen_copy.fill(self.black)
         image_end = self.default_font.render("GAME OVER", True, self.white)
         image_end_rect = image_end.get_rect()
         image_end_rect.center = self.screen_copy.get_rect().center
@@ -311,8 +317,9 @@ class Game(globale_variablen.Settings):
         dauer_text = f'{minutes}:{seconds}'
         dauer_img = self.default_font.render(dauer_text, True, self.white)
         self.screen_copy.blit(dauer_img, (
-        self.screen_copy.get_rect().w - dauer_img.get_rect().w, self.screen_copy.get_rect().h - dauer_img.get_rect().h))
-        #self.blit_clickable_words(self.binary_code, self.white,
+            self.screen_copy.get_rect().w - dauer_img.get_rect().w,
+            self.screen_copy.get_rect().h - dauer_img.get_rect().h))
+        # self.blit_clickable_words(self.binary_code, self.white,
         #                          (self.midtop[0], self.midtop[1] + self.down))
 
     def screen_transfer(self, run=True):
@@ -324,19 +331,35 @@ class Game(globale_variablen.Settings):
         pg.display.flip()
 
     def nums(self):
-        self.test = True
-        print("test is true........")
-        binary_list = []
-        for i in range(len(self.woerter.input_code.split())):  # the code?
+        binary_list = {}
+        splitinput = self.woerter.input_code.split()
+        print("input code", splitinput)
+        print("guessed code words",self.guessed_code_words)
+        for i in range(len(splitinput)):  # the code?
+            print("i", i)
+            code_number_at_this_index = list(self.binary_code)[i]
+            opposite = 0 if code_number_at_this_index == '1' else 1
             if i < len(self.guessed_code_words):
-                code_number_at_this_index = list(self.binary_code)[i]
-                opposite = 0 if code_number_at_this_index == '1' else 1
-                if self.guessed_code_words[i].name == self.woerter.input_code.split()[i]:
-                    binary_list.append(f'{code_number_at_this_index} ')
+                if self.guessed_code_words[i].name == splitinput[i]:
+                    binary_list[self.guessed_code_words[i].name] = f'{code_number_at_this_index} '
                 else:
-                    binary_list.append(
-                        f'{opposite} ')  # append an empty space so the blitting function splits them based on it
+                    binary_list[f'{self.guessed_code_words[i].name} '] = f'{opposite} '
             else:
-                binary_list.append(f'{0 if i % 2 == 0 else 1} ')
-        blit_h = self.blit_clickable_words(binary_list, self.white,(self.screenw//2, 0))
+                binary_list[f'{i} '] = f'{opposite} '
+        print("list keys", list(binary_list.keys()))
+        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0))
+        blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,100)]], self.white,
+                                           (self.screenw // 2, blit_h), no_buttons=False)
         self.top = blit_h
+
+
+    def check_num_buttons(self,click):
+        click_rect = Rect(click[0],click[1],1,1)
+        index = click_rect.collidelist([a.rect for a in self.buttons])
+        if index and index != -1:
+            print("index clicked nums",index)
+            self.move_word = index
+            print("move this word:",self.move_word)
+
+
+

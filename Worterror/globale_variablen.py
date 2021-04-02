@@ -7,6 +7,7 @@ import pygame.freetype
 
 class Settings:
     def __init__(self):
+        self.top = 0
         self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         self.screen_copy = pg.transform.scale(self.screen_copy, (1920, 1080))
