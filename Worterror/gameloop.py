@@ -36,10 +36,14 @@ class Gameloop():
                     elif e.key == K_LEFT: # show next code_string explanation installment
                         if self.info.move_word is not None:
                             if self.info.move_word > 0 and self.info.move_word < ln:
-                                self.info.guessed_code_words.insert(self.info.move_word,self.info.guessed_code_words.pop(self.info.move_word-1))
+                                popped = self.info.guessed_code_words.pop(self.info.move_word-1)
+                                popped.color = self.info.orange
+                                self.info.guessed_code_words.insert(self.info.move_word,popped)
                                 self.info.move_word -= 1
                             elif self.info.move_word == 0:
-                                self.info.guessed_code_words.insert(len(self.info.guessed_code_words)-1,self.info.guessed_code_words.pop(0))
+                                popped = self.info.guessed_code_words.pop(0)
+                                popped.color = self.info.orange
+                                self.info.guessed_code_words.insert(ln-1,popped)
                                 self.info.move_word = len(self.info.guessed_code_words)-1
                             else:
                                 print("clicked on word whose index was more than the collected code words")
@@ -49,14 +53,17 @@ class Gameloop():
                     elif e.key == K_RIGHT: # show next code_string explanation installment
                         if self.info.move_word is not None:
                             if self.info.move_word < ln-1:
-                                self.info.guessed_code_words.insert(self.info.move_word,
-                                                                    self.info.guessed_code_words.pop(
-                                                                        self.info.move_word + 1))
+                                popped = self.info.guessed_code_words.pop(self.info.move_word + 1)
+                                popped.color = self.info.orange
+                                self.info.guessed_code_words.insert(self.info.move_word, popped)
                                 self.info.move_word += 1
                             elif self.info.move_word == ln-1:
-                                self.info.guessed_code_words.insert(0, self.info.guessed_code_words.pop(
-                                    len(self.info.guessed_code_words) - 1))
+                                popped = self.info.guessed_code_words.pop(ln - 1)
+                                popped.color = self.info.orange
+                                self.info.guessed_code_words.insert(0, popped)
                                 self.info.move_word = 0
+                            else:
+                                print("...")
                         else:
                             self.info.next_counter += 1
                             self.info.test_next_counter += 1
@@ -79,6 +86,10 @@ class Gameloop():
 
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     self.click = self.info.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
+                    x,y = self.click
+                    print("original click",x,y)
+                    x -= self.info.end_first_screen_part*2 # this offset is produced by the def of end_first_screen_part
+                    self.info.check_num_buttons((x,y))
                 self.info.desk(self.click)
                 self.click = False
 

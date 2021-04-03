@@ -31,7 +31,7 @@ class Settings:
         self.fps = 45 # keine konstante geschwindigkeit
         self.default_font = font.SysFont(None, self.screen_surface // 20) # make one rendering function? # try excepts
         self.default_space_w = self.default_font.render(" ", True, (0,0,0)).get_rect().w
-        self.bigger_font = font.SysFont(None, self.screen_surface // 10)
+        self.bigger_font = font.SysFont(None, self.screen_surface // 15)
         self.smaller_font = font.SysFont(None, self.screen_surface // 30)
         self.tiny_font = font.SysFont(None, self.screen_surface // 45)
         self.space = self.font_spacing(self.default_font)
