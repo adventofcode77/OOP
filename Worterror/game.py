@@ -53,7 +53,6 @@ class Game(globale_variablen.Settings):
         self.tript2.fill(self.black)
         self.nums()
         if click:
-            self.check_num_buttons(click)
             x, y = click
             for syl in self.gold_syls + self.lila_syls:
                 if syl.rect.collidepoint(x, y):
@@ -107,68 +106,51 @@ class Game(globale_variablen.Settings):
                                            screen=surface)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
-                             no_buttons=True,
-                             wh=None):  # does it need to get the image in order to know how big the font i
+                             no_buttons=True):  # does it need to get the image in order to know how big the font i
         window_counter = 0
         if not screen:
             screen = self.screen_copy
         copy_screen = screen.copy()
-        if wh:
-            screen_rect = Rect(0, 0, wh[0], wh[1])
-            copy_screen_rect = Rect(0, 0, wh[0], wh[1])
-        else:
-            screen_rect = screen.get_rect()
-            copy_screen_rect = copy_screen.get_rect()
+        copy_screen_rect = copy_screen.get_rect()
         list_snapshots_to_blit = {}
-        words = lst
         if no_buttons:
             copy_buttons = self.buttons[:]
         self.buttons = []
-        if type(words) == str:
-            words = words.split(" ")
+        if type(lst) == str:
+            lst = lst.split(" ")
         color_copy = color
-        afont = self.smaller_font
+        if not afont:
+            afont = self.smaller_font
         spacing = self.font_spacing(afont)
         last_line_down = midtop[1]
         last_word_right = 0.25 * copy_screen_rect.w
-        for i in range(len(words)):
-            aword = words[i]
+        for i in range(len(lst)):
+            aword = lst[i]
             if not aword:
                 continue
             if type(aword) is word.Word:
                 if aword.color:
                     color = aword.color
+                    print(aword.name,"color is",aword.color)
                     aword = aword.name
-            elif type(aword) is silbe.Silbe:
-                color = self.lime if aword.clicked_on else self.white
-                aword = aword.name
             elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
             word_img = afont.render(aword, True, color)
             word_rect = word_img.get_rect()
             color = color_copy
             if last_word_right >= 0.75 * copy_screen_rect.w:
-                if last_line_down < screen_rect.h - spacing * 3:  # twice the highest spacing?
+                if last_line_down < copy_screen_rect.h - spacing * 3:  # twice the highest spacing?
                     last_word_right = 0.25 * copy_screen_rect.w
                     last_line_down += spacing
-                    word_rect.x, word_rect.y = last_word_right, last_line_down
-                    self.buttons.append(word.Button(aword, word_img, word_rect, i))
-                    copy_screen.blit(word_img, word_rect)
-                    last_word_right = last_word_right + word_rect.w + self.default_space_w
                 else:
                     copy_screen = screen.copy()
                     last_line_down = midtop[1]
                     last_word_right = 0.25 * copy_screen_rect.w
                     window_counter += 1
-                    word_rect.x, word_rect.y = last_word_right, last_line_down
-                    self.buttons.append(word.Button(aword, word_img, word_rect, i))
-                    copy_screen.blit(word_img, word_rect)
-                    last_word_right = last_word_right + word_rect.w + self.default_space_w
-            else:
-                word_rect.x, word_rect.y = last_word_right, last_line_down
-                self.buttons.append(word.Button(aword, word_img, word_rect, i))
-                copy_screen.blit(word_img, word_rect)
-                last_word_right = last_word_right + word_rect.w + self.default_space_w
+            word_rect.x, word_rect.y = last_word_right, last_line_down
+            self.buttons.append(word.Button(aword, word_img, word_rect, i))
+            copy_screen.blit(word_img, word_rect)
+            last_word_right = last_word_right + word_rect.w + self.default_space_w
             if aword[-1] in ".!?":
                 last_word_right = 0.25 * copy_screen_rect.w
                 last_line_down += spacing * 1.5
@@ -245,11 +227,11 @@ class Game(globale_variablen.Settings):
         for syl in to_return:
             if syl.visible == True:
                 if syl.rect.x <= self.end_first_screen_part:
-                    syl.rect.x = syl.rect.x + self.end_first_screen_part if self.end_first_screen_part < self.start_third_screen_part else self.start_third_screen_part - self.screenw // 10
-                elif syl.rect.x >= self.start_third_screen_part:
-                    syl.rect.x = self.start_third_screen_part - (
-                                self.screenw - syl.rect.x) if self.start_third_screen_part - (
-                                self.screenw - syl.rect.x) > self.end_first_screen_part else self.end_first_screen_part + self.screenw // 10
+                    syl.rect.x = syl.rect.x + self.screenw//15 if syl.rect.x + self.screenw//15 < self.start_third_screen_part \
+                        else self.start_third_screen_part - self.screenw // 15
+                elif syl.rect.x >= self.start_third_screen_part-syl.rect.w:
+                    syl.rect.x = self.start_third_screen_part-syl.rect.w - self.screenw//15 if \
+                        self.start_third_screen_part-syl.rect.w - self.screenw//15 > self.end_first_screen_part else self.end_first_screen_part + self.screenw // 15
         return syls[:len(self.pos_list)]  # (now syls should always be bigger than this cut)
 
     def blit_loop(self):  # why is there some trembling? especially after downsizing screen
@@ -264,8 +246,6 @@ class Game(globale_variablen.Settings):
                 syl = self.screen_syls.pop(0)
                 if syl.visible == True:
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
-                else:
-                    self.screen_copy.blit(self.invisible, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                 syl.rect.y = self.pos_list[i] + self.syl_pos_change
             gold = self.gold_syls[:]
             lil = self.lila_syls[:]
@@ -339,21 +319,25 @@ class Game(globale_variablen.Settings):
                     binary_list[f'{self.guessed_code_words[i].name} '] = f'{opposite} '
             else:
                 binary_list[f'{i} '] = f'{opposite} '
-        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0), screen=self.tript2)
+        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font)
         blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,100)]], self.white,
                                            (self.screenw // 2, blit_h), no_buttons=False, screen=self.tript2)
         self.top = blit_h
 
 
     def check_num_buttons(self,click): # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
-        click = self.scale_click(click,self.tript2,self.screen_copy)
-        click_rect = Rect(click[0],click[1],1,1)
-        index = click_rect.collidelist([a.rect for a in self.buttons])
-        if index and index != -1:
-            self.move_word = index
-            print(self.move_word)
-        else:
-            self.move_word = None
+        if self.buttons:
+            print("end of first part",self.end_first_screen_part)
+            print("self down",self.down)
+            print("buttons:",[b.rect for b in self.buttons])
+            click_rect = Rect(click[0],click[1],1,1)
+            print("click scaled to tript2",click_rect)
+            index = click_rect.collidelist([a.rect for a in self.buttons])
+            if index != -1:
+                self.move_word = index
+                print("word",self.move_word)
+            else:
+                self.move_word = None
 
 
 

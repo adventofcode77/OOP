@@ -17,6 +17,7 @@ class Word():
         self.syls = self.make_silben(self.info.make_rgb())
         self.image = self.info.default_font.render(self.name, True, self.info.gold)
         self.rect = self.image.get_rect() # draw_rect()?
+        self.color = color
 
     def make_silben(self, rgb):
         order = self.totalsyls # make class attribute?
