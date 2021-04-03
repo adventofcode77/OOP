@@ -196,6 +196,7 @@ class Game(globale_variablen.Settings):
                         replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self,
                                                   (0, 0, 0))  # replace with simpler object?
                         replacement.visible = False
+                        replacement.rect.x,replacement.rect.y = 1,1
                         self.syls[index] = replacement
                     else:
                         self.syls.remove(syl)
@@ -327,15 +328,10 @@ class Game(globale_variablen.Settings):
 
     def check_num_buttons(self,click): # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
         if self.buttons:
-            print("end of first part",self.end_first_screen_part)
-            print("self down",self.down)
-            print("buttons:",[b.rect for b in self.buttons])
             click_rect = Rect(click[0],click[1],1,1)
-            print("click scaled to tript2",click_rect)
             index = click_rect.collidelist([a.rect for a in self.buttons])
             if index != -1:
                 self.move_word = index
-                print("word",self.move_word)
             else:
                 self.move_word = None
 

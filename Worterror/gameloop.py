@@ -87,7 +87,6 @@ class Gameloop():
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     self.click = self.info.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                     x,y = self.click
-                    print("original click",x,y)
                     x -= self.info.end_first_screen_part*2 # this offset is produced by the def of end_first_screen_part
                     self.info.check_num_buttons((x,y))
                 self.info.desk(self.click)
