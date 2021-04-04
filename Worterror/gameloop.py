@@ -21,7 +21,7 @@ class Gameloop():
             self.clock.tick(self.info.fps)  # one loop
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
-                    self.info.game_over(over=True)
+                    self.info.game_over()
                 elif e.type == KEYDOWN: # enum instead of if/else? dict with states and functions
                     ln = len(self.info.guessed_code_words)
                     if e.key == K_SPACE: # go to the desk
@@ -31,7 +31,7 @@ class Gameloop():
                             self.menu = False
                             self.info.next_counter = 0
                             self.main_loop = True
-                            for item in self.info.player.my_silben:
+                            for item in self.info.spieler.my_silben:
                                 item.clicked_on = False
                     elif e.key == K_LEFT: # show next code_string explanation installment
                         if self.info.move_word is not None:
@@ -79,8 +79,8 @@ class Gameloop():
                 self.info.next_counter = next
             elif self.main_loop:
 
-                self.info.player.act()  # PLAYER MOVES ONCE A LOOP
-                self.info.player.pick(self.info.syls)
+                self.info.spieler.act()  # PLAYER MOVES ONCE A LOOP
+                self.info.spieler.pick(self.info.syls)
                 self.info.blit_loop()
             else:
                 if " ".join([word.name for word in self.info.guessed_code_words]) == self.info.woerter.input_code:
@@ -88,7 +88,7 @@ class Gameloop():
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     self.click = self.info.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                     x,y = self.click
-                    x -= self.info.end_first_screen_part*2 # this offset is produced by the def of end_first_screen_part
+                    x -= self.info.end_first_screen_part # this offset is produced by the def of end_first_screen_part
                     self.info.check_num_buttons((x,y))
                 self.info.desk(self.click)
                 self.click = False

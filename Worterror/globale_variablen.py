@@ -69,11 +69,12 @@ class Settings:
         x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh
         return (x,y)
 
-    def make_rgb(self): # make three main hues, each for all in a word
-        hue = random.choice((0,1))
-        rgb = [random.randint(0,255),random.randint(0,255),random.randint(100,200)]
-        rgb[hue] = 255
+    def make_rgb(self): # hues, each for all in a word
+        hue = random.choice((0,1,2))
+        rgb = [random.randint(0,200),random.randint(0,200),random.randint(100,200)]
+        rgb[hue] = 255 if hue != 2 else 200
         return rgb
+
 
 # pg.init()
 # setobj = Settings()
