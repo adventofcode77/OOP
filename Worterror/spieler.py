@@ -55,11 +55,36 @@ class Spieler():
         if index is not -1:
             picked = sylobjects[index]
             if picked.visible == True:
-                if picked in self.info.woerter.code_syls:
-                    self.info.gold_syls.append(picked)
+                if self.info.tript2.get_rect().w >= self.info.screenw//10:
+                    self.my_silben.append(picked)
+                    if picked in self.info.woerter.code_syls:
+                        self.info.gold_syls.append(picked)
+                    else:
+                        self.info.lila_syls.append(picked)
                 else:
-                    self.info.lila_syls.append(picked)
-                self.my_silben.append(picked)
+                    self.info.game_over(died=True)
+                    self.info.next_counter = 0
+                    self.main_loop = True
+                    for item in self.info.player.my_silben:
+                        item.clicked_on = False
+                    self.info.gold_syls = []
+                    self.info.lila_syls = []
+                    self.info.woerter.silben,self.info.woerter.code_syls = self.info.silben_copy,self.info.code_silben_copy
+                    self.deleted_word_bool = False
+                    self.deleted_code_word_bool = False
+                    self.deletedlist = []
+                    self.deleted_word = ""
+                    self.start_syls_cut_at = 0
+                    self.pos_list = self.info.get_pos_list()
+                    self.end_first_screen_part = (self.info.screenw // 10) * ((len(self.info.gold_syls) // 10) + 1)
+                    self.start_third_screen_part = self.info.screenw - (self.info.screenw // 10) * (len(self.info.lila_syls) // 10 + 1)
+                    self.tript2 = self.info.screen_copy.subsurface(self.end_first_screen_part, self.info.down,
+                                                              self.start_third_screen_part - self.end_first_screen_part,
+                                                              self.info.screenh - self.info.down)
+                    for syl in self.my_silben:
+                        syl.visible = True
+                    self.my_silben = []
+                    self.appendlist = []
                 picked.visible = False
 
 

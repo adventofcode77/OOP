@@ -25,6 +25,7 @@ class Game(globale_variablen.Settings):
         self.words = self.woerter.words
         syls = self.woerter.silben + self.woerter.code_syls
         self.syls = random.sample(syls, len(syls))
+        self.silben_copy,self.code_silben_copy = self.woerter.silben[:],self.woerter.code_syls[:]
         # self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
         self.syl_pos_change = 0
@@ -251,12 +252,12 @@ class Game(globale_variablen.Settings):
             gold = self.gold_syls[:]
             lil = self.lila_syls[:]
             ln = len(self.pos_list)
-            for j in range(i, len(lil), ln):
+            for j in range(i, len(lil), ln): # making the right columns
                 syl = lil[j]
                 syl.rect.x = self.screenw - (1 + j // ln) * self.screenw // 10
                 syl.rect.y = (1 + i) * self.screenh // 10
                 self.screen_copy.blit(syl.image, syl.rect)
-            for k in range(i, len(gold), ln):
+            for k in range(i, len(gold), ln): # making the left columns
                 syl = gold[k]
                 syl.rect.x = (1 + k // ln) * self.screenw // 10
                 syl.rect.y = (1 + i) * self.screenh // 10
@@ -275,18 +276,20 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(self.player.image, self.player.rect)
         self.screen_transfer()
 
-    def game_over(self):
+    def game_over(self,won=False,died=False):
         self.screen_copy.fill(self.black)
-        image_end = self.default_font.render("GAME OVER", True, self.white)
+        text = "GEWONNEN!" if won else "VERLUST! NEU STARTEN" if died else "GAME OVER"
+        image_end = self.default_font.render(text, True, self.white)
         image_end_rect = image_end.get_rect()
         image_end_rect.center = self.screen_copy.get_rect().center
         self.screen_copy.blit(image_end, image_end_rect)
         self.screen_transfer(run=False)
-        time.delay(500)
-        quit()
+        time.delay(1000)
+        if not died:
+            quit()
 
     def dauer(self):
-        dauer = 20 * 60000 - time.get_ticks()
+        dauer = 5 * 60000 - time.get_ticks()
         if dauer < 0:  # or verpixelung begins
             self.game_over()
         seconds = int(dauer / 1000 % 60)

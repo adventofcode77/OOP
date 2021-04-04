@@ -11,7 +11,7 @@ class Woerterbuch(globale_variablen.Settings):
         self.lang = lang
         self.listofrecords = []
         self.list_records()
-        self.parsed = self.quick_get(25) # why do too few words lead to syls starting to fall from the middle
+        self.parsed = self.quick_get(100) # why do too few words lead to syls starting to fall from the middle
             # save a sample in case the imported parser stops working
     def iterate(self,record):
         meaning = ""
