@@ -20,7 +20,7 @@ class Game(globale_variablen.Settings):
         self.syl_speed_change = 10
         self.initial_syl_speed_change = self.syl_speed_change
         # variables above may be needed to initialise other classes' instances
-        self.player = spieler.Spieler(self)  # takes the game object as parameter
+        self.spieler = spieler.Spieler(self)  # takes the game object as parameter
         self.woerter = woerter.Woerter(self)
         self.words = self.woerter.words
         syls = self.woerter.silben + self.woerter.code_syls
@@ -39,9 +39,9 @@ class Game(globale_variablen.Settings):
         self.gold_syls, self.lila_syls = [], []
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // 10) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * (len(self.lila_syls) // 10 + 1)
-        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, self.down,
+        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                                                   self.start_third_screen_part - self.end_first_screen_part,
-                                                  self.screenh - self.down)
+                                                  self.screenh)
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
@@ -59,8 +59,8 @@ class Game(globale_variablen.Settings):
                 if syl.rect.collidepoint(x, y):
                     if syl.clicked_on:
                         syl.clicked_on = False
-                        index = self.player.appendlist.index(syl)
-                        del self.player.appendlist[index]
+                        index = self.spieler.appendlist.index(syl)
+                        del self.spieler.appendlist[index]
                     else:
                         syl.clicked_on = True
                         self.draw_word(syl=syl, screen=self.tript2)
@@ -70,7 +70,7 @@ class Game(globale_variablen.Settings):
         if not height_of_all:
             height_of_all = self.down
         if syl:
-            self.player.appendlist.append(syl)
+            self.spieler.appendlist.append(syl)
             if self.deleted_word_bool or self.deleted_code_word_bool:
                 self.deleted_word_bool = False
                 self.deleted_code_word_bool = False
@@ -85,7 +85,7 @@ class Game(globale_variablen.Settings):
         if self.deleted_word_bool or self.deleted_code_word_bool:
             bitlists = [word for a in self.deletedlist[:] for word in a.bit]
         else:
-            bitlists = [word for a in self.player.appendlist[:] for word in a.bit]
+            bitlists = [word for a in self.spieler.appendlist[:] for word in a.bit]
         return bitlists
 
     def blit_word(self, height_of_all=0,
@@ -95,7 +95,7 @@ class Game(globale_variablen.Settings):
             word_string = self.deleted_word
         else:
             farbe = (self.lime, self.cyan)
-            word_string = "".join([a.name for a in self.player.appendlist])
+            word_string = "".join([a.name for a in self.spieler.appendlist])
         if not surface:
             surface = self.screen_copy
         word_img = self.default_font.render(word_string, True, farbe[0])
@@ -169,7 +169,7 @@ class Game(globale_variablen.Settings):
 
     def check_word(self):
         temp_bool = True
-        appendlisttuples = [a.tuple for a in self.player.appendlist]
+        appendlisttuples = [a.tuple for a in self.spieler.appendlist]
         for word in self.words:  # check for the word in non-code words
             wordtuples = [a.tuple for a in word.syls]  # 1 comparison with wordtuples for each word in words
             if appendlisttuples == wordtuples:
@@ -189,7 +189,7 @@ class Game(globale_variablen.Settings):
                     self.deleted_code_word_bool = True
 
     def delete_word(self):  # same syl is actually different objects in different lists, why?
-        for this in self.player.appendlist:
+        for this in self.spieler.appendlist:
             for syl in self.syls:
                 if this.tuple == syl.tuple:
                     index = self.syls.index(syl)
@@ -202,17 +202,17 @@ class Game(globale_variablen.Settings):
                     else:
                         self.syls.remove(syl)
                     self.sylscounter -= 1
-            for syl in self.player.my_silben:
+            for syl in self.spieler.my_silben:
                 if this.tuple == syl.tuple:
-                    self.player.my_silben.remove(syl)
+                    self.spieler.my_silben.remove(syl)
             for syl in self.gold_syls:
                 if this.tuple == syl.tuple:
                     self.gold_syls.remove(syl)
             for syl in self.lila_syls:
                 if this.tuple == syl.tuple:
                     self.lila_syls.remove(syl)
-        self.deletedlist = self.player.appendlist[:]
-        self.player.appendlist = []
+        self.deletedlist = self.spieler.appendlist[:]
+        self.spieler.appendlist = []
 
     def get_pos_list(self):
         poslist = []
@@ -225,30 +225,35 @@ class Game(globale_variablen.Settings):
 
     def get_screensyls(self):
         syls = self.syls[self.start_syls_cut_at:] + self.syls[:self.start_syls_cut_at]
+        #syls = [syl for syl in syls if syl.visible] #why does this make the loop jerk backwards?
         to_return = syls[:len(self.pos_list)]
         for syl in to_return:
-            if syl.visible == True:
-                if syl.rect.x <= self.end_first_screen_part:
-                    syl.rect.x = syl.rect.x + self.screenw//15 if syl.rect.x + self.screenw//15 < self.start_third_screen_part \
-                        else self.start_third_screen_part - self.screenw // 15
-                elif syl.rect.x >= self.start_third_screen_part-syl.rect.w:
-                    syl.rect.x = self.start_third_screen_part-syl.rect.w - self.screenw//15 if \
-                        self.start_third_screen_part-syl.rect.w - self.screenw//15 > self.end_first_screen_part else self.end_first_screen_part + self.screenw // 15
-        return syls[:len(self.pos_list)]  # (now syls should always be bigger than this cut)
+            if syl.visible:
+                if self.start_third_screen_part-self.end_first_screen_part < self.screenw//10:
+                    print("space left:",self.start_third_screen_part-self.end_first_screen_part)
+                    self.spieler.new_start()
+                elif syl.rect.x < self.end_first_screen_part:
+                    while syl.rect.x < self.end_first_screen_part:
+                        syl.rect.x += self.screenw//10
+                elif syl.rect.x > self.start_third_screen_part-syl.rect.w:
+                    while syl.rect.x > self.start_third_screen_part-syl.rect.w:
+                        syl.rect.x -= self.screenw//10
+
+        return to_return  # (now syls should always be bigger than this cut)
 
     def blit_loop(self):  # why is there some trembling? especially after downsizing screen
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // 10) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * (len(self.lila_syls) // 10 + 1)
-        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part + self.screenw // 10, 0, (
-                self.start_third_screen_part - self.end_first_screen_part - self.screenw // 10), self.screenh)
+        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
+                self.start_third_screen_part - self.end_first_screen_part, self.screenh)
         self.screen_syls = self.get_screensyls()
         self.screen_copy.fill(self.black)
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
-                if syl.visible == True:
+                if syl.visible:
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
-                syl.rect.y = self.pos_list[i] + self.syl_pos_change
+                    syl.rect.y = self.pos_list[i] + self.syl_pos_change
             gold = self.gold_syls[:]
             lil = self.lila_syls[:]
             ln = len(self.pos_list)
@@ -259,7 +264,7 @@ class Game(globale_variablen.Settings):
                 self.screen_copy.blit(syl.image, syl.rect)
             for k in range(i, len(gold), ln): # making the left columns
                 syl = gold[k]
-                syl.rect.x = (1 + k // ln) * self.screenw // 10
+                syl.rect.x = (k // ln) * self.screenw // 10
                 syl.rect.y = (1 + i) * self.screenh // 10
                 self.screen_copy.blit(syl.image, syl.rect)
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
@@ -273,7 +278,7 @@ class Game(globale_variablen.Settings):
             self.start_syls_cut_at -= 1
             if self.start_syls_cut_at < 1:  # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = len(self.syls) - 1
-        self.screen_copy.blit(self.player.image, self.player.rect)
+        self.screen_copy.blit(self.spieler.image, self.spieler.rect)
         self.screen_transfer()
 
     def game_over(self,won=False,died=False):
