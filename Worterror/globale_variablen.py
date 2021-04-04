@@ -70,11 +70,11 @@ class Settings:
         return (x,y)
 
     def make_rgb(self): # make three main hues, each for all in a word
-        hue = random.choice((0,1,2))
-        rgb = [random.randint(0,255),random.randint(0,255),random.randint(0,200)]
+        hue = random.choice((0,1))
+        rgb = [random.randint(0,255),random.randint(0,255),random.randint(100,200)]
         rgb[hue] = 255
         return rgb
 
-pg.init()
-setobj = Settings()
+# pg.init()
+# setobj = Settings()
 

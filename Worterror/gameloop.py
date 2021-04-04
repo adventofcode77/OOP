@@ -21,7 +21,7 @@ class Gameloop():
             self.clock.tick(self.info.fps)  # one loop
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
-                    self.info.game_over()
+                    self.info.game_over(over=True)
                 elif e.type == KEYDOWN: # enum instead of if/else? dict with states and functions
                     ln = len(self.info.guessed_code_words)
                     if e.key == K_SPACE: # go to the desk
@@ -83,7 +83,8 @@ class Gameloop():
                 self.info.player.pick(self.info.syls)
                 self.info.blit_loop()
             else:
-
+                if " ".join([word.name for word in self.info.guessed_code_words]) == self.info.woerter.input_code:
+                    self.info.game_over(won=True)
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     self.click = self.info.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                     x,y = self.click
