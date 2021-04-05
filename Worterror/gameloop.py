@@ -82,8 +82,7 @@ class Gameloop():
                 next = self.info.menu.tutorial(self.info.next_counter, self.info.language)
                 self.info.next_counter = next
             elif self.info.wait:
-                print("game_over()")
-                self.info.game_over() #now it never calls dauer()?
+                self.info.game_over()
                 continue
             elif self.main_loop:
                 self.info.spieler.act()  # PLAYER MOVES ONCE A LOOP

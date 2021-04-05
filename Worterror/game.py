@@ -111,7 +111,7 @@ class Game(globale_variablen.Settings):
                                            screen=surface)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
-                             no_buttons=True):  # does it need to get the image in order to know how big the font i
+                             no_buttons=True):
         window_counter = 0
         if not screen:
             screen = self.screen_copy
@@ -244,8 +244,8 @@ class Game(globale_variablen.Settings):
 
     def blit_loop(self):  # why is there some trembling? especially after downsizing screen
         self.screen_copy.fill(self.gray)
-        self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // 10) + 1)
-        self.start_third_screen_part = self.screenw - (self.screenw // 10) * (len(self.lila_syls) // 10 + 1)
+        self.end_first_screen_part = (self.screenw // 8) * ((len(self.gold_syls) // 10) + 1)
+        self.start_third_screen_part = self.screenw - (self.screenw // 8) * (len(self.lila_syls) // 10 + 1)
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                 self.start_third_screen_part - self.end_first_screen_part, self.screenh)
         self.tript2.fill(self.black)
@@ -261,12 +261,12 @@ class Game(globale_variablen.Settings):
             ln = len(self.pos_list)
             for j in range(i, len(lil), ln): # making the right columns
                 syl = lil[j]
-                syl.rect.x = self.screenw - (1 + j // ln) * self.screenw // 10
+                syl.rect.x = self.screenw - (1 + j // ln) * self.screenw // 8
                 syl.rect.y = (1 + i) * self.screenh // 10
                 self.screen_copy.blit(syl.image, syl.rect)
             for k in range(i, len(gold), ln): # making the left columns
                 syl = gold[k]
-                syl.rect.x = (k // ln) * self.screenw // 10
+                syl.rect.x = (k // ln) * self.screenw // 8
                 syl.rect.y = (1 + i) * self.screenh // 10
                 self.screen_copy.blit(syl.image, syl.rect)
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
@@ -287,9 +287,8 @@ class Game(globale_variablen.Settings):
         self.screen_copy.fill(self.black)
         text = f"Gewonnen! Das nächste Code ist: {self.output_code.upper()}." if self.won else "VERLUST! Neu starten."
         text += " Drucke SPACE, um fortzufahren."
-        self.blit_clickable_words(text,self.white,self.screen_copy.get_rect().center)
+        self.blit_clickable_words(text,self.white,(self.midtop[0],self.midtop[1] + self.down * 2))
         self.wait = True
-        print(text)
 
 
     def dauer(self):
@@ -303,8 +302,6 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(dauer_img, (
             self.screen_copy.get_rect().w - dauer_img.get_rect().w,
             self.screen_copy.get_rect().h - dauer_img.get_rect().h))
-        # self.blit_clickable_words(self.binary_code, self.white,
-        #                          (self.midtop[0], self.midtop[1] + self.down))
 
     def screen_transfer(self, run=True):
         if run:
