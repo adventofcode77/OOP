@@ -257,10 +257,9 @@ class Game(globale_variablen.Settings):
                 syl = self.screen_syls.pop(0)
                 if syl.visible:
                     if syl.tuple in [s.tuple for s in self.woerter.code_syls] and not self.show_code_syl:
-                        print(syl.name,"is code")
-                        self.show_code_syl = syl.tuple
-                    if syl.tuple == self.show_code_syl:
-                        num_steps = self.fps * 5
+                        #self.show_code_syl = syl.tuple
+                    #if syl.tuple == self.show_code_syl:
+                        num_steps = self.fps * 4
                         list_ints = [
                             int(orig_rgb_digit + (gold_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
                             orig_rgb_digit, gold_rgb_digit in list(zip(syl.rgb, self.yellow))]  # see stackoverflow link on fading
