@@ -64,30 +64,5 @@ class Spieler():
                         self.info.lila_syls.append(picked)
                 picked.visible = False
 
-    def new_start(self):
-        self.info.next_counter = 0
-        self.main_loop = True
-        for item in self.info.spieler.my_silben:
-            item.clicked_on = False
-        self.info.gold_syls = []
-        self.info.lila_syls = []
-        self.info.woerter.silben, self.info.woerter.code_syls = self.info.silben_copy, self.info.code_silben_copy
-        self.deleted_word_bool = False
-        self.deleted_code_word_bool = False
-        self.deletedlist = []
-        self.deleted_word = ""
-        self.start_syls_cut_at = 0
-        self.pos_list = self.info.get_pos_list()
-        self.info.end_first_screen_part = (self.info.screenw // 10) * ((len(self.info.gold_syls) // 10) + 1)
-        self.info.start_third_screen_part = self.info.screenw - (self.info.screenw // 10) * (
-                    len(self.info.lila_syls) // 10 + 1)
-        self.tript2 = self.info.screen_copy.subsurface(self.info.end_first_screen_part, self.info.down,
-                                                       self.info.start_third_screen_part - self.info.end_first_screen_part,
-                                                       self.info.screenh - self.info.down)
-        for syl in self.my_silben:
-            syl.visible = True
-            syl.rect.x = random.randrange(self.info.right, self.info.screenw - self.rect.w - self.info.right,
-                                          self.info.screenw // 15)
-        self.my_silben = []
-        self.appendlist = []
+
 

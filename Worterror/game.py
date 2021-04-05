@@ -51,7 +51,7 @@ class Game(globale_variablen.Settings):
         self.buttons = []
         self.move_word = None
         # gameloop should run last
-        self.gameloop = gameloop.Gameloop(self)  # starts the game
+        self.gameloop = gameloop.Gameloop(self)  # starts the game (and the object gameloop never gets created as long as the game runs)
         print("this line doesn't execute")
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
@@ -233,11 +233,7 @@ class Game(globale_variablen.Settings):
         to_return = syls[:len(self.pos_list)]
         for syl in to_return:
             if syl.visible:
-                if self.start_third_screen_part-self.end_first_screen_part < self.screenw//10:
-                    print("space left:",self.start_third_screen_part-self.end_first_screen_part)
-                    self.game_over()
-                    self.spieler.new_start()
-                elif syl.rect.x < self.end_first_screen_part:
+                if syl.rect.x < self.end_first_screen_part:
                     while syl.rect.x < self.end_first_screen_part:
                         syl.rect.x += self.screenw//10
                 elif syl.rect.x > self.start_third_screen_part-syl.rect.w:
@@ -287,19 +283,13 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(self.spieler.image, self.spieler.rect)
         self.screen_transfer()
 
-    def game_over(self,won=False,screen=None):
-        if not screen:
-            screen = self.screen_copy
-        screen.fill(self.black)
-        text = f"Gewonnen! Das nächste Code ist: {self.output_code.upper()}." if won else "VERLUST! Neu starten."
+    def game_over(self):
+        self.screen_copy.fill(self.black)
+        text = f"Gewonnen! Das nächste Code ist: {self.output_code.upper()}." if self.won else "VERLUST! Neu starten."
         text += " Drucke SPACE, um fortzufahren."
-        image_end = self.default_font.render(text, True, self.white)
-        image_end_rect = image_end.get_rect()
-        image_end_rect.center = self.screen_copy.get_rect().center
-        self.tript2.blit(image_end,(self.tript2.get_rect().w//2,self.tript2.get_rect().h//2))
+        self.blit_clickable_words(text,self.white,self.screen_copy.get_rect().center)
         self.wait = True
         print(text)
-        self.screen_transfer()
 
 
     def dauer(self):
