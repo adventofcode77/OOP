@@ -50,6 +50,7 @@ class Game(globale_variablen.Settings):
         self.guessed_code_words = []
         self.buttons = []
         self.move_word = None
+        self.step_fps = 1
         # gameloop should run last
         self.gameloop = gameloop.Gameloop(self)  # starts the game (and the object gameloop never gets created as long as the game runs)
         print("this line doesn't execute")
@@ -268,6 +269,14 @@ class Game(globale_variablen.Settings):
                 syl = gold[k]
                 syl.rect.x = (k // ln) * self.screenw // 8
                 syl.rect.y = (1 + i) * self.screenh // 10
+                if k%1 == 0:
+                    if self.step_fps < self.fps:
+                        list_ints = [int(orig_rgb_digit + (gold_rgb_digit-orig_rgb_digit)*self.step_fps/self.fps) for orig_rgb_digit, gold_rgb_digit in list(zip(syl.rgb, self.gold))] # see fading link
+                        print("list ints?",list_ints)
+                        syl.image = self.default_font.render(syl.name, True, (list_ints[0],list_ints[1],list_ints[2]))
+                        self.step_fps += 1
+                    else:
+                        self.step_fps = 0
                 self.screen_copy.blit(syl.image, syl.rect)
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
         if self.syl_pos_change >= self.screenh // 10:
