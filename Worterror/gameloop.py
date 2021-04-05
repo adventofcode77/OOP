@@ -88,11 +88,15 @@ class Gameloop():
             elif self.main_loop:
                 self.info.spieler.act()  # PLAYER MOVES ONCE A LOOP
                 self.info.spieler.pick(self.info.syls)
+                if self.info.start_third_screen_part-self.info.end_first_screen_part < self.info.screenw//10:
+                    print("space left:",self.info.start_third_screen_part-self.info.end_first_screen_part)
+                    self.info.game_over()
+                    self.new_start()
                 self.info.blit_loop()
             else:
                 if " ".join([word.name for word in self.info.guessed_code_words]) == self.info.woerter.input_code:
                     self.info.won = True
-                    self.info.game_over(won=True)
+                    self.info.game_over()
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     self.click = self.info.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)
                     x,y = self.click
@@ -101,6 +105,33 @@ class Gameloop():
                 self.info.desk(self.click)
                 self.click = False
 
+
+    def new_start(self):
+        self.info.next_counter = 0
+        self.main_loop = True
+        for item in self.info.spieler.my_silben:
+            item.clicked_on = False
+        self.info.gold_syls = []
+        self.info.lila_syls = []
+        self.info.woerter.silben, self.info.woerter.code_syls = self.info.silben_copy, self.info.code_silben_copy
+        self.info.deleted_word_bool = False
+        self.info.deleted_code_word_bool = False
+        self.info.deletedlist = []
+        self.info.deleted_word = ""
+        self.info.start_syls_cut_at = 0
+        self.info.pos_list = self.info.get_pos_list()
+        self.info.end_first_screen_part = (self.info.screenw // 10) * ((len(self.info.gold_syls) // 10) + 1)
+        self.info.start_third_screen_part = self.info.screenw - (self.info.screenw // 10) * (
+                    len(self.info.lila_syls) // 10 + 1)
+        self.info.tript2 = self.info.screen_copy.subsurface(self.info.end_first_screen_part, self.info.down,
+                                                       self.info.start_third_screen_part - self.info.end_first_screen_part,
+                                                       self.info.screenh - self.info.down)
+        for syl in self.info.spieler.my_silben:
+            syl.visible = True
+            syl.rect.x = random.randrange(self.info.right, self.info.screenw - syl.rect.w - self.info.right,
+                                          self.info.screenw // 15)
+        self.info.spieler.my_silben = []
+        self.info.spieler.appendlist = []
 
 
 
