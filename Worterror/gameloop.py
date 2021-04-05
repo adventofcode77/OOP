@@ -21,11 +21,15 @@ class Gameloop():
             self.clock.tick(self.info.fps)  # one loop
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
-                    self.info.game_over()
+                    quit()
                 elif e.type == KEYDOWN: # enum instead of if/else? dict with states and functions
                     ln = len(self.info.guessed_code_words)
                     if e.key == K_SPACE: # go to the desk
-                        if self.main_loop:
+                        if self.info.wait:
+                            if self.info.won:
+                                quit()
+                            self.info.wait = False
+                        elif self.main_loop:
                             self.main_loop = False
                         else:
                             self.menu = False
@@ -63,7 +67,7 @@ class Gameloop():
                                 self.info.guessed_code_words.insert(0, popped)
                                 self.info.move_word = 0
                             else:
-                                print("...")
+                                print("k_RIGHT + move_word > end list")
                         else:
                             self.info.next_counter += 1
                             self.info.test_next_counter += 1
@@ -77,13 +81,17 @@ class Gameloop():
             if self.menu:
                 next = self.info.menu.tutorial(self.info.next_counter, self.info.language)
                 self.info.next_counter = next
+            elif self.info.wait:
+                print("game_over()")
+                self.info.game_over() #now it never calls dauer()?
+                continue
             elif self.main_loop:
-
                 self.info.spieler.act()  # PLAYER MOVES ONCE A LOOP
                 self.info.spieler.pick(self.info.syls)
                 self.info.blit_loop()
             else:
                 if " ".join([word.name for word in self.info.guessed_code_words]) == self.info.woerter.input_code:
+                    self.info.won = True
                     self.info.game_over(won=True)
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     self.click = self.info.scale_click(self.click,self.info.screen_copy,self.info.screen_via_display_set_mode)

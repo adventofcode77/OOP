@@ -65,7 +65,6 @@ class Spieler():
                 picked.visible = False
 
     def new_start(self):
-        self.info.game_over(died=True)
         self.info.next_counter = 0
         self.main_loop = True
         for item in self.info.spieler.my_silben:

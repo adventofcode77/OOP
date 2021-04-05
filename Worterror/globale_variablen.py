@@ -19,6 +19,7 @@ class Settings:
         self.black = (0,0,0)
         self.white = (255,255,255)
         self.zuff = (200,255,200)
+        self.gray = (50,50,50)
         self.gold = (212,175,55)
         self.lila = (125,33,200)
         self.lime = (0,255,0)

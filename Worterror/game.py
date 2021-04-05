@@ -8,7 +8,9 @@ class Game(globale_variablen.Settings):
     def __init__(self, input_codes, file_paths, binary_code):
         super().__init__()
         pg.font.init()
-        self.test = False
+        self.top = 0
+        self.wait = False
+        self.won = False
         self.binary_code = binary_code
         self.input_codes = input_codes
         self.output_code = "Dame schlägt Bauer"
@@ -42,6 +44,8 @@ class Game(globale_variablen.Settings):
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                                                   self.start_third_screen_part - self.end_first_screen_part,
                                                   self.screenh)
+        self.end_header = 0
+        self.header = self.screen_copy.subsurface(0,0,self.screenw,self.end_header)
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
@@ -63,8 +67,8 @@ class Game(globale_variablen.Settings):
                         del self.spieler.appendlist[index]
                     else:
                         syl.clicked_on = True
-                        self.draw_word(syl=syl, screen=self.tript2)
-        self.draw_word(screen=self.tript2)
+                        self.draw_word(height_of_all=self.top,syl=syl, screen=self.tript2)
+        self.draw_word(height_of_all=self.top,screen=self.tript2)
 
     def draw_word(self, height_of_all=None, syl=None, screen=None):
         if not height_of_all:
@@ -152,7 +156,7 @@ class Game(globale_variablen.Settings):
             self.buttons.append(word.Button(aword, word_img, word_rect, i))
             copy_screen.blit(word_img, word_rect)
             last_word_right = last_word_right + word_rect.w + self.default_space_w
-            if aword[-1] in ".!?":
+            if aword[-1] in ".!?:":
                 last_word_right = 0.25 * copy_screen_rect.w
                 last_line_down += spacing * 1.5
             list_snapshots_to_blit[window_counter] = copy_screen.copy()
@@ -231,6 +235,7 @@ class Game(globale_variablen.Settings):
             if syl.visible:
                 if self.start_third_screen_part-self.end_first_screen_part < self.screenw//10:
                     print("space left:",self.start_third_screen_part-self.end_first_screen_part)
+                    self.game_over()
                     self.spieler.new_start()
                 elif syl.rect.x < self.end_first_screen_part:
                     while syl.rect.x < self.end_first_screen_part:
@@ -242,12 +247,13 @@ class Game(globale_variablen.Settings):
         return to_return  # (now syls should always be bigger than this cut)
 
     def blit_loop(self):  # why is there some trembling? especially after downsizing screen
+        self.screen_copy.fill(self.gray)
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // 10) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * (len(self.lila_syls) // 10 + 1)
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                 self.start_third_screen_part - self.end_first_screen_part, self.screenh)
+        self.tript2.fill(self.black)
         self.screen_syls = self.get_screensyls()
-        self.screen_copy.fill(self.black)
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
@@ -281,20 +287,23 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(self.spieler.image, self.spieler.rect)
         self.screen_transfer()
 
-    def game_over(self,won=False,died=False):
-        self.screen_copy.fill(self.black)
-        text = "GEWONNEN!" if won else "VERLUST! NEU STARTEN" if died else "GAME OVER"
+    def game_over(self,won=False,screen=None):
+        if not screen:
+            screen = self.screen_copy
+        screen.fill(self.black)
+        text = f"Gewonnen! Das nächste Code ist: {self.output_code.upper()}." if won else "VERLUST! Neu starten."
+        text += " Drucke SPACE, um fortzufahren."
         image_end = self.default_font.render(text, True, self.white)
         image_end_rect = image_end.get_rect()
         image_end_rect.center = self.screen_copy.get_rect().center
-        self.screen_copy.blit(image_end, image_end_rect)
-        self.screen_transfer(run=False)
-        time.delay(1000)
-        if not died:
-            quit()
+        self.tript2.blit(image_end,(self.tript2.get_rect().w//2,self.tript2.get_rect().h//2))
+        self.wait = True
+        print(text)
+        self.screen_transfer()
+
 
     def dauer(self):
-        dauer = 5 * 60000 - time.get_ticks()
+        dauer = 15 * 60000 - time.get_ticks()
         if dauer < 0:  # or verpixelung begins
             self.game_over()
         seconds = int(dauer / 1000 % 60)
@@ -316,6 +325,7 @@ class Game(globale_variablen.Settings):
         pg.display.flip()
 
     def nums(self):
+        self.header.fill(self.gray)
         binary_list = {}
         splitinput = self.woerter.input_code.split()
         for i in range(len(splitinput)):  # the code?
@@ -329,6 +339,7 @@ class Game(globale_variablen.Settings):
             else:
                 binary_list[f'{i} '] = f'{opposite} '
         blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font)
+        self.end_header = blit_h
         blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,100)]], self.white,
                                            (self.screenw // 2, blit_h), no_buttons=False, screen=self.tript2)
         self.top = blit_h
