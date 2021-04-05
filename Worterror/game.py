@@ -9,6 +9,7 @@ class Game(globale_variablen.Settings):
         super().__init__()
         pg.font.init()
         self.top = 0
+        self.show_code_syl = False
         self.wait = False
         self.won = False
         self.binary_code = binary_code
@@ -255,6 +256,20 @@ class Game(globale_variablen.Settings):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
                 if syl.visible:
+                    if syl.tuple in [s.tuple for s in self.woerter.code_syls] and not self.show_code_syl:
+                        print(syl.name,"is code")
+                        self.show_code_syl = syl.tuple
+                    if syl.tuple == self.show_code_syl:
+                        num_steps = self.fps * 5
+                        list_ints = [
+                            int(orig_rgb_digit + (gold_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
+                            orig_rgb_digit, gold_rgb_digit in list(zip(syl.rgb, self.yellow))]  # see stackoverflow link on fading
+                        syl.image = self.default_font.render(syl.name, True,
+                                                             (list_ints[0], list_ints[1], list_ints[2]))
+                        if self.step_fps < num_steps:
+                            self.step_fps += 1
+                        else:
+                            self.step_fps = 0
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                     syl.rect.y = self.pos_list[i] + self.syl_pos_change
             gold = self.gold_syls[:]
@@ -269,14 +284,6 @@ class Game(globale_variablen.Settings):
                 syl = gold[k]
                 syl.rect.x = (k // ln) * self.screenw // 8
                 syl.rect.y = (1 + i) * self.screenh // 10
-                if k%1 == 0:
-                    if self.step_fps < self.fps:
-                        list_ints = [int(orig_rgb_digit + (gold_rgb_digit-orig_rgb_digit)*self.step_fps/self.fps) for orig_rgb_digit, gold_rgb_digit in list(zip(syl.rgb, self.gold))] # see fading link
-                        print("list ints?",list_ints)
-                        syl.image = self.default_font.render(syl.name, True, (list_ints[0],list_ints[1],list_ints[2]))
-                        self.step_fps += 1
-                    else:
-                        self.step_fps = 0
                 self.screen_copy.blit(syl.image, syl.rect)
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
         if self.syl_pos_change >= self.screenh // 10:
@@ -284,11 +291,13 @@ class Game(globale_variablen.Settings):
             self.start_syls_cut_at += 1
             if self.start_syls_cut_at > len(self.syls) - 1:  # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = 0
+            self.show_code_syl = False
         elif self.syl_pos_change <= - self.screenh // 10:
             self.syl_pos_change = 0
             self.start_syls_cut_at -= 1
             if self.start_syls_cut_at < 1:  # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = len(self.syls) - 1
+            self.show_code_syl = False
         self.screen_copy.blit(self.spieler.image, self.spieler.rect)
         self.screen_transfer()
 
@@ -325,7 +334,10 @@ class Game(globale_variablen.Settings):
         binary_list = {}
         splitinput = self.woerter.input_code.split()
         for i in range(len(splitinput)):  # the code?
-            code_number_at_this_index = list(self.binary_code)[i]
+            try:
+                code_number_at_this_index = list(self.binary_code)[i]
+            except:
+                code_number_at_this_index = 0
             opposite = 0 if code_number_at_this_index == '1' else 1
             if i < len(self.guessed_code_words):
                 if self.guessed_code_words[i].name == splitinput[i]:
