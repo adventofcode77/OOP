@@ -85,7 +85,7 @@ class Gameloop():
                 self.info.game_over()
                 continue
             elif self.main_loop:
-                self.info.spieler.act()  # PLAYER MOVES ONCE A LOOP
+                self.info.spieler.act(self.info.tript2.get_rect())  # PLAYER MOVES ONCE A LOOP
                 self.info.spieler.pick(self.info.syls)
                 if self.info.start_third_screen_part-self.info.end_first_screen_part < self.info.screenw//10:
                     print("space left:",self.info.start_third_screen_part-self.info.end_first_screen_part)
