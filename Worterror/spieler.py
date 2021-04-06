@@ -14,21 +14,16 @@ class Spieler():
         self.appendlist = []
         self.loop_down = True
 
-    def act(self):
+    def act(self,screen_rect):
         keys = key.get_pressed()
         if keys[K_LEFT] or keys[K_a]:
-            self.rect.x = 0 if self.speed > self.rect.x else self.rect.x - self.speed
+            self.rect.x = screen_rect.x if self.rect.x - self.speed < screen_rect.x else self.rect.x - self.speed
         elif keys[K_RIGHT] or keys[K_d]:
-            self.rect.right = self.info.screenw if self.rect.right + self.speed > self.info.screenw else self.rect.right + self.speed
+            self.rect.right = screen_rect.w-self.rect.w if self.rect.right + self.speed > screen_rect.w else self.rect.right + self.speed
         elif keys[K_UP] or keys[K_w]:
             self.rect.top = 0 if self.rect.top - self.speed < 0 else self.rect.top - self.speed
         elif keys[K_DOWN] or keys[K_s]:
-            self.rect.bottom = self.info.screenh if self.rect.bottom + self.speed > self.info.screenh else self.rect.bottom + self.speed
-        elif keys[K_0]:
-            for syl in self.my_silben:
-                syl.visible = True
-            self.my_silben = []
-            self.appendlist = []
+            self.rect.bottom = screen_rect.h if self.rect.bottom + self.speed > screen_rect.h else self.rect.bottom + self.speed
         # change speed of itself (changes speed/direction of the loop too)
         if self.loop_down:
             if keys[K_EQUALS] or keys[K_2]:

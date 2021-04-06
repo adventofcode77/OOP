@@ -9,7 +9,7 @@ class Game(globale_variablen.Settings):
         super().__init__()
         pg.font.init()
         self.top = 0
-        self.show_code_syl = False
+        self.vergolden = True
         self.wait = False
         self.won = False
         self.binary_code = binary_code
@@ -255,20 +255,22 @@ class Game(globale_variablen.Settings):
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
+                if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
+                    num_steps = self.fps * 2
+                    list_ints = [
+                        int(orig_rgb_digit + (gold_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
+                        orig_rgb_digit, gold_rgb_digit in list(zip(syl.rgb, self.yellow))]  # see stackoverflow link on fading
+                    syl.image = self.default_font.render(syl.name, True,
+                                                         (list_ints[0], list_ints[1], list_ints[2]))
+                    if self.vergolden and self.step_fps < num_steps:
+                        self.step_fps += 1
+                    elif self.vergolden and int(time.get_ticks())%1000 in range(0,10):
+                        self.vergolden = False
+                    elif self.step_fps > 0:
+                        self.step_fps -=1
+                    else:
+                        self.vergolden = True
                 if syl.visible:
-                    if syl.tuple in [s.tuple for s in self.woerter.code_syls] and not self.show_code_syl:
-                        #self.show_code_syl = syl.tuple
-                    #if syl.tuple == self.show_code_syl:
-                        num_steps = self.fps * 4
-                        list_ints = [
-                            int(orig_rgb_digit + (gold_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
-                            orig_rgb_digit, gold_rgb_digit in list(zip(syl.rgb, self.yellow))]  # see stackoverflow link on fading
-                        syl.image = self.default_font.render(syl.name, True,
-                                                             (list_ints[0], list_ints[1], list_ints[2]))
-                        if self.step_fps < num_steps:
-                            self.step_fps += 1
-                        else:
-                            self.step_fps = 0
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                     syl.rect.y = self.pos_list[i] + self.syl_pos_change
             gold = self.gold_syls[:]
@@ -290,13 +292,11 @@ class Game(globale_variablen.Settings):
             self.start_syls_cut_at += 1
             if self.start_syls_cut_at > len(self.syls) - 1:  # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = 0
-            self.show_code_syl = False
         elif self.syl_pos_change <= - self.screenh // 10:
             self.syl_pos_change = 0
             self.start_syls_cut_at -= 1
             if self.start_syls_cut_at < 1:  # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = len(self.syls) - 1
-            self.show_code_syl = False
         self.screen_copy.blit(self.spieler.image, self.spieler.rect)
         self.screen_transfer()
 
@@ -309,7 +309,7 @@ class Game(globale_variablen.Settings):
 
 
     def dauer(self):
-        dauer = 15 * 60000 - time.get_ticks()
+        dauer = 5 * 60000 - time.get_ticks()
         if dauer < 0:  # or verpixelung begins
             self.game_over()
         seconds = int(dauer / 1000 % 60)
