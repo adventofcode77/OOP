@@ -17,9 +17,11 @@ class Spieler():
     def act(self,screen_rect):
         keys = key.get_pressed()
         if keys[K_LEFT] or keys[K_a]:
-            self.rect.x = screen_rect.x if self.rect.x - self.speed < screen_rect.x else self.rect.x - self.speed
+            self.rect.x = self.info.end_first_screen_part if self.rect.x - self.speed < self.info.end_first_screen_part else self.rect.x - self.speed
         elif keys[K_RIGHT] or keys[K_d]:
-            self.rect.right = screen_rect.w-self.rect.w if self.rect.right + self.speed > screen_rect.w else self.rect.right + self.speed
+            print("st",self.info.start_third_screen_part)
+            print("self rect right",self.rect.right)
+            self.rect.right = self.info.start_third_screen_part if self.rect.right + self.speed > self.info.start_third_screen_part else self.rect.right + self.speed
         elif keys[K_UP] or keys[K_w]:
             self.rect.top = 0 if self.rect.top - self.speed < 0 else self.rect.top - self.speed
         elif keys[K_DOWN] or keys[K_s]:
