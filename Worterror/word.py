@@ -5,6 +5,7 @@ class Word():
     def __init__(self, key, meaning,txtsilben,worder,totalsyls,info,color=None):
         self.info = info
         self.totalsyls = totalsyls
+        self.tuples = []
         self.worder = worder
         self.name = key
         self.meaning = meaning.split()
@@ -33,6 +34,7 @@ class Word():
             silbe1 = silbe.Silbe(it,word,bit,order, self.worder, self.info, rgb)
             syls.append(silbe1)
             order += 1
+            self.tuples.append((order,self.worder))
         return syls
 
 class Button():

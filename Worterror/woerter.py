@@ -72,8 +72,8 @@ class Woerter():
             self.code_words.append(word_object)
             bits_counter += len_syls
         for aword in self.code_words: # can't say "for word in" because of word.Word
-            self.code_syls.append(aword.make_silben(self.info.make_rgb()))
-        self.code_syls = [elem for list in self.code_syls for elem in list]
+            self.code_syls += aword.syls
+        print("self code syls:", [syl.name for syl in self.code_syls])
 
     def split_word_syls(self,word): # german-specific #Angstschweiß
         word_syls = []
