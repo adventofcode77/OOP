@@ -16,7 +16,6 @@ class Main:
         #print(pg.font.get_fonts())
         game1 = game.Game(input_codes, file_paths, binary_code)
         code = game1.output_code
-        print(f'code: {code}')
 
 if __name__ == '__main__':
      Main()

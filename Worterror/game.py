@@ -8,8 +8,9 @@ class Game(globale_variablen.Settings):
     def __init__(self, input_codes, file_paths, binary_code):
         super().__init__()
         pg.font.init()
+        self.blink_counter = 0
         self.top = 0
-        self.vergolden = True
+        self.change_color = True
         self.wait = False
         self.won = False
         self.binary_code = binary_code
@@ -229,6 +230,21 @@ class Game(globale_variablen.Settings):
             pos -= tenth
         return poslist
 
+    def blink(self, num_steps, syl, new_color):
+        list_ints = [
+            int(orig_rgb_digit + (gold_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
+            orig_rgb_digit, gold_rgb_digit in list(zip(syl.rgb, new_color))]  # see stackoverflow link on fading
+        syl.image = self.default_font.render(syl.name, True,
+                                             (list_ints[0], list_ints[1], list_ints[2]))
+        if self.change_color and self.step_fps < num_steps:
+            self.step_fps += 1
+        elif self.change_color and self.blink_counter >= self.fps:
+            self.change_color = False
+        elif self.step_fps > 0:
+            self.step_fps -= 1
+        elif self.step_fps == 0 and self.blink_counter >= self.fps:
+            self.change_color = True
+
     def get_screensyls(self):
         syls = self.syls[self.start_syls_cut_at:] + self.syls[:self.start_syls_cut_at]
         #syls = [syl for syl in syls if syl.visible] #why does this make the loop jerk backwards?
@@ -256,34 +272,33 @@ class Game(globale_variablen.Settings):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
                 if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
-                    num_steps = self.fps * 2
-                    list_ints = [
-                        int(orig_rgb_digit + (gold_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
-                        orig_rgb_digit, gold_rgb_digit in list(zip(syl.rgb, self.yellow))]  # see stackoverflow link on fading
-                    syl.image = self.default_font.render(syl.name, True,
-                                                         (list_ints[0], list_ints[1], list_ints[2]))
-                    if self.vergolden and self.step_fps < num_steps:
-                        self.step_fps += 1
-                    elif self.vergolden and int(time.get_ticks())%1000 in range(0,10):
-                        self.vergolden = False
-                    elif self.step_fps > 0:
-                        self.step_fps -=1
-                    else:
-                        self.vergolden = True
+                    self.blink(self.fps*2, syl, self.yellow)
                 if syl.visible:
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                     syl.rect.y = self.pos_list[i] + self.syl_pos_change
             gold = self.gold_syls[:]
-            lil = self.lila_syls[:]
+            gold_tuples = [syl.tuple for syl in self.gold_syls]
+            gold_to_blink = next(iter([word for word in self.words if [tuple in gold_tuples for tuple in word.tuples]])).tuples
+            lil = self.lila_syls[:]p
+            lila_tuples = [syl.tuple for syl in lil]
+            lila_to_blink = next(iter([word for word in self.words if [tuple in lila_tuples for tuple in word.tuples]])).tuples
+            print("gold word",gold_to_blink)
             ln = len(self.pos_list)
-            for j in range(i, len(lil), ln): # making the right columns
+            for j in range(i, len(lil), ln): # making the right columns]
                 syl = lil[j]
                 syl.rect.x = self.screenw - (1 + j // ln) * self.screenw // 8
+                if syl.tuple in lila_to_blink:
+                    print("syl",syl.name,"is in lilas", lila_to_blink.name)
+                    self.blink(self.fps*2,syl,self.cyan)
                 syl.rect.y = (1 + i) * self.screenh // 10
                 self.screen_copy.blit(syl.image, syl.rect)
             for k in range(i, len(gold), ln): # making the left columns
                 syl = gold[k]
                 syl.rect.x = (k // ln) * self.screenw // 8
+                print("gold syl",syl.tuple)
+                if syl.tuple in gold_to_blink:
+                    print("syl", syl.name, "is in golds", gold_to_blink.name)
+                    self.blink(self.fps*2,syl,self.cyan)
                 syl.rect.y = (1 + i) * self.screenh // 10
                 self.screen_copy.blit(syl.image, syl.rect)
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
