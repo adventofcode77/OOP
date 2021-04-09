@@ -10,7 +10,7 @@ class Silbe(): #do with sprites
         self.rgb = rgb
         self.image = self.info.default_font.render(self.name, True, tuple(rgb))
         self.rect = self.image.get_rect() # or text.get_rect()?
-        self.rect.x = random.randrange(self.info.right,self.info.screenw-self.rect.w-self.info.right,self.info.screenw//25)
+        self.rect.x = random.randrange(self.info.right,self.info.screenw-self.rect.w-self.info.right,self.info.screenw//5)
         self.clicked_on = False
         self.bit = bit # ['einer', 'Aktiengesellschaft']
         self.visible = True
