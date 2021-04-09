@@ -69,11 +69,11 @@ class Woerter():
             len_syls = len(syls)
             word_bit_string = " ".join(self.code_word_text_bits[i])
             word_object = word.Word(aword, word_bit_string, syls, self.worder, self.totalsyls, self.info)
+            self.code_syls += word_object.syls
             self.code_words.append(word_object)
             bits_counter += len_syls
-        for aword in self.code_words: # can't say "for word in" because of word.Word
-            self.code_syls += aword.syls
-        print("self code syls:", [syl.name for syl in self.code_syls])
+            self.totalsyls += len(syls)
+        print("self code syls:", [syl.name+str(syl.tuple) for syl in self.code_syls])
 
     def split_word_syls(self,word): # german-specific #Angstschweiß
         word_syls = []

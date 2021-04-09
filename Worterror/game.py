@@ -10,6 +10,7 @@ class Game(globale_variablen.Settings):
         pg.font.init()
         self.blink_counter = 0
         self.top = 0
+        self.h = 8
         self.change_color = True
         self.wait = False
         self.won = False
@@ -223,7 +224,7 @@ class Game(globale_variablen.Settings):
 
     def get_pos_list(self):
         poslist = []
-        tenth = self.screenh // 10
+        tenth = self.screenh // self.h
         pos = self.screenh - tenth
         while pos >= 0 - self.syl_pos_change:
             poslist.append(pos)
@@ -253,17 +254,17 @@ class Game(globale_variablen.Settings):
             if syl.visible:
                 if syl.rect.x < self.end_first_screen_part:
                     while syl.rect.x < self.end_first_screen_part:
-                        syl.rect.x += self.screenw//10
+                        syl.rect.x += self.screenw//5
                 elif syl.rect.x > self.start_third_screen_part-syl.rect.w:
                     while syl.rect.x > self.start_third_screen_part-syl.rect.w:
-                        syl.rect.x -= self.screenw//10
+                        syl.rect.x -= self.screenw//5
 
         return to_return  # (now syls should always be bigger than this cut)
 
     def blit_loop(self):  # why is there some trembling? especially after downsizing screen
         self.screen_copy.fill(self.gray)
-        self.end_first_screen_part = (self.screenw // 8) * ((len(self.gold_syls) // 10) + 1)
-        self.start_third_screen_part = self.screenw - (self.screenw // 8) * (len(self.lila_syls) // 10 + 1)
+        self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // self.h) + 1)
+        self.start_third_screen_part = self.screenw - (self.screenw // 10) * ((len(self.lila_syls) // self.h) + 1)
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                 self.start_third_screen_part - self.end_first_screen_part, self.screenh)
         self.tript2.fill(self.black)
@@ -277,37 +278,44 @@ class Game(globale_variablen.Settings):
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                     syl.rect.y = self.pos_list[i] + self.syl_pos_change
             gold = self.gold_syls[:]
-            gold_tuples = [syl.tuple for syl in self.gold_syls]
-            gold_to_blink = next(iter([word for word in self.words if [tuple in gold_tuples for tuple in word.tuples]])).tuples
-            lil = self.lila_syls[:]p
+            gold_tuples = [syl.tuple for syl in gold]
+            code_tuples = [w.tuples for w in self.woerter.code_words]
+            gw = None
+
+            def find_complete_syls(syl_tuples, words_tuples):
+                try:
+                    nxt = next(iter([set for set in words_tuples if [t for t in set if t in syl_tuples] == [t for t in set]]))
+                    return nxt
+                except:
+                    print([w.name for w in self.woerter.code_words])
+                    return None
+            gw = find_complete_syls(gold_tuples,code_tuples)
+            lil = self.lila_syls[:]
             lila_tuples = [syl.tuple for syl in lil]
-            lila_to_blink = next(iter([word for word in self.words if [tuple in lila_tuples for tuple in word.tuples]])).tuples
-            print("gold word",gold_to_blink)
+            words_tuples = [word.tuples for word in self.words]
+            lw = None # lw = find_complete_syls(lila_tuples,words_tuples)
             ln = len(self.pos_list)
             for j in range(i, len(lil), ln): # making the right columns]
                 syl = lil[j]
-                syl.rect.x = self.screenw - (1 + j // ln) * self.screenw // 8
-                if syl.tuple in lila_to_blink:
-                    print("syl",syl.name,"is in lilas", lila_to_blink.name)
+                syl.rect.x = self.screenw - (1 + j // ln) * self.screenw // 10
+                if lw and syl.tuple in lw:
                     self.blink(self.fps*2,syl,self.cyan)
-                syl.rect.y = (1 + i) * self.screenh // 10
+                syl.rect.y = (1 + i) * self.screenh // self.h
                 self.screen_copy.blit(syl.image, syl.rect)
             for k in range(i, len(gold), ln): # making the left columns
                 syl = gold[k]
-                syl.rect.x = (k // ln) * self.screenw // 8
-                print("gold syl",syl.tuple)
-                if syl.tuple in gold_to_blink:
-                    print("syl", syl.name, "is in golds", gold_to_blink.name)
+                syl.rect.x = (k // ln) * self.screenw // 10
+                if gw and syl.tuple in gw:
                     self.blink(self.fps*2,syl,self.cyan)
-                syl.rect.y = (1 + i) * self.screenh // 10
+                syl.rect.y = (1 + i) * self.screenh // self.h
                 self.screen_copy.blit(syl.image, syl.rect)
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
-        if self.syl_pos_change >= self.screenh // 10:
+        if self.syl_pos_change >= self.screenh // self.h:
             self.syl_pos_change = 0
             self.start_syls_cut_at += 1
             if self.start_syls_cut_at > len(self.syls) - 1:  # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = 0
-        elif self.syl_pos_change <= - self.screenh // 10:
+        elif self.syl_pos_change <= - self.screenh // self.h:
             self.syl_pos_change = 0
             self.start_syls_cut_at -= 1
             if self.start_syls_cut_at < 1:  # "==" doesn't work after words get deleted

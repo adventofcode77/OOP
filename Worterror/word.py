@@ -21,20 +21,18 @@ class Word():
         self.color = color
 
     def make_silben(self, rgb):
-        order = self.totalsyls # make class attribute?
         syls = []
         for i in range(len(self.txtsilben)):
-            order += 1
             it = self.txtsilben[i]
             if i < len(self.bits):
                 bit = self.bits[i]
             else:
                 bit = [...]
             word = self.name
-            silbe1 = silbe.Silbe(it,word,bit,order, self.worder, self.info, rgb)
+            silbe1 = silbe.Silbe(it,word,bit,self.totalsyls, self.worder, self.info, rgb)
             syls.append(silbe1)
-            order += 1
-            self.tuples.append((order,self.worder))
+            self.tuples.append((self.totalsyls, self.worder))
+            self.totalsyls += 1
         return syls
 
 class Button():
