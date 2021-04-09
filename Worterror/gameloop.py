@@ -16,6 +16,7 @@ class Gameloop():
         self.mainloop() # call last
 
     def mainloop(self):
+        self.info.nums() # called here once to create self.info.top so that picked syls get painted starting from there
         while True:
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
