@@ -6,7 +6,7 @@ import random
 class Spieler():
     def __init__(self,game_instance):
         self.info = game_instance
-        self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2,self.info.screen_surface//10,self.info.screen_surface//10)
+        self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2,self.info.screen_surface//20,self.info.screen_surface//20)
         self.my_silben = []
         self.image = transform.scale(image.load('Roboter.png'),(self.rect.w,self.rect.h))
         self.speed = round(self.info.initial_syl_speed_change*1.5,2) # currently depends on fps too
