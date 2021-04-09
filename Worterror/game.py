@@ -10,6 +10,7 @@ class Game(globale_variablen.Settings):
         pg.font.init()
         self.blink_counter = 0
         self.top = 0
+        self.gw,self.nw = None, None
         self.h = 8
         self.change_color = True
         self.wait = False
@@ -231,12 +232,17 @@ class Game(globale_variablen.Settings):
             pos -= tenth
         return poslist
 
-    def blink(self, num_steps, syl, new_color):
+    def blink(self, num_steps, syl, new_color, start_color=None):
+        if not start_color:
+            start_color = syl.rgb
         list_ints = [
             int(orig_rgb_digit + (gold_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
-            orig_rgb_digit, gold_rgb_digit in list(zip(syl.rgb, new_color))]  # see stackoverflow link on fading
-        syl.image = self.default_font.render(syl.name, True,
+            orig_rgb_digit, gold_rgb_digit in list(zip(start_color, new_color))]  # see stackoverflow link on fading
+        try:
+            syl.image = self.default_font.render(syl.name, True,
                                              (list_ints[0], list_ints[1], list_ints[2]))
+        except:
+            print("excepted rgb for",syl.name,":",list_ints[0], list_ints[1], list_ints[2])
         if self.change_color and self.step_fps < num_steps:
             self.step_fps += 1
         elif self.change_color and self.blink_counter >= self.fps:
@@ -280,34 +286,35 @@ class Game(globale_variablen.Settings):
             gold = self.gold_syls[:]
             gold_tuples = [syl.tuple for syl in gold]
             code_tuples = [w.tuples for w in self.woerter.code_words]
-            gw = None
 
             def find_complete_syls(syl_tuples, words_tuples):
                 try:
                     nxt = next(iter([set for set in words_tuples if [t for t in set if t in syl_tuples] == [t for t in set]]))
                     return nxt
                 except:
-                    print([w.name for w in self.woerter.code_words])
                     return None
-            gw = find_complete_syls(gold_tuples,code_tuples)
+
+            if not self.gw or self.gw not in code_tuples:
+                self.gw = find_complete_syls(gold_tuples,code_tuples)
             lil = self.lila_syls[:]
             lila_tuples = [syl.tuple for syl in lil]
             words_tuples = [word.tuples for word in self.words]
-            lw = None # lw = find_complete_syls(lila_tuples,words_tuples)
-            ln = len(self.pos_list)
-            for j in range(i, len(lil), ln): # making the right columns]
+            if not self.nw or self.nw not in words_tuples:
+                self.nw = find_complete_syls(lila_tuples, words_tuples)
+            for j in range(i, len(lil), self.h): # making the right columns]
                 syl = lil[j]
-                syl.rect.x = self.screenw - (1 + j // ln) * self.screenw // 10
-                if lw and syl.tuple in lw:
-                    self.blink(self.fps*2,syl,self.cyan)
-                syl.rect.y = (1 + i) * self.screenh // self.h
+                syl.rect.x = self.screenw - ((1 + (j // self.h)) * (self.screenw // 10))
+                if self.nw and syl.tuple in self.nw:
+                    print("nw is",self.nw)
+                    self.blink(self.fps*2,syl,self.red, start_color=self.white)
+                syl.rect.y = self.top + (i * ((self.screenh-self.top) // self.h))
                 self.screen_copy.blit(syl.image, syl.rect)
-            for k in range(i, len(gold), ln): # making the left columns
+            for k in range(i, len(gold), self.h): # making the left columns
                 syl = gold[k]
-                syl.rect.x = (k // ln) * self.screenw // 10
-                if gw and syl.tuple in gw:
-                    self.blink(self.fps*2,syl,self.cyan)
-                syl.rect.y = (1 + i) * self.screenh // self.h
+                syl.rect.x = (k // self.h) * (self.screenw // 10) # starts from width 0 for words 1-8 if ln is 8
+                if self.gw and syl.tuple in self.gw:
+                    self.blink(self.fps*2,syl,self.red, start_color=self.white)
+                syl.rect.y = self.top + i * ((self.screenh-self.top) // self.h)
                 self.screen_copy.blit(syl.image, syl.rect)
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
         if self.syl_pos_change >= self.screenh // self.h:
