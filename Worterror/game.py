@@ -8,6 +8,7 @@ class Game(globale_variablen.Settings):
     def __init__(self, input_codes, file_paths, binary_code):
         super().__init__()
         pg.font.init()
+        self.radiuses = []
         self.blink_counter = 0
         self.top = 0
         self.gw,self.nw = None, None
@@ -269,10 +270,10 @@ class Game(globale_variablen.Settings):
             if syl.visible:
                 if syl.rect.x < self.end_first_screen_part:
                     while syl.rect.x < self.end_first_screen_part:
-                        syl.rect.x += self.screenw//5
+                        syl.rect.x += self.screenw//10
                 elif syl.rect.x > self.start_third_screen_part-syl.rect.w:
                     while syl.rect.x > self.start_third_screen_part-syl.rect.w:
-                        syl.rect.x -= self.screenw//5
+                        syl.rect.x -= self.screenw//10
 
         return to_return  # (now syls should always be bigger than this cut)
 
@@ -291,12 +292,11 @@ class Game(globale_variablen.Settings):
                     if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
                         syl.rgb = self.blink(self.fps*2, syl, self.yellow)
                         syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
-                    circle_color = syl.rgb
-                    circle_width = 1+(self.step_fps//self.fps*2)
-                    print("circle width",circle_width)
+                    circle_width = 1+(self.step_fps//self.fps*2)*3
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
-                    draw.circle(self.screen_copy,circle_color,syl.rect.center,syl.rect.w,width=circle_width)
+                    draw.circle(self.screen_copy,syl.rgb,syl.rect.center,syl.rect.w,width=circle_width)
                     syl.rect.y = self.pos_list[i] + self.syl_pos_change
+                    syl.rect_in_circle.center = syl.rect.center
             gold = self.gold_syls[:]
             gold_tuples = [syl.tuple for syl in gold]
             code_tuples = [w.tuples for w in self.woerter.code_words]
