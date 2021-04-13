@@ -9,6 +9,10 @@ class Spieler():
         self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2,self.info.screen_surface//20,self.info.screen_surface//20)
         self.my_silben = []
         self.image = transform.scale(image.load('Roboter.png'),(self.rect.w,self.rect.h))
+        self.normal_image = self.image.copy()
+        self.brighter_image = self.image.copy()
+        brighten = 100
+        self.brighter_image.fill((brighten, brighten, brighten), special_flags=BLEND_RGB_ADD)
         self.speed = round(self.info.initial_syl_speed_change*1.5,2) # currently depends on fps too
         self.initial_speed = self.speed
         self.appendlist = []
@@ -46,18 +50,21 @@ class Spieler():
                     self.loop_down = True
                     self.info.syl_speed_change = -self.info.syl_speed_change
 
-    def pick(self,sylobjects):
-        index = self.rect.collidelist([a.rect for a in sylobjects])
-        if index is not -1:
-            picked = sylobjects[index]
-            if picked.visible:
-                if self.info.tript2.get_rect().w >= self.info.screenw//10:
-                    self.my_silben.append(picked)
-                    if picked in self.info.woerter.code_syls:
-                        self.info.gold_syls.append(picked)
-                    else:
-                        self.info.lila_syls.append(picked)
-                picked.visible = False
+    def pick(self, visible_syls):
+        index1 = self.rect.collidelist([syl.rect_in_circle for syl in visible_syls]) # collision with
+        if index1 is not -1:
+            self.image = self.brighter_image
+        else:
+            self.image = self.normal_image
+        index2 = self.rect.collidelist([a.rect for a in visible_syls]) # collision with syl text
+        if index2 is not -1:
+            picked = visible_syls[index2]
+            self.my_silben.append(picked)
+            if picked in self.info.woerter.code_syls:
+                self.info.gold_syls.append(picked)
+            else:
+                self.info.lila_syls.append(picked)
+            picked.visible = False
 
 
 
