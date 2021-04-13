@@ -239,18 +239,27 @@ class Game(globale_variablen.Settings):
             int(orig_rgb_digit + (gold_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
             orig_rgb_digit, gold_rgb_digit in list(zip(start_color, new_color))]  # see stackoverflow link on fading
         try:
-            syl.image = self.default_font.render(syl.name, True,
-                                             (list_ints[0], list_ints[1], list_ints[2]))
+            list_ints[0], list_ints[1], list_ints[2] in range(0,255)
         except:
             print("excepted rgb for",syl.name,":",list_ints[0], list_ints[1], list_ints[2])
-        if self.change_color and self.step_fps < num_steps:
-            self.step_fps += 1
-        elif self.change_color and self.blink_counter >= self.fps:
-            self.change_color = False
-        elif self.step_fps > 0:
-            self.step_fps -= 1
-        elif self.step_fps == 0 and self.blink_counter >= self.fps:
-            self.change_color = True
+        if self.change_color: #step fps changes in the direction towards the new color
+            if self.step_fps < num_steps: # self fps hasn't reached the new color yet
+             self.step_fps += 1
+            else: # the change is complete, but the bool shouldn't be flipped until a second has passed
+                if not self.blink_counter: # blink counter starts counting for a second
+                    self.blink_counter = 1
+                elif self.blink_counter >= self.fps//2: # blink counter has finished counting for a time unit
+                    self.change_color = False
+        else:
+            if self.step_fps > 0: # step fps is changing in the direction of the original color
+                self.step_fps -= 1
+            elif self.step_fps == 0:
+                if not self.blink_counter:  # blink counter starts counting for a second
+                    self.blink_counter = 1
+                elif self.blink_counter >= self.fps//2: # blink counter has finished counting for a time unit
+                    self.change_color = True
+                    self.blink_counter = None # reset blink counter to None so it can start counting again at the right time
+        return (list_ints[0], list_ints[1], list_ints[2])
 
     def get_screensyls(self):
         syls = self.syls[self.start_syls_cut_at:] + self.syls[:self.start_syls_cut_at]
@@ -278,10 +287,15 @@ class Game(globale_variablen.Settings):
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
-                if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
-                    self.blink(self.fps*2, syl, self.yellow)
                 if syl.visible:
+                    if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
+                        syl.rgb = self.blink(self.fps*2, syl, self.yellow)
+                        syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
+                    circle_color = syl.rgb
+                    circle_width = 1+(self.step_fps//self.fps*2)
+                    print("circle width",circle_width)
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
+                    draw.circle(self.screen_copy,circle_color,syl.rect.center,syl.rect.w,width=circle_width)
                     syl.rect.y = self.pos_list[i] + self.syl_pos_change
             gold = self.gold_syls[:]
             gold_tuples = [syl.tuple for syl in gold]
@@ -303,17 +317,18 @@ class Game(globale_variablen.Settings):
                 self.nw = find_complete_syls(lila_tuples, words_tuples)
             for j in range(i, len(lil), self.h): # making the right columns]
                 syl = lil[j]
-                syl.rect.x = self.screenw - ((1 + (j // self.h)) * (self.screenw // 10))
+                syl.rect.x = self.screenw - ((1 + (j // self.h)) * (self.screenw // 10)) # makes a new column further to the left whenever j becomes one more time bigger than the column length
                 if self.nw and syl.tuple in self.nw:
-                    print("nw is",self.nw)
-                    self.blink(self.fps*2,syl,self.red, start_color=self.white)
+                    syl.rgb = self.blink(self.fps*2,syl,self.red, start_color=self.white)
+                    syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
                 syl.rect.y = self.top + (i * ((self.screenh-self.top) // self.h))
                 self.screen_copy.blit(syl.image, syl.rect)
             for k in range(i, len(gold), self.h): # making the left columns
                 syl = gold[k]
                 syl.rect.x = (k // self.h) * (self.screenw // 10) # starts from width 0 for words 1-8 if ln is 8
                 if self.gw and syl.tuple in self.gw:
-                    self.blink(self.fps*2,syl,self.red, start_color=self.white)
+                    syl.rgb = self.blink(self.fps*2,syl,self.red, start_color=self.white)
+                    syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
                 syl.rect.y = self.top + i * ((self.screenh-self.top) // self.h)
                 self.screen_copy.blit(syl.image, syl.rect)
         self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)

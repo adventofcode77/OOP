@@ -20,7 +20,8 @@ class Gameloop():
         while True:
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
-            self.info.blink_counter = 0 if self.info.blink_counter == 1000 else self.info.blink_counter+1
+            if self.info.blink_counter:
+                self.info.blink_counter += 1
             for e in event.get():  # how to clear events?
                 if e.type == QUIT:
                     quit()
