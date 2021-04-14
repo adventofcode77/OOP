@@ -32,7 +32,7 @@ class Game(globale_variablen.Settings):
         self.words = self.woerter.words
         syls = self.woerter.silben + self.woerter.code_syls
         self.syls = random.sample(syls, len(syls))
-        self.silben_copy,self.code_silben_copy = self.woerter.silben[:],self.woerter.code_syls[:]
+        self.silben_copy,self.code_silben_copy, self.syls_copy = self.woerter.silben[:],self.woerter.code_syls[:], self.syls[:]
         # self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
         self.syl_pos_change = 0
@@ -288,15 +288,20 @@ class Game(globale_variablen.Settings):
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
+                circle_width = 1 + (self.step_fps // self.fps * 2) * 2
                 if syl.visible:
                     if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
                         syl.rgb = self.blink(self.fps*2, syl, self.yellow)
                         syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
-                    circle_width = 1+(self.step_fps//self.fps*2)*3
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                     draw.circle(self.screen_copy,syl.rgb,syl.rect.center,syl.rect.w,width=circle_width)
-                    syl.rect.y = self.pos_list[i] + self.syl_pos_change
-                    syl.rect_in_circle.center = syl.rect.center
+                elif syl.picked:
+                    draw.circle(self.screen_copy, syl.rgb, syl.new_spot_rect.center, syl.rect.w // 2, width=syl.picked)
+                    draw.circle(self.screen_copy, syl.rgb, syl.ghost_rect.center, syl.rect.w, width=syl.picked)
+                    syl.picked = syl.picked - 2 if syl.picked > 0 else 0
+                syl.rect.y = self.pos_list[i] + self.syl_pos_change
+                syl.rect_in_circle.center = syl.rect.center
+                syl.rect_copy = syl.rect.copy() # why does this leave rect in place
             gold = self.gold_syls[:]
             gold_tuples = [syl.tuple for syl in gold]
             code_tuples = [w.tuples for w in self.woerter.code_words]
