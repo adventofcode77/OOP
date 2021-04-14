@@ -6,7 +6,8 @@ import random
 class Spieler():
     def __init__(self,game_instance):
         self.info = game_instance
-        self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2,self.info.screen_surface//20,self.info.screen_surface//20)
+        self.spieler_w, self.spieler_h = self.info.screen_surface//20,self.info.screen_surface//20
+        self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2, self.spieler_w, self.spieler_h)
         self.my_silben = []
         self.image = transform.scale(image.load('Roboter.png'),(self.rect.w,self.rect.h))
         self.normal_image = self.image.copy()
@@ -51,20 +52,24 @@ class Spieler():
                     self.info.syl_speed_change = -self.info.syl_speed_change
 
     def pick(self, visible_syls):
-        index1 = self.rect.collidelist([syl.rect_in_circle for syl in visible_syls]) # collision with
-        if index1 is not -1:
+        index_circle_rect = self.rect.collidelist([syl.rect_in_circle for syl in visible_syls]) # collision with
+        if index_circle_rect is not -1:
             self.image = self.brighter_image
         else:
             self.image = self.normal_image
-        index2 = self.rect.collidelist([a.rect for a in visible_syls]) # collision with syl text
-        if index2 is not -1:
-            picked = visible_syls[index2]
-            self.my_silben.append(picked)
-            if picked in self.info.woerter.code_syls:
-                self.info.gold_syls.append(picked)
+        index_txt_rect = self.rect.collidelist([a.rect for a in visible_syls]) # collision with syl text
+        if index_txt_rect is not -1:
+            pikd = visible_syls[index_txt_rect]
+            pikd.new_spot_rect = pikd.rect
+            pikd.ghost_rect = pikd.rect_copy
+            pikd.picked = self.info.fps
+            self.my_silben.append(pikd)
+            pikd.visible = False # works through the variable
+            if pikd in self.info.woerter.code_syls:
+                self.info.gold_syls.append(pikd)
             else:
-                self.info.lila_syls.append(picked)
-            picked.visible = False
+                self.info.lila_syls.append(pikd)
+
 
 
 

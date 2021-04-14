@@ -27,7 +27,21 @@ class Gameloop():
                     quit()
                 elif e.type == KEYDOWN: # enum instead of if/else? dict with states and functions
                     ln = len(self.info.guessed_code_words)
-                    if e.key == K_SPACE: # go to the desk
+                    if e.key == K_0:
+                        self.new_start()
+                    elif e.key == K_5:
+                        print("before",self.info.spieler.spieler_h )
+                        self.info.spieler.spieler_h *= 1.1
+                        self.info.spieler.spieler_w *= 1.1
+                        print("after", self.info.spieler.spieler_h)
+                        self.rect = pg.Rect(self.info.screenw // 2, self.info.screenh // 2, self.info.spieler.spieler_w,
+                                            self.info.spieler.spieler_h)
+                    elif e.key == K_4:
+                        self.info.spieler.spieler_h *= 0.9
+                        self.info.spieler.spieler_w *= 0.9
+                        self.rect = pg.Rect(self.info.screenw // 2, self.info.screenh // 2, self.info.spieler.spieler_w,
+                                            self.info.spieler.spieler_h)
+                    elif e.key == K_SPACE: # go to the desk
                         if self.info.wait:
                             if self.info.won:
                                 quit()
@@ -91,7 +105,6 @@ class Gameloop():
                 self.info.spieler.act(self.info.tript2.get_rect())  # PLAYER MOVES ONCE A LOOP
                 self.info.spieler.pick([syl for syl in self.info.syls if syl.visible])
                 if self.info.start_third_screen_part-self.info.end_first_screen_part < self.info.screenw//10:
-                    print("space left:",self.info.start_third_screen_part-self.info.end_first_screen_part)
                     self.info.game_over()
                     self.new_start()
                 self.info.blit_loop()
@@ -111,11 +124,9 @@ class Gameloop():
     def new_start(self):
         self.info.next_counter = 0
         self.main_loop = True
-        for item in self.info.spieler.my_silben:
-            item.clicked_on = False
         self.info.gold_syls = []
         self.info.lila_syls = []
-        self.info.woerter.silben, self.info.woerter.code_syls = self.info.silben_copy, self.info.code_silben_copy
+        self.info.woerter.silben, self.info.woerter.code_syls, self.syls = self.info.silben_copy, self.info.code_silben_copy, self.info.syls_copy
         self.info.deleted_word_bool = False
         self.info.deleted_code_word_bool = False
         self.info.deletedlist = []
@@ -128,12 +139,16 @@ class Gameloop():
         self.info.tript2 = self.info.screen_copy.subsurface(self.info.end_first_screen_part, self.info.down,
                                                        self.info.start_third_screen_part - self.info.end_first_screen_part,
                                                        self.info.screenh - self.info.down)
-        for syl in self.info.spieler.my_silben:
+
+        self.info.spieler.appendlist = []
+        self.info.spieler.speed = round(self.info.initial_syl_speed_change * 1.5, 2)
+        self.info.spieler.loop_down = True
+        for syl in self.info.spieler.my_silben: # somehow need this despite restoring the copies
+            syl.clicked_on = False
             syl.visible = True
             syl.rect.x = random.randrange(self.info.right, self.info.screenw - syl.rect.w - self.info.right,
-                                          self.info.screenw // 15)
+                                          self.info.screenw // 10)
         self.info.spieler.my_silben = []
-        self.info.spieler.appendlist = []
 
 
 
