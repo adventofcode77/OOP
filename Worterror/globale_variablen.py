@@ -5,7 +5,7 @@ import math
 import random
 import pygame.freetype
 
-class Settings:
+class Settings: # there could be a function converting size/location numbers based on screen size
     def __init__(self):
         self.top = 0
         self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE|DOUBLEBUF)
