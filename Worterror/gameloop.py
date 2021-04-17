@@ -17,7 +17,8 @@ class Gameloop():
 
     def mainloop(self):
         self.info.nums() # called here once to create self.info.top so that picked syls get painted starting from there
-        while True:
+        while True: #TODO: make it actually object-oriented (with classes producing the state of one object each?) +
+                    # advise not to use python but for example java
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
             if self.info.blink_counter:
