@@ -2,6 +2,7 @@ import pygame as pg
 import sys, time, random
 from pygame import *
 import game
+import gameloop
 
 class Main:
     #TODO make a script that downloads the wiktionary dump/imports the parser and configures their paths
@@ -15,6 +16,8 @@ class Main:
         pg.init()
         #print(pg.font.get_fonts())
         game1 = game.Game(input_codes, file_paths, binary_code)
+        gameloop_ = gameloop.Gameloop(game1)
+        gameloop_.mainloop()
         code = game1.output_code
 
 if __name__ == '__main__':
