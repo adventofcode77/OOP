@@ -1,7 +1,14 @@
+import random
+
 import pygame as pg
 from pygame import *
-import random
-import woerter, globale_variablen, silbe, spieler, gameloop, menu, word
+
+import globale_variablen
+import menu
+import silbe
+import spieler
+import woerter
+import word
 
 
 class Game(globale_variablen.Settings):
@@ -57,7 +64,7 @@ class Game(globale_variablen.Settings):
         self.move_word = None
         self.step_fps = 1
         # gameloop should run last
-        self.gameloop = gameloop.Gameloop(self)  # starts the game (and the object gameloop never gets created as long as the game runs)
+        #self.gameloop = gameloop.Gameloop(self)  # starts the game (and the object gameloop never gets created as long as the game runs)
         print("this line doesn't execute")
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
