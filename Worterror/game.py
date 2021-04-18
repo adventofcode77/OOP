@@ -29,8 +29,7 @@ class Game(globale_variablen.Settings):
         self.next_counter = 0
         self.test_next_counter = 0
         self.menu = menu.Menu(self)
-        self.language = 1  # self.choose_language()
-        self.file_path = file_paths[self.language - 1]
+        self.file_path = file_paths[0]
         self.syl_speed_change = 10
         self.initial_syl_speed_change = self.syl_speed_change
         # variables above may be needed to initialise other classes' instances
