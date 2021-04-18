@@ -4,17 +4,23 @@ import pygame as pg
 from pygame import *
 from pygame.locals import *
 
+from Worterror import game
+
 
 class Gameloop():
-    def __init__(self, game_instance):
-        self.info = game_instance
-        self.clock = pg.time.Clock()  # speed depends on cpu
+    def __init__(self, input_codes, file_paths, binary_code):
+        self.input_codes = input_codes
+        self.file_paths = file_paths
+        self.binary_code = binary_code
+
+        self.info = game.Game(self.input_codes, self.file_paths, self.binary_code)
         self.main_loop = False
         self.menu = True
-        # self.next_counter = 0
         self.click = False
         self.binary_click = False
-        # self.mainloop() # call last
+
+        self.clock = pg.time.Clock()  # speed depends on cpu
+
 
     def mainloop(self):
         self.info.nums()  # called here once to create self.info.top so that picked syls get painted starting from there
@@ -98,7 +104,7 @@ class Gameloop():
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
             # AFTER GOING THROUGH THE EVENTS LIST
             if self.menu:
-                next = self.info.menu.tutorial(self.info.next_counter, self.info.language)
+                next = self.info.menu.tutorial(self.info.next_counter)
                 self.info.next_counter = next
             elif self.info.wait:
                 self.info.game_over()
@@ -124,30 +130,8 @@ class Gameloop():
                 self.click = False
 
     def new_start(self):
-        self.info.next_counter = 0
-        self.main_loop = True
-        self.info.gold_syls = []
-        self.info.lila_syls = []
-        self.info.woerter.silben, self.info.woerter.code_syls, self.syls = self.info.silben_copy, self.info.code_silben_copy, self.info.syls_copy
-        self.info.deleted_word_bool = False
-        self.info.deleted_code_word_bool = False
-        self.info.deletedlist = []
-        self.info.deleted_word = ""
-        self.info.start_syls_cut_at = 0
-        self.info.pos_list = self.info.get_pos_list()
-        self.info.end_first_screen_part = (self.info.screenw // 10) * ((len(self.info.gold_syls) // 10) + 1)
-        self.info.start_third_screen_part = self.info.screenw - (self.info.screenw // 10) * (
-                len(self.info.lila_syls) // 10 + 1)
-        self.info.tript2 = self.info.screen_copy.subsurface(self.info.end_first_screen_part, self.info.down,
-                                                            self.info.start_third_screen_part - self.info.end_first_screen_part,
-                                                            self.info.screenh - self.info.down)
-
-        self.info.spieler.appendlist = []
-        self.info.spieler.speed = round(self.info.initial_syl_speed_change * 1.5, 2)
-        self.info.spieler.loop_down = True
-        for syl in self.info.spieler.my_silben:  # somehow need this despite restoring the copies
-            syl.clicked_on = False
-            syl.visible = True
-            syl.rect.x = random.randrange(self.info.right, self.info.screenw - syl.rect.w - self.info.right,
-                                          self.info.screenw // 10)
-        self.info.spieler.my_silben = []
+        self.info = game.Game(self.input_codes, self.file_paths, self.binary_code)
+        self.main_loop = False
+        self.menu = True
+        self.click = False
+        self.binary_click = False

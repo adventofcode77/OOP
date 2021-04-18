@@ -1,9 +1,6 @@
-import pygame as pg
-import random
 import woerterbuch
 import word
-import silbe
-import random
+
 
 class Woerter():
     all_syls = []
@@ -14,7 +11,7 @@ class Woerter():
         self.worder = 0
         self.words = self.get_words(self.dictwithkeyname)
         self.silben = self.get_silben()
-        self.input_code = self.info.input_codes[self.info.language-1]
+        self.input_code = self.info.input_codes[0]
         self.num_syls = self.get_num_code_syls(self.input_code)
         self.placeholder_code_text = self.get_escape_game_text()
         self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(self.input_code.split()))
@@ -36,8 +33,8 @@ class Woerter():
         return text
 
     def get_bank(self):
-        parser = woerterbuch.Woerterbuch(self.info.file_path, self.info.language)
-        return parser.parsed
+        parser = woerterbuch.Woerterbuch(self.info.file_path)
+        return parser.quick_get(50)
 
     def get_words(self,source):
         words = []
