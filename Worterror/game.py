@@ -19,9 +19,8 @@ class Game(globale_variablen.Settings):
         self.blink_counter = 0
         self.top = 0
         self.gw,self.nw = None, None
-        self.h = 8
+        self.h = 10
         self.change_color = True
-        self.wait = False
         self.won = False
         self.binary_code = binary_code
         self.input_codes = input_codes
@@ -230,15 +229,6 @@ class Game(globale_variablen.Settings):
         self.deletedlist = self.spieler.appendlist[:]
         self.spieler.appendlist = []
 
-    def get_pos_list(self):
-        poslist = []
-        tenth = self.screenh // self.h
-        pos = self.screenh - tenth
-        while pos >= 0 - self.syl_pos_change:
-            poslist.append(pos)
-            pos -= tenth
-        return poslist
-
     def blink(self, num_steps, syl, new_color, start_color=None):
         if not start_color:
             start_color = syl.rgb
@@ -268,22 +258,41 @@ class Game(globale_variablen.Settings):
                     self.blink_counter = None # reset blink counter to None so it can start counting again at the right time
         return (list_ints[0], list_ints[1], list_ints[2])
 
+    def get_pos_list(self):
+        poslist = []
+        space = self.screenh // self.h
+        pos = self.screenh - space + 1
+        while pos >= 0 - self.syl_pos_change:
+            poslist.append(pos)
+            pos -= space
+        return poslist
+
     def get_screensyls(self):
         syls = self.syls[self.start_syls_cut_at:] + self.syls[:self.start_syls_cut_at]
         #syls = [syl for syl in syls if syl.visible] #why does this make the loop jerk backwards?
         to_return = syls[:len(self.pos_list)]
         for syl in to_return:
             if syl.visible:
-                if syl.rect.x < self.end_first_screen_part:
+                too_left = syl.rect.x < self.end_first_screen_part
+                too_right = syl.rect.x > self.start_third_screen_part-syl.rect.w
+                if too_left:
                     while syl.rect.x < self.end_first_screen_part:
                         syl.rect.x += self.screenw//10
-                elif syl.rect.x > self.start_third_screen_part-syl.rect.w:
+                elif too_right:
                     while syl.rect.x > self.start_third_screen_part-syl.rect.w:
                         syl.rect.x -= self.screenw//10
-
+                if syl.rect.x < self.end_first_screen_part or syl.rect.x > self.start_third_screen_part - syl.rect.w:
+                    print("trigger new game?")
+                    self.end_first_screen_part = self.start_third_screen_part-syl.rect.w # trigger new game?
         return to_return  # (now syls should always be bigger than this cut)
 
     def blit_loop(self):  # why is there some trembling? especially after downsizing screen
+        gold = self.gold_syls[:]
+        gold_tuples = [syl.tuple for syl in gold]
+        code_tuples = [w.tuples for w in self.woerter.code_words]
+        lil = self.lila_syls[:]
+        lila_tuples = [syl.tuple for syl in lil]
+        words_tuples = [word.tuples for word in self.words]
         self.screen_copy.fill(self.gray)
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // self.h) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * ((len(self.lila_syls) // self.h) + 1)
@@ -294,23 +303,23 @@ class Game(globale_variablen.Settings):
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
-                circle_width = 1 + (self.step_fps // self.fps * 2) * 2
+                circle_width = 1
                 if syl.visible:
                     if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
                         syl.rgb = self.blink(self.fps*2, syl, self.yellow)
                         syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
+                        circle_width = 1 + (self.step_fps // self.fps * 2) * 2
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                     draw.circle(self.screen_copy,syl.rgb,syl.rect.center,syl.rect.w,width=circle_width)
                 elif syl.picked:
                     draw.circle(self.screen_copy, syl.rgb, syl.new_spot_rect.center, syl.rect.w // 2, width=syl.picked)
                     draw.circle(self.screen_copy, syl.rgb, syl.ghost_rect.center, syl.rect.w, width=syl.picked)
+                    #TODO 'NoneType' bug: object has no attribute 'center' sometime after loop reversal
                     syl.picked = syl.picked - 2 if syl.picked > 0 else 0
                 syl.rect.y = self.pos_list[i] + self.syl_pos_change
                 syl.rect_in_circle.center = syl.rect.center
                 syl.rect_copy = syl.rect.copy() # why does this leave rect in place
-            gold = self.gold_syls[:]
-            gold_tuples = [syl.tuple for syl in gold]
-            code_tuples = [w.tuples for w in self.woerter.code_words]
+
 
             def find_complete_syls(syl_tuples, words_tuples):
                 try:
@@ -321,28 +330,12 @@ class Game(globale_variablen.Settings):
 
             if not self.gw or self.gw not in code_tuples:
                 self.gw = find_complete_syls(gold_tuples,code_tuples)
-            lil = self.lila_syls[:]
-            lila_tuples = [syl.tuple for syl in lil]
-            words_tuples = [word.tuples for word in self.words]
+
             if not self.nw or self.nw not in words_tuples:
                 self.nw = find_complete_syls(lila_tuples, words_tuples)
-            for j in range(i, len(lil), self.h): # making the right columns]
-                syl = lil[j]
-                syl.rect.x = self.screenw - ((1 + (j // self.h)) * (self.screenw // 10)) # makes a new column further to the left whenever j becomes one more time bigger than the column length
-                if self.nw and syl.tuple in self.nw:
-                    syl.rgb = self.blink(self.fps*2,syl,self.red, start_color=self.white)
-                    syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
-                syl.rect.y = self.top + (i * ((self.screenh-self.top) // self.h))
-                self.screen_copy.blit(syl.image, syl.rect)
-            for k in range(i, len(gold), self.h): # making the left columns
-                syl = gold[k]
-                syl.rect.x = (k // self.h) * (self.screenw // 10) # starts from width 0 for words 1-8 if ln is 8
-                if self.gw and syl.tuple in self.gw:
-                    syl.rgb = self.blink(self.fps*2,syl,self.red, start_color=self.white)
-                    syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
-                syl.rect.y = self.top + i * ((self.screenh-self.top) // self.h)
-                self.screen_copy.blit(syl.image, syl.rect)
-        self.syl_pos_change += int((self.screenh / 1000) * self.syl_speed_change)
+            self.blit_tript(i, lil, self.nw, lambda iterator: self.screenw - ((1 + (iterator // self.h)) * (self.screenw // 10)))
+            self.blit_tript(i, gold, self.gw, lambda iterator: (iterator // self.h) * (self.screenw // 10))  # starts from width 0 for words 1-8 if ln is 8
+        self.syl_pos_change += self.syl_speed_change # removed the int() around it
         if self.syl_pos_change >= self.screenh // self.h:
             self.syl_pos_change = 0
             self.start_syls_cut_at += 1
@@ -356,12 +349,22 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(self.spieler.image, self.spieler.rect)
         self.screen_transfer()
 
+    def blit_tript(self, i, lst_syls, blinking_word, x_position):
+        ln = len(lst_syls)
+        for k in range(i, ln, self.h):  # making the left columns
+            syl = lst_syls[k]
+            syl.rect.x = x_position(k)
+            if blinking_word and syl.tuple in blinking_word:
+                syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.white)
+                syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
+            syl.rect.y = self.top + i * ((self.screenh - self.top) // self.h)
+            self.screen_copy.blit(syl.image, syl.rect)
+
     def game_over(self):
         self.screen_copy.fill(self.black)
-        text = f"Gewonnen! Das nächste Code ist: {self.output_code.upper()}." if self.won else "VERLUST! Neu starten."
+        text = f"Gewonnen! Das nächste Code ist: {self.output_code.upper()}." if self.won else "VERLOREN! Neu starten."
         text += " Drucke SPACE, um fortzufahren."
         self.blit_clickable_words(text,self.white,(self.midtop[0],self.midtop[1] + self.down * 2))
-        self.wait = True
 
 
     def dauer(self):

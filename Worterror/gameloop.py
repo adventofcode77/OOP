@@ -1,5 +1,3 @@
-import random
-
 import pygame as pg
 from pygame import *
 from pygame.locals import *
@@ -9,6 +7,7 @@ from Worterror import game
 
 class Gameloop():
     def __init__(self, input_codes, file_paths, binary_code):
+        self.wait = False
         self.input_codes = input_codes
         self.file_paths = file_paths
         self.binary_code = binary_code
@@ -37,23 +36,11 @@ class Gameloop():
                     ln = len(self.info.guessed_code_words)
                     if e.key == K_0:
                         self.new_start()
-                    elif e.key == K_5:
-                        print("before", self.info.spieler.spieler_h)
-                        self.info.spieler.spieler_h *= 1.1
-                        self.info.spieler.spieler_w *= 1.1
-                        print("after", self.info.spieler.spieler_h)
-                        self.rect = pg.Rect(self.info.screenw // 2, self.info.screenh // 2, self.info.spieler.spieler_w,
-                                            self.info.spieler.spieler_h)
-                    elif e.key == K_4:
-                        self.info.spieler.spieler_h *= 0.9
-                        self.info.spieler.spieler_w *= 0.9
-                        self.rect = pg.Rect(self.info.screenw // 2, self.info.screenh // 2, self.info.spieler.spieler_w,
-                                            self.info.spieler.spieler_h)
                     elif e.key == K_SPACE:  # go to the desk
-                        if self.info.wait:
+                        if self.wait:
                             if self.info.won:
                                 quit()
-                            self.info.wait = False
+                            self.wait = False
                         elif self.main_loop:
                             self.main_loop = False
                         else:
@@ -64,34 +51,36 @@ class Gameloop():
                                 item.clicked_on = False
                     elif e.key == K_LEFT:  # show next code_string explanation installment
                         if self.info.move_word is not None:
-                            if self.info.move_word > 0 and self.info.move_word < ln:
-                                popped = self.info.guessed_code_words.pop(self.info.move_word - 1)
-                                popped.color = self.info.orange
-                                self.info.guessed_code_words.insert(self.info.move_word, popped)
-                                self.info.move_word -= 1
-                            elif self.info.move_word == 0:
-                                popped = self.info.guessed_code_words.pop(0)
-                                popped.color = self.info.orange
-                                self.info.guessed_code_words.insert(ln - 1, popped)
-                                self.info.move_word = len(self.info.guessed_code_words) - 1
-                            else:
+                            try:
+                                if self.info.move_word > 0 and self.info.move_word < ln:
+                                    popped = self.info.guessed_code_words.pop(self.info.move_word - 1)
+                                    popped.color = self.info.orange
+                                    self.info.guessed_code_words.insert(self.info.move_word, popped)
+                                    self.info.move_word -= 1
+                                elif self.info.move_word == 0:
+                                    popped = self.info.guessed_code_words.pop(0)
+                                    popped.color = self.info.orange
+                                    self.info.guessed_code_words.insert(ln - 1, popped)
+                                    self.info.move_word = len(self.info.guessed_code_words) - 1
+                            except:
                                 print("clicked on word whose index was more than the collected code words")
                         else:
                             self.info.next_counter -= 1
                             self.info.test_next_counter -= 1
                     elif e.key == K_RIGHT:  # show next code_string explanation installment
                         if self.info.move_word is not None:
-                            if self.info.move_word < ln - 1:
-                                popped = self.info.guessed_code_words.pop(self.info.move_word + 1)
-                                popped.color = self.info.orange
-                                self.info.guessed_code_words.insert(self.info.move_word, popped)
-                                self.info.move_word += 1
-                            elif self.info.move_word == ln - 1:
-                                popped = self.info.guessed_code_words.pop(ln - 1)
-                                popped.color = self.info.orange
-                                self.info.guessed_code_words.insert(0, popped)
-                                self.info.move_word = 0
-                            else:
+                            try:
+                                if self.info.move_word < ln - 1:
+                                    popped = self.info.guessed_code_words.pop(self.info.move_word + 1)
+                                    popped.color = self.info.orange
+                                    self.info.guessed_code_words.insert(self.info.move_word, popped)
+                                    self.info.move_word += 1
+                                elif self.info.move_word == ln - 1:
+                                    popped = self.info.guessed_code_words.pop(ln - 1)
+                                    popped.color = self.info.orange
+                                    self.info.guessed_code_words.insert(0, popped)
+                                    self.info.move_word = 0
+                            except:
                                 print("k_RIGHT + move_word > end list")
                         else:
                             self.info.next_counter += 1
@@ -106,13 +95,15 @@ class Gameloop():
             if self.menu:
                 next = self.info.menu.tutorial(self.info.next_counter)
                 self.info.next_counter = next
-            elif self.info.wait:
+            elif self.wait:
+                "here?"
                 self.info.game_over()
                 continue
             elif self.main_loop:
                 self.info.spieler.act(self.info.tript2.get_rect())  # PLAYER MOVES ONCE A LOOP
                 self.info.spieler.pick([syl for syl in self.info.syls if syl.visible])
                 if self.info.start_third_screen_part - self.info.end_first_screen_part < self.info.screenw // 10:
+                    print("gameloop object overflow death?")
                     self.info.game_over()
                     self.new_start()
                 self.info.blit_loop()
@@ -135,3 +126,4 @@ class Gameloop():
         self.menu = True
         self.click = False
         self.binary_click = False
+        self.wait = True

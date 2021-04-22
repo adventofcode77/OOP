@@ -1,6 +1,5 @@
 import pygame as pg
 
-import game
 import gameloop
 from Worterror import woerterbuch
 
