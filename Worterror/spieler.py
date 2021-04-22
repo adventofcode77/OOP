@@ -56,7 +56,7 @@ class Spieler():
                     self.info.syl_speed_change = -self.info.syl_speed_change
 
     def pick(self, visible_syls):
-        index_circle_rect = self.rect.collidelist([syl.rect_in_circle for syl in visible_syls])  # collision with
+        index_circle_rect = self.rect.collidelist([syl.rect_in_circle for syl in visible_syls])  # collision with circle
         if index_circle_rect is not -1:
             self.image = self.brighter_image
         else:
@@ -68,8 +68,9 @@ class Spieler():
             pikd.ghost_rect = pikd.rect_copy
             pikd.picked = self.info.fps
             self.my_silben.append(pikd)
-            pikd.visible = False  # works through the variable
+            pikd.visible = False  # works through the variable.
             if pikd in self.info.woerter.code_syls:
                 self.info.gold_syls.append(pikd)
             else:
+                print("append to lilas",pikd.name)
                 self.info.lila_syls.append(pikd)

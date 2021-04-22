@@ -261,7 +261,7 @@ class Game(globale_variablen.Settings):
     def get_pos_list(self):
         poslist = []
         space = self.screenh // self.h
-        pos = self.screenh - space + 1
+        pos = self.screenh
         while pos >= 0 - self.syl_pos_change:
             poslist.append(pos)
             pos -= space
@@ -314,28 +314,20 @@ class Game(globale_variablen.Settings):
                 elif syl.picked:
                     draw.circle(self.screen_copy, syl.rgb, syl.new_spot_rect.center, syl.rect.w // 2, width=syl.picked)
                     draw.circle(self.screen_copy, syl.rgb, syl.ghost_rect.center, syl.rect.w, width=syl.picked)
-                    #TODO 'NoneType' bug: object has no attribute 'center' sometime after loop reversal
+                    #TODO 'NoneType' bug: object has no attribute 'center' sometime after loop direction reversal
                     syl.picked = syl.picked - 2 if syl.picked > 0 else 0
-                syl.rect.y = self.pos_list[i] + self.syl_pos_change
+                syl.rect.y = self.pos_list[i] + self.syl_pos_change # syl moves to the current ratio of start_pos/movement_window
                 syl.rect_in_circle.center = syl.rect.center
                 syl.rect_copy = syl.rect.copy() # why does this leave rect in place
 
+            self.blit_tript(i, lil, self.nw, lambda iterator: self.screenw - ((1 + (iterator // self.h)) * (self.screenw // 10)), lila_tuples, words_tuples)
+            self.blit_tript(i, gold, self.gw, lambda iterator: (iterator // self.h) * (self.screenw // 10), gold_tuples, code_tuples)  # starts from width 0 for words 1-8 if ln is 8
+        self.adjust_loop_window()
+        self.screen_copy.blit(self.spieler.image, self.spieler.rect)
+        self.screen_transfer()
 
-            def find_complete_syls(syl_tuples, words_tuples):
-                try:
-                    nxt = next(iter([set for set in words_tuples if [t for t in set if t in syl_tuples] == [t for t in set]]))
-                    return nxt
-                except:
-                    return None
-
-            if not self.gw or self.gw not in code_tuples:
-                self.gw = find_complete_syls(gold_tuples,code_tuples)
-
-            if not self.nw or self.nw not in words_tuples:
-                self.nw = find_complete_syls(lila_tuples, words_tuples)
-            self.blit_tript(i, lil, self.nw, lambda iterator: self.screenw - ((1 + (iterator // self.h)) * (self.screenw // 10)))
-            self.blit_tript(i, gold, self.gw, lambda iterator: (iterator // self.h) * (self.screenw // 10))  # starts from width 0 for words 1-8 if ln is 8
-        self.syl_pos_change += self.syl_speed_change # removed the int() around it
+    def adjust_loop_window(self):
+        self.syl_pos_change += self.syl_speed_change  # removed the int() around it
         if self.syl_pos_change >= self.screenh // self.h:
             self.syl_pos_change = 0
             self.start_syls_cut_at += 1
@@ -346,10 +338,17 @@ class Game(globale_variablen.Settings):
             self.start_syls_cut_at -= 1
             if self.start_syls_cut_at < 1:  # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = len(self.syls) - 1
-        self.screen_copy.blit(self.spieler.image, self.spieler.rect)
-        self.screen_transfer()
 
-    def blit_tript(self, i, lst_syls, blinking_word, x_position):
+    def find_complete_syls(self, syl_tuples, words_tuples):
+        try:
+            nxt = next(iter([set for set in words_tuples if [t for t in set if t in syl_tuples] == [t for t in set]]))
+            return nxt
+        except:
+            return None
+
+    def blit_tript(self, i, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
+        if not blinking_word or blinking_word not in syl_tuples:
+            blinking_word = self.find_complete_syls(syl_tuples, words_tuples)
         ln = len(lst_syls)
         for k in range(i, ln, self.h):  # making the left columns
             syl = lst_syls[k]
