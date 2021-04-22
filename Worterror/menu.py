@@ -1,7 +1,4 @@
-import pygame as pg
-
-
-class Menu():
+class Menu:
     def __init__(self, game_instance):
         self.info = game_instance
         self.offset = 0
@@ -28,9 +25,6 @@ class Menu():
                                                 afont=self.info.smaller_font)
         self.info.screen_transfer()
         return next_counter
-
-    def overview(self):  # all instructions in one window, then you can press a key to see the tutorial again
-        pass
 
     def list_lists_instructions(self):
         start = f"Willkommen zum Spielanleitung! Drücke {self.next} um fortzufahren oder {self.back} um zurückzugehen. Um die Anleitung zu SKIPPEN, drücke {self.main_loop}. "

@@ -1,25 +1,25 @@
 import pygame as pg
 from pygame import *
 from pygame.locals import *
-import random
+
 
 class Spieler():
-    def __init__(self,game_instance):
+    def __init__(self, game_instance):
         self.info = game_instance
-        self.spieler_w, self.spieler_h = self.info.screen_surface//20,self.info.screen_surface//20
-        self.rect = pg.Rect(self.info.screenw//2,self.info.screenh//2, self.spieler_w, self.spieler_h)
+        self.spieler_w, self.spieler_h = self.info.screen_surface // 15, self.info.screen_surface // 15
+        self.rect = pg.Rect(self.info.screenw // 2, self.info.screenh // 2, self.spieler_w, self.spieler_h)
         self.my_silben = []
-        self.image = transform.scale(image.load('Roboter.png'),(self.rect.w,self.rect.h))
+        self.image = transform.scale(image.load('Roboter.png'), (self.rect.w, self.rect.h))
         self.normal_image = self.image.copy()
         self.brighter_image = self.image.copy()
         brighten = 100
         self.brighter_image.fill((brighten, brighten, brighten), special_flags=BLEND_RGB_ADD)
-        self.speed = round(self.info.initial_syl_speed_change*1.5,2) # currently depends on fps too
+        self.speed = round(self.info.initial_syl_speed_change * 1.5, 2)  # currently depends on fps too
         self.initial_speed = self.speed
         self.appendlist = []
         self.loop_down = True
 
-    def act(self,screen_rect):
+    def act(self, screen_rect):
         keys = key.get_pressed()
         if keys[K_LEFT] or keys[K_a]:
             self.rect.x = self.info.end_first_screen_part if self.rect.x - self.speed < self.info.end_first_screen_part else self.rect.x - self.speed
@@ -32,44 +32,44 @@ class Spieler():
         # change speed of itself (changes speed/direction of the loop too)
         if self.loop_down:
             if keys[K_EQUALS] or keys[K_2]:
-                self.speed = round(1.1 * self.speed,2) if self.speed <= self.initial_speed * 3 else self.speed
-                self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,2) if self.info.syl_speed_change <= self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
+                self.speed = round(1.1 * self.speed, 2) if self.speed <= self.initial_speed * 3 else self.speed
+                self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,
+                                                   2) if self.info.syl_speed_change <= self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
             elif keys[K_MINUS] or keys[K_1]:
-                self.speed = round(0.9 * self.speed,2)
-                self.info.syl_speed_change = round(0.9 * self.info.syl_speed_change,2) if self.info.syl_speed_change >= self.info.initial_syl_speed_change * 0.05 else self.info.syl_speed_change
-                if self.speed <= self.initial_speed*0.05 or self.info.syl_speed_change <= self.info.initial_syl_speed_change * 0.05:
+                self.speed = round(0.9 * self.speed, 2)
+                self.info.syl_speed_change = round(0.9 * self.info.syl_speed_change,
+                                                   2) if self.info.syl_speed_change >= self.info.initial_syl_speed_change * 0.05 else self.info.syl_speed_change
+                if self.speed <= self.initial_speed * 0.05 or self.info.syl_speed_change <= self.info.initial_syl_speed_change * 0.05:
                     self.loop_down = False
                     self.info.syl_speed_change = -self.info.syl_speed_change
         else:
             if keys[K_MINUS] or keys[K_1]:
-                self.speed = round(1.1 * self.speed,2) if self.speed <= self.initial_speed * 3 else self.speed
-                self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,2) if self.info.syl_speed_change >= -self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
+                self.speed = round(1.1 * self.speed, 2) if self.speed <= self.initial_speed * 3 else self.speed
+                self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,
+                                                   2) if self.info.syl_speed_change >= -self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
             elif keys[K_EQUALS] or keys[K_2]:
-                self.speed = round(0.9 * self.speed,2)
-                self.info.syl_speed_change = round(0.9 * self.info.syl_speed_change,2) if self.info.syl_speed_change <= -self.info.initial_syl_speed_change * 0.05 else self.info.syl_speed_change
-                if self.speed <= self.initial_speed*0.05 or self.info.syl_speed_change >= -self.info.initial_syl_speed_change * 0.05:
+                self.speed = round(0.9 * self.speed, 2)
+                self.info.syl_speed_change = round(0.9 * self.info.syl_speed_change,
+                                                   2) if self.info.syl_speed_change <= -self.info.initial_syl_speed_change * 0.05 else self.info.syl_speed_change
+                if self.speed <= self.initial_speed * 0.05 or self.info.syl_speed_change >= -self.info.initial_syl_speed_change * 0.05:
                     self.loop_down = True
                     self.info.syl_speed_change = -self.info.syl_speed_change
 
     def pick(self, visible_syls):
-        index_circle_rect = self.rect.collidelist([syl.rect_in_circle for syl in visible_syls]) # collision with
+        index_circle_rect = self.rect.collidelist([syl.rect_in_circle for syl in visible_syls])  # collision with
         if index_circle_rect is not -1:
             self.image = self.brighter_image
         else:
             self.image = self.normal_image
-        index_txt_rect = self.rect.collidelist([a.rect for a in visible_syls]) # collision with syl text
+        index_txt_rect = self.rect.collidelist([a.rect for a in visible_syls])  # collision with syl text
         if index_txt_rect is not -1:
             pikd = visible_syls[index_txt_rect]
             pikd.new_spot_rect = pikd.rect
             pikd.ghost_rect = pikd.rect_copy
             pikd.picked = self.info.fps
             self.my_silben.append(pikd)
-            pikd.visible = False # works through the variable
+            pikd.visible = False  # works through the variable
             if pikd in self.info.woerter.code_syls:
                 self.info.gold_syls.append(pikd)
             else:
                 self.info.lila_syls.append(pikd)
-
-
-
-

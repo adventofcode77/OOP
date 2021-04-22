@@ -1,7 +1,7 @@
-from wiktionary_de_parser import Parser
 import random
 import re
-import globale_variablen
+
+from wiktionary_de_parser import Parser
 
 
 def iterate(record):
