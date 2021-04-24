@@ -1,7 +1,7 @@
 import pygame as pg
 
 import gameloop
-from Worterror import woerterbuch
+import woerterbuch
 
 
 class Main:

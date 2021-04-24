@@ -29,7 +29,7 @@ class Word():
             else:
                 bit = [...]
             word = self.name
-            silbe1 = silbe.Silbe(it,word,bit,self.totalsyls, self.worder, self.info, rgb)
+            silbe1 = silbe.Silbe(it, word, bit, self.totalsyls, self.worder, self.info, rgb)
             syls.append(silbe1)
             self.tuples.append((self.totalsyls, self.worder))
             self.totalsyls += 1

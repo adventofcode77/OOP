@@ -2,7 +2,7 @@ import pygame as pg
 from pygame import *
 from pygame.locals import *
 
-from Worterror import game
+import game
 
 
 class Gameloop():
