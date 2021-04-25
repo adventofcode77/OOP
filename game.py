@@ -47,7 +47,6 @@ class Game(globale_variablen.Settings):
         self.deleted_word = ""
         self.start_syls_cut_at = 0
         self.pos_list = self.get_pos_list()
-        print("len post list", len(self.pos_list))
         self.gold_syls, self.lila_syls = [], []
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // 10) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * (len(self.lila_syls) // 10 + 1)
@@ -61,9 +60,6 @@ class Game(globale_variablen.Settings):
         self.buttons = []
         self.move_word = None
         self.step_fps = 1
-        # gameloop should run last
-        #self.gameloop = gameloop.Gameloop(self)  # starts the game (and the object gameloop never gets created as long as the game runs)
-        print("this line doesn't execute")
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
         self.tript2.fill(self.black)
@@ -82,6 +78,7 @@ class Game(globale_variablen.Settings):
         self.draw_word(height_of_all=self.top,screen=self.tript2)
 
     def draw_word(self, height_of_all=None, syl=None, screen=None):
+        # TODO make object word_on_screen and keep the variables that define its state inside of it
         if not height_of_all:
             height_of_all = self.down
         if syl:
