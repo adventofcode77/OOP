@@ -72,5 +72,4 @@ class Spieler():
             if pikd in self.info.woerter.code_syls:
                 self.info.gold_syls.append(pikd)
             else:
-                print("append to lilas",pikd.name)
                 self.info.lila_syls.append(pikd)

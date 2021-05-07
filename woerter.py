@@ -35,7 +35,7 @@ class Woerter:
 
     def get_bank(self):
         parser = woerterbuch.Woerterbuch(self.info.file_path)
-        return parser.quick_get(50)
+        return parser.quick_get(100)
 
     def get_words(self, source):
         words = []

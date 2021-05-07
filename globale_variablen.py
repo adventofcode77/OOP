@@ -77,5 +77,21 @@ class Settings:  # there could be a function converting size/location numbers ba
         rgb[hue] = 255 if hue != 2 else 200
         return rgb
 
-# pg.init()
-# setobj = Settings()
+    def screen_transfer(self, run=True):
+        if run:
+            self.dauer()  # should be in screen_transfer() in order to appear in every frame
+        resized_screen_copy = pg.transform.smoothscale(self.screen_copy,
+                                                       self.screen_via_display_set_mode.get_rect().size)
+        self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
+        pg.display.flip()
+
+    def dauer(self):
+        dauer = 1 * 60000 - time.get_ticks()
+        seconds = int(dauer / 1000 % 60)
+        minutes = int(dauer / 60000 % 24)
+        dauer_text = f'{minutes}:{seconds}'
+        dauer_img = self.default_font.render(dauer_text, True, self.white)
+        self.screen_copy.blit(dauer_img, (
+            self.screen_copy.get_rect().w - dauer_img.get_rect().w,
+            self.screen_copy.get_rect().h - dauer_img.get_rect().h))
+        return dauer

@@ -21,7 +21,6 @@ class Game(globale_variablen.Settings):
         self.gw,self.nw = None, None
         self.h = 10
         self.change_color = True
-        self.won = False
         self.binary_code = binary_code
         self.input_codes = input_codes
         self.output_code = "Dame schlägt Bauer"
@@ -58,7 +57,7 @@ class Game(globale_variablen.Settings):
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
-        self.move_word = None
+        self.word_to_move = None
         self.step_fps = 1
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
@@ -174,10 +173,13 @@ class Game(globale_variablen.Settings):
             temp_counter = len(list_snapshots_to_blit) - 1 - (self.test_next_counter % len(list_snapshots_to_blit))
         else:
             temp_counter = self.test_next_counter % len(list_snapshots_to_blit)
+        h = last_line_down + self.font_spacing(afont)
+        # window = (0.25*self.screenw,midtop[1],0.5*self.screenw,h)
+        # screen.fill(self.white)
         screen.blit(list_snapshots_to_blit[temp_counter], (0, 0))
         if no_buttons:
             self.buttons = copy_buttons
-        return last_line_down + self.font_spacing(afont)  # how far down the screen there is curently text
+        return h  # how far down the screen there is curently text
 
     def check_word(self):
         temp_bool = True
@@ -230,8 +232,8 @@ class Game(globale_variablen.Settings):
         if not start_color:
             start_color = syl.rgb
         list_ints = [
-            int(orig_rgb_digit + (gold_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
-            orig_rgb_digit, gold_rgb_digit in list(zip(start_color, new_color))]  # see stackoverflow link on fading
+            int(orig_rgb_digit + (new_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
+            orig_rgb_digit, new_rgb_digit in list(zip(start_color, new_color))]  # see stackoverflow link on fading
         try:
             list_ints[0], list_ints[1], list_ints[2] in range(0,255)
         except:
@@ -279,7 +281,6 @@ class Game(globale_variablen.Settings):
                     while syl.rect.x > self.start_third_screen_part-syl.rect.w:
                         syl.rect.x -= self.screenw//10
                 if syl.rect.x < self.end_first_screen_part or syl.rect.x > self.start_third_screen_part - syl.rect.w:
-                    print("trigger new game?")
                     self.end_first_screen_part = self.start_third_screen_part-syl.rect.w # trigger new game?
         return to_return  # (now syls should always be bigger than this cut)
 
@@ -300,19 +301,19 @@ class Game(globale_variablen.Settings):
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
-                circle_width = 1
+                circle_width = 2
                 if syl.visible:
                     if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
                         syl.rgb = self.blink(self.fps*2, syl, self.yellow)
                         syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
-                        circle_width = 1 + (self.step_fps // self.fps * 2) * 2
+                        circle_width = 2 + (self.step_fps // self.fps * 2) * 2 # width goes up and down with the color changes
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                     draw.circle(self.screen_copy,syl.rgb,syl.rect.center,syl.rect.w,width=circle_width)
                 elif syl.picked:
                     draw.circle(self.screen_copy, syl.rgb, syl.new_spot_rect.center, syl.rect.w // 2, width=syl.picked)
                     draw.circle(self.screen_copy, syl.rgb, syl.ghost_rect.center, syl.rect.w, width=syl.picked)
                     #TODO 'NoneType' bug: object has no attribute 'center' sometime after loop direction reversal
-                    syl.picked = syl.picked - 2 if syl.picked > 0 else 0
+                    syl.picked = syl.picked - 4 if syl.picked > 0 else 0
                 syl.rect.y = self.pos_list[i] + self.syl_pos_change # syl moves to the current ratio of start_pos/movement_window
                 syl.rect_in_circle.center = syl.rect.center
                 syl.rect_copy = syl.rect.copy() # why does this leave rect in place
@@ -351,37 +352,19 @@ class Game(globale_variablen.Settings):
             syl = lst_syls[k]
             syl.rect.x = x_position(k)
             if blinking_word and syl.tuple in blinking_word:
-                syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.white)
+                syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.cyan)
                 syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
             syl.rect.y = self.top + i * ((self.screenh - self.top) // self.h)
             self.screen_copy.blit(syl.image, syl.rect)
 
-    def game_over(self):
-        self.screen_copy.fill(self.black)
-        text = f"Gewonnen! Das nächste Code ist: {self.output_code.upper()}." if self.won else "VERLOREN! Neu starten."
-        text += " Drucke SPACE, um fortzufahren."
-        self.blit_clickable_words(text,self.white,(self.midtop[0],self.midtop[1] + self.down * 2))
-
-
-    def dauer(self):
-        dauer = 5 * 60000 - time.get_ticks()
-        if dauer < 0:  # or verpixelung begins
-            self.game_over()
-        seconds = int(dauer / 1000 % 60)
-        minutes = int(dauer / 60000 % 24)
-        dauer_text = f'{minutes}:{seconds}'
-        dauer_img = self.default_font.render(dauer_text, True, self.white)
-        self.screen_copy.blit(dauer_img, (
-            self.screen_copy.get_rect().w - dauer_img.get_rect().w,
-            self.screen_copy.get_rect().h - dauer_img.get_rect().h))
-
-    def screen_transfer(self, run=True):
-        if run:
-            self.dauer()
-        resized_screen_copy = pg.transform.smoothscale(self.screen_copy,
-                                                       self.screen_via_display_set_mode.get_rect().size)
-        self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
-        pg.display.flip()
+    def game_over(self,text,surface=None):
+        rect = Rect(0.33*self.screenw,0.33*self.screenh,0.33*self.screenw,0.33*self.screenh)
+        border_rect = Rect(rect.x*0.9,rect.y*0.9,rect.w+rect.x*0.2,rect.h+rect.y*0.2)
+        draw.rect(self.screen_copy,self.orange,border_rect)
+        rect.center = self.screen_copy.get_rect().center
+        surface = self.screen_copy.subsurface(rect)
+        surface.fill(self.lila)
+        self.blit_clickable_words(text,self.white,(0,self.down),screen=surface)
 
     def nums(self):
         self.header.fill(self.gray)
@@ -402,19 +385,19 @@ class Game(globale_variablen.Settings):
                 binary_list[f'{i} '] = f'{opposite} '
         blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font)
         self.end_header = blit_h
-        blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,100)]], self.white,
+        blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,100)]], self.yellow,
                                            (self.screenw // 2, blit_h), no_buttons=False, screen=self.tript2)
         self.top = blit_h
 
 
     def check_num_buttons(self,click): # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
-        if self.buttons:
+        if self.buttons: # self.buttons only refers to the guessed code words on trypt2
             click_rect = Rect(click[0],click[1],1,1)
             index = click_rect.collidelist([a.rect for a in self.buttons])
             if index != -1:
-                self.move_word = index
+                self.word_to_move = index
             else:
-                self.move_word = None
+                self.word_to_move = None
 
 
 

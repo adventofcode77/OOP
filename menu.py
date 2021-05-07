@@ -5,7 +5,7 @@ class Menu:
         self.text_pos = (self.info.midtop[0], self.info.midtop[1] + self.offset + self.info.space)
         # keys
         self.move = "AWDS / LEFT RIGHT UP DOWN"
-        self.workspace_window = "SPACE"
+        self.pause = "SPACE"
         self.main_loop = "SPACE"
         self.drop_objects = 0
         self.next, self.back = "RECHTS", "LINKS"
@@ -27,17 +27,17 @@ class Menu:
         return next_counter
 
     def list_lists_instructions(self):
-        start = f"Willkommen zum Spielanleitung! Drücke {self.next} um fortzufahren oder {self.back} um zurückzugehen. Um die Anleitung zu SKIPPEN, drücke {self.main_loop}. "
-        move = f"Um dich zu bewegen, nutze die {self.move} Tasten. Um schneller oder langsamer zu werden, nutze {self.accelerate} oder {self.decelerate}. " \
-               " Warnung: Alles auf der Schirm wird seine Geschwindigkeit aendern. "
-        goal = f"Dein Ziel ist, ein Code zu finden. Der Code sieht aus wie ein Satz. " \
-               f"Um den Satz zu bekommen, musst du die richtige Woerter in der richtigen Reihenfolge zusammensetzen. " \
-               f"Die Woerter findest du, indem du Silben sammelst und sie ebenso zusammensetzest. Du kannst bis 12 Silben sammeln. " \
-               f"Um sie zu entlasen, druecke {self.drop_objects}. "
-        game_window = f"Um das Spiel zu beenden, druecke auf X. Um die Schirmgroesse anzupassen, bewege die Schirmenden. " \
-                      f"Um diese Anleitung nochmals zu sehen, druecke {self.instructions}. Druecke {self.main_loop} um zurueck zum Spiel zu gehen." \
-                      f"Um fortzufahren, druecke jetzt {self.main_loop}. "
-
-        list_de = [start, goal, move, game_window]
-
+        start = f"Willkommen zur Spielanleitung! Drücke {self.next} um fortzufahren oder {self.back} um zurückzugehen. " \
+                f"Um die Anleitung zu SKIPPEN, drücke {self.main_loop}. "
+        move = f"Um dich zu bewegen, nutze die {self.move} Tasten. Um schneller oder langsamer zu werden, " \
+               f"nutze {self.accelerate} oder {self.decelerate}. " \
+               f"Um die Schirmgröße anzupassen, bewege die Schirmenden. "
+        goal = f"Um den Code zu bekommen, musst du Silben sammeln und einen Satz erstellen. " \
+               f"Pausiere das Spiel mit {self.pause}, um klicken zu können. " \
+               f"Die richtige Silben sind GELB und erscheinen LINKS. Klicke auf sie mit dem Maus. " \
+               f"Die fertige Wörter erscheinen unter den Ziffern. Bewege sie mit {self.next} und {self.back}."
+        game_window = f"Um diese Anleitung nochmals zu sehen, druecke {self.instructions}. " \
+                      f"Drücke {self.main_loop} um zurück zum Spiel zu gehen. " \
+                      f"Um fortzufahren, drücke jetzt {self.main_loop}. "
+        list_de = [start, move, goal, game_window]
         return list_de
