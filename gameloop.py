@@ -22,8 +22,7 @@ class Gameloop():
 
     def mainloop(self):
         self.info.nums()  # called here once to create self.info.top so that picked syls get painted starting from there
-        while True:  # TODO: make it actually object-oriented (with classes producing the state of one object each?) +
-            # advise not to use python but for example java
+        while True:  # TODO: make more object-oriented (with classes producing the state of one object each?)
             time_left = self.info.dauer()
             if time_left < 0:
                 self.lost = True
@@ -58,7 +57,7 @@ class Gameloop():
                             for item in self.info.spieler.my_silben:
                                 item.clicked_on = False
                     elif e.key == K_LEFT or e.key == K_RIGHT:  # show next code_string explanation installment
-                        self.move_code_word_or_to_next_text_window(ln, e.key)
+                        self.move_things_left_and_right(ln, e.key)
                     elif e.key == K_i:
                         self.menu = True
                 elif e.type == MOUSEBUTTONDOWN:
@@ -109,7 +108,7 @@ class Gameloop():
         print("new start")
 
 
-    def move_code_word_or_to_next_text_window(self, ln, richtung):
+    def move_things_left_and_right(self, ln, richtung):
         plusminus1 = 1 if richtung == K_RIGHT else -1
         if self.info.word_to_move is not None:
             if richtung == K_RIGHT and self.info.word_to_move >= ln-1:
