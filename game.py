@@ -12,7 +12,7 @@ import word
 
 
 class Game(globale_variablen.Settings):
-    def __init__(self, input_codes, file_paths, binary_code, dict):
+    def __init__(self, code_satz, file_paths, binary_code, dict):
         super().__init__()
         pg.font.init()
         self.radiuses = []
@@ -22,7 +22,7 @@ class Game(globale_variablen.Settings):
         self.h = 10
         self.change_color = True
         self.binary_code = binary_code
-        self.input_codes = input_codes
+        self.code_satz = code_satz
         self.output_code = "Dame schlägt Bauer"
         self.next_counter = 0
         self.test_next_counter = 0
@@ -322,15 +322,16 @@ class Game(globale_variablen.Settings):
                 syl.rect.y = self.pos_list[i] + self.syl_pos_change # syl moves to the current ratio of start_pos/movement_window
                 syl.rect_in_circle.center = syl.rect.center
                 syl.rect_copy = syl.rect.copy() # why does this leave rect in place
-            self.blit_tript(i, lil, self.nw, lambda iterator: self.screenw - ((1 + (iterator // self.h)) * (self.screenw // 10)), lila_tuples, words_tuples)
-            self.blit_tript(i, gold, self.gw, lambda iterator: (iterator // self.h) * (self.screenw // 10), gold_tuples, code_tuples)  # starts from width 0 for words 1-8 if ln is 8
+            self.blit_tript(i, True, lil, self.nw, lambda iterator: self.screenw - ((1 + (iterator // self.h)) * (self.screenw // 10)), lila_tuples, words_tuples)
+                # Die lambda funktion berechnet die X koordinate der silben. Sie nimmt ein parameter namens "iterator" (in der definition von blit_trypt() )
+            self.blit_tript(i, False, gold, self.gw, lambda iterator: (iterator // self.h) * (self.screenw // 10), gold_tuples, code_tuples)  # starts from width 0 for words 1-8 if ln is 8
         self.adjust_loop_window()
         self.screen_copy.blit(self.spieler.image, self.spieler.rect)
         self.screen_transfer()
 
-    def adjust_loop_window(self):
-        self.syl_pos_change += self.syl_speed_change  # removed the int() around it
-        if self.syl_pos_change >= self.screenh // self.h:
+    def adjust_loop_window(self): # Verwaltet den laufenden Loop aus runterfallenden Silben
+        self.syl_pos_change += self.syl_speed_change  #
+        if self.syl_pos_change >= self.screenh // self.h: # wenn
             self.syl_pos_change = 0
             self.start_syls_cut_at += 1
             if self.start_syls_cut_at > len(self.syls) - 1:  # "==" doesn't work after words get deleted
@@ -341,20 +342,23 @@ class Game(globale_variablen.Settings):
             if self.start_syls_cut_at < 1:  # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = len(self.syls) - 1
 
-    def find_complete_syls(self, syl_tuples, words_tuples):
+    def find_complete_syls(self, syl_tuples, words_tuples): # Findet ein kompletes Code-Wort in den gesammelten Code-Silben
         try:
             nxt = next(iter([set for set in words_tuples if [t for t in set if t in syl_tuples] == [t for t in set]]))
             return nxt
         except:
             return None
 
-    def blit_tript(self, i, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
+    def blit_tript(self, i, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
         if not blinking_word or blinking_word not in syl_tuples:
+            # Diese if Klause versucht, nur eine Silbe pro Sektor zum blinken zu bringen. Jedoch blinken im Moment mehrere...
             blinking_word = self.find_complete_syls(syl_tuples, words_tuples)
+            if list_ist_lila: self.nw = blinking_word # self.nw ist die gespeicherte blinkende Silbe auf dem rechten Sektor
+            else: self.gw = blinking_word # self.gw ist die gespeicherte blinkende Silbe auf dem linken Sektor
         ln = len(lst_syls)
-        for k in range(i, ln, self.h):  # making the left columns
-            syl = lst_syls[k]
-            syl.rect.x = x_position(k)
+        for iterator in range(i, ln, self.h):  # making the left columns
+            syl = lst_syls[iterator]
+            syl.rect.x = x_position(iterator)
             if blinking_word and syl.tuple in blinking_word:
                 syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.cyan)
                 syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
@@ -363,7 +367,8 @@ class Game(globale_variablen.Settings):
 
     def game_over(self,text,surface=None):
         rect = Rect(0.33*self.screenw,0.33*self.screenh,0.33*self.screenw,0.33*self.screenh)
-        border_rect = Rect(rect.x*0.9,rect.y*0.9,rect.w+rect.x*0.2,rect.h+rect.y*0.2)
+        offset = 0.03*self.screenh
+        border_rect = Rect(rect.x-offset,rect.y-offset,rect.w+offset*2,rect.h+offset*2)
         draw.rect(self.screen_copy,self.orange,border_rect)
         rect.center = self.screen_copy.get_rect().center
         surface = self.screen_copy.subsurface(rect)
@@ -371,23 +376,21 @@ class Game(globale_variablen.Settings):
         self.blit_clickable_words(text,self.white,(0,self.down),screen=surface)
 
     def ziffern_und_code_woerter(self):
-        # {} MIT CODE WOERTER UND ZIFFERN
+        # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
         self.header.fill(self.gray)
         binary_list = {}
-        splitinput = self.woerter.input_code.split()
-        for i in range(len(splitinput)):  # the code?
-            try:
-                code_number_at_this_index = list(self.binary_code)[i]
-            except:
-                code_number_at_this_index = 0
+        list_code_satz = self.woerter.code_satz.split()
+        for i in range(len(list_code_satz)): # füllt den Woerterbuch auf
+            code_number_at_this_index = list(self.binary_code)[i]
             opposite = 0 if code_number_at_this_index == '1' else 1
-            if i < len(self.guessed_code_words):
-                if self.guessed_code_words[i].name == splitinput[i]:
-                    binary_list[self.guessed_code_words[i].name] = f'{code_number_at_this_index} '
+            if i < len(self.guessed_code_words): # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
+                dieses_code_wort = self.guessed_code_words[i].name
+                if dieses_code_wort == list_code_satz[i]: # checkt, ob das richtige Wort im richtigen Platz ist
+                    binary_list[dieses_code_wort] = f'{code_number_at_this_index} ' # wenn ja, ergibt die originelle Ziffer
                 else:
-                    binary_list[f'{self.guessed_code_words[i].name} '] = f'{opposite} '
+                    binary_list[dieses_code_wort] = f'{opposite} ' # wenn nein, ändert 1 zum 0 oder 0 zum 1
             else:
-                binary_list[f'{i} '] = f'{opposite} '
+                binary_list[f'{i} '] = f'{opposite} ' # die nicht-erratene woerter ergeben immer 0
         blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font)
         self.end_header = blit_h
         blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,1000)]], self.yellow,

@@ -27,7 +27,7 @@ class Gameloop():
             time_left = self.info.dauer()
             if time_left < 0:
                 self.lost = True
-                self.wait = True
+                self.wait = True # warten, bis der Spieler Space druckt
             self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
             if self.info.blink_counter:
@@ -85,9 +85,6 @@ class Gameloop():
                     self.wait = True # without self.wait, the loop doesn't lead to game_over
                     self.new_game = True
                 self.info.blit_loop()
-            elif " ".join([word.name for word in self.info.guessed_code_words]) == self.info.woerter.input_code:
-                self.won = True
-                self.wait = True
             else:
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     self.click = self.info.scale_click(self.click, self.info.screen_copy,
@@ -97,8 +94,12 @@ class Gameloop():
                     self.info.check_num_buttons((x, y))
                 self.info.desk(self.click)
                 self.click = False
+                # GEWINNVORAUSSETZUNG
+                if " ".join([word.name for word in self.info.guessed_code_words]) == self.info.woerter.code_satz:
+                    self.won = True
+                    self.wait = True
 
-    def new_start(self):
+    def new_start(self): # Startet das ganze Spiel von neu, aber behaltet die Spielwoerter aus dem letzten
         self.info = game.Game(self.input_codes, self.file_paths, self.binary_code, self.spielwoerter)
         self.main_loop = False
         self.menu = True
@@ -108,24 +109,26 @@ class Gameloop():
         print("new start")
 
 
-    def move_things_left_and_right(self, ln, richtung):
-        plusminus1 = 1 if richtung == K_RIGHT else -1
-        if self.info.word_to_move is not None:
-            if self.info.word_to_move >= ln-1 or self.info.word_to_move <= 0:
-                if richtung == K_RIGHT:
-                    self.info.word_to_move = ln-1
-                    insert_at = 0
-                elif richtung == K_LEFT :
-                    self.info.word_to_move = 0
-                    insert_at = ln-1
-            popped = self.info.guessed_code_words.pop(self.info.word_to_move)
+    def move_things_left_and_right(self, ln, richtung): # stellt fest was die Links und Rechts Pfeilen machen
+        plusminus1 = 1 if richtung == K_RIGHT else -1 # diese Wert ist entweder 1 oder -1 abhängend davon, ob Links oder Rechts gedruckt wurde
+        if self.info.word_to_move is not None: # checkt, ob der Spieler auf einem der Code_Wörter geklickt hat
+            # wenn ja, checkt ob dieses Wort ausser die COde Wörter Liste verlassen würde, wenn es nach links oder rechts bewegt würde
+            if self.info.word_to_move >= ln-1 and richtung == K_RIGHT:
+                self.info.word_to_move = ln - 1
+                insert_at = 0
+            elif self.info.word_to_move <= 0 and richtung == K_LEFT:
+                self.info.word_to_move = 0
+                insert_at = ln-1
+            else:
+                insert_at = self.info.word_to_move + plusminus1
+            popped = self.info.guessed_code_words.pop(self.info.word_to_move) # nimmt das geklickte Wort raus aus der Liste
             popped.color = self.info.orange
             try:
-                self.info.guessed_code_words.insert(insert_at, popped)
-                self.info.word_to_move += plusminus1
+                self.info.guessed_code_words.insert(insert_at, popped) # fügt das geklickte Wort einen Platz nach links oder rechts
+                self.info.word_to_move = insert_at
             except:
                 print("out of bounds")
-        else:
+        else: # wenn es kein geklicktes Wort gibt, bewegt sich der Counter für Text-Fenster nach links oder nach rechts
             self.info.next_counter += plusminus1
             self.info.test_next_counter += plusminus1
 

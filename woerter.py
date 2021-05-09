@@ -12,13 +12,13 @@ class Woerter:
         self.worder = 0
         self.words = self.get_words(self.dictwithkeyname)
         self.silben = self.get_silben()
-        self.input_code = self.info.input_codes[0]
-        self.num_syls = self.get_num_code_syls(self.input_code)
+        self.code_satz = self.info.code_satz[0]
+        self.num_syls = self.get_num_code_syls(self.code_satz)
         self.placeholder_code_text = self.get_escape_game_text()
-        self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(self.input_code.split()))
+        self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(self.code_satz.split()))
         self.code_words = []
         self.code_syls = []
-        self.get_code_words_and_syls(self.input_code)
+        self.get_code_words_and_syls(self.code_satz)
 
     def get_num_code_syls(self, input_code):
         num_syls = 0
