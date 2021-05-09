@@ -6,12 +6,13 @@ import game
 
 
 class Gameloop():
-    def __init__(self, input_codes, file_paths, binary_code):
+    def __init__(self, input_codes, file_paths, binary_code,dict):
         self.wait, self.lost, self.won, self.new_game = False, False, False, False
+        self.spielwoerter = dict
         self.input_codes = input_codes
         self.file_paths = file_paths
         self.binary_code = binary_code
-        self.info = game.Game(self.input_codes, self.file_paths, self.binary_code)
+        self.info = game.Game(self.input_codes, self.file_paths, self.binary_code, dict)
         self.main_loop = False
         self.menu = True
         self.click = False
@@ -21,7 +22,7 @@ class Gameloop():
 
 
     def mainloop(self):
-        self.info.nums()  # called here once to create self.info.top so that picked syls get painted starting from there
+        self.info.ziffern_und_code_woerter()  # called here once to create self.info.top so that picked syls get painted starting from there
         while True:  # TODO: make more object-oriented (with classes producing the state of one object each?)
             time_left = self.info.dauer()
             if time_left < 0:
@@ -71,7 +72,6 @@ class Gameloop():
                     else "VERLOREN!" if self.lost else "NEU STARTEN!"
                 text += " Drucke SPACE, um fortzufahren."
                 self.info.game_over(text)
-                print(text)
                 continue
             # BEFORE THE GAMELOOP HAS STARTED
             elif self.menu:
@@ -99,7 +99,7 @@ class Gameloop():
                 self.click = False
 
     def new_start(self):
-        self.info = game.Game(self.input_codes, self.file_paths, self.binary_code)
+        self.info = game.Game(self.input_codes, self.file_paths, self.binary_code, self.spielwoerter)
         self.main_loop = False
         self.menu = True
         self.click = False
@@ -111,12 +111,13 @@ class Gameloop():
     def move_things_left_and_right(self, ln, richtung):
         plusminus1 = 1 if richtung == K_RIGHT else -1
         if self.info.word_to_move is not None:
-            if richtung == K_RIGHT and self.info.word_to_move >= ln-1:
-                self.info.word_to_move = ln-1
-                insert_at = 0
-            elif richtung == K_LEFT and self.info.word_to_move <= 0:
-                self.info.word_to_move = 0
-                insert_at = ln-1
+            if self.info.word_to_move >= ln-1 or self.info.word_to_move <= 0:
+                if richtung == K_RIGHT:
+                    self.info.word_to_move = ln-1
+                    insert_at = 0
+                elif richtung == K_LEFT :
+                    self.info.word_to_move = 0
+                    insert_at = ln-1
             popped = self.info.guessed_code_words.pop(self.info.word_to_move)
             popped.color = self.info.orange
             try:

@@ -5,21 +5,20 @@ import woerterbuch
 
 
 class Main:
-    #TODO make a script that downloads the wiktionary dump/imports the parser and configures their paths
-    file_paths = ['/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'] # ,"/Users/ellie/Downloads/enwiktionary-20210220-pages-articles-multistream.xml"] # backup
-    code_de = ["Das Herz der Verliebten Dame schlägt für den Bauern"] #random.choice([f"Der Turm hat vier Ebenen","Gehe zum Feld 6 bei 6 auf dem Schachbrett","Achte auf den Zeichen an der Decke","Der Schlüssel steht unter Angriff","Eine figur wird mit dem Schlüssel rausfliegen","Du brauchst mehr als sechs Schritte","5 links, 3 gerade aus, 2 rechts"])
-    dict = woerterbuch.Woerterbuch(file_paths[0]).quick_get(50)
-    binary_code = "000011001"
+    #TODO ? make a script that downloads the wiktionary dump/imports the parser and configures their paths
+    file_paths = ['/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'] # XML FILE AUS WIKTIONARY
+    code_satz = ["Das Herz der Verliebten Dame schlägt für den Bauern"] # CODE SATZ
+    spielwoerter = woerterbuch.Woerterbuch(file_paths[0]).quick_get(50) # SPIELWOERTER
+    letztes_spiel_code = "000011001"
 
     def __init__(self):
-        self.newgame(Main.code_de, Main.file_paths, Main.binary_code)
+        self.newgame(Main.code_satz, Main.file_paths, Main.letztes_spiel_code, Main.spielwoerter)
 
     @staticmethod
-    def newgame(input_codes, file_paths, binary_code):
+    def newgame(code_satz, file_paths, letztes_spiel_code, dict):
         pg.init()
         #print(pg.font.get_fonts())
-        # game1 = game.Game(input_codes, file_paths, binary_code)
-        gameloop_ = gameloop.Gameloop(input_codes, file_paths, binary_code)
+        gameloop_ = gameloop.Gameloop(code_satz, file_paths, letztes_spiel_code, dict)
         gameloop_.mainloop()
         # code = game1.output_code
 

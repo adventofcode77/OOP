@@ -7,7 +7,7 @@ class Woerter:
 
     def __init__(self, game_instance):
         self.info = game_instance
-        self.dictwithkeyname = self.get_bank()
+        self.dictwithkeyname = self.info.spielwoerter
         self.totalsyls = 0
         self.worder = 0
         self.words = self.get_words(self.dictwithkeyname)
@@ -33,9 +33,9 @@ class Woerter:
             text = file.read().replace('\n', ' ')
         return text
 
-    def get_bank(self):
-        parser = woerterbuch.Woerterbuch(self.info.file_path)
-        return parser.quick_get(100)
+    # def get_bank(self):
+    #     parser = woerterbuch.Woerterbuch(self.info.file_path)
+    #     return parser.quick_get(100)
 
     def get_words(self, source):
         words = []

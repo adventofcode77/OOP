@@ -12,7 +12,7 @@ import word
 
 
 class Game(globale_variablen.Settings):
-    def __init__(self, input_codes, file_paths, binary_code):
+    def __init__(self, input_codes, file_paths, binary_code, dict):
         super().__init__()
         pg.font.init()
         self.radiuses = []
@@ -32,6 +32,7 @@ class Game(globale_variablen.Settings):
         self.initial_syl_speed_change = self.syl_speed_change
         # variables above may be needed to initialise other classes' instances
         self.spieler = spieler.Spieler(self)  # takes the game object as parameter
+        self.spielwoerter = dict
         self.woerter = woerter.Woerter(self)
         self.words = self.woerter.words
         syls = self.woerter.silben + self.woerter.code_syls
@@ -62,7 +63,7 @@ class Game(globale_variablen.Settings):
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
         self.tript2.fill(self.black)
-        self.nums()
+        self.ziffern_und_code_woerter()
         if click:
             x, y = click
             for syl in self.gold_syls + self.lila_syls:
@@ -119,6 +120,7 @@ class Game(globale_variablen.Settings):
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
                              no_buttons=True):
+        #variablen
         window_counter = 0
         if not screen:
             screen = self.screen_copy
@@ -136,6 +138,7 @@ class Game(globale_variablen.Settings):
         spacing = self.font_spacing(afont)
         last_line_down = midtop[1]
         last_word_right = 0.25 * copy_screen_rect.w
+        # for loop
         for i in range(len(lst)):
             aword = lst[i]
             if not aword:
@@ -167,6 +170,7 @@ class Game(globale_variablen.Settings):
                 last_word_right = 0.25 * copy_screen_rect.w
                 last_line_down += spacing * 1.5
             list_snapshots_to_blit[window_counter] = copy_screen.copy()
+        # snapshots
         if len(list_snapshots_to_blit) == 0:
             list_snapshots_to_blit[window_counter] = screen.copy()
         if self.test_next_counter < 0:  # temp? counter adjusts the text window counter without changing it, so that it doesnt keep resetting to the first or last window when it's outside the bounds
@@ -174,9 +178,8 @@ class Game(globale_variablen.Settings):
         else:
             temp_counter = self.test_next_counter % len(list_snapshots_to_blit)
         h = last_line_down + self.font_spacing(afont)
-        # window = (0.25*self.screenw,midtop[1],0.5*self.screenw,h)
-        # screen.fill(self.white)
         screen.blit(list_snapshots_to_blit[temp_counter], (0, 0))
+        # buttons
         if no_buttons:
             self.buttons = copy_buttons
         return h  # how far down the screen there is curently text
@@ -284,7 +287,8 @@ class Game(globale_variablen.Settings):
                     self.end_first_screen_part = self.start_third_screen_part-syl.rect.w # trigger new game?
         return to_return  # (now syls should always be bigger than this cut)
 
-    def blit_loop(self):  # why is there some trembling? especially after downsizing screen
+    def blit_loop(self):
+        # variablen
         gold = self.gold_syls[:]
         gold_tuples = [syl.tuple for syl in gold]
         code_tuples = [w.tuples for w in self.woerter.code_words]
@@ -298,6 +302,7 @@ class Game(globale_variablen.Settings):
                 self.start_third_screen_part - self.end_first_screen_part, self.screenh)
         self.tript2.fill(self.black)
         self.screen_syls = self.get_screensyls()
+        # for loop
         for i in range(len(self.pos_list)):
             if self.screen_syls:
                 syl = self.screen_syls.pop(0)
@@ -317,7 +322,6 @@ class Game(globale_variablen.Settings):
                 syl.rect.y = self.pos_list[i] + self.syl_pos_change # syl moves to the current ratio of start_pos/movement_window
                 syl.rect_in_circle.center = syl.rect.center
                 syl.rect_copy = syl.rect.copy() # why does this leave rect in place
-
             self.blit_tript(i, lil, self.nw, lambda iterator: self.screenw - ((1 + (iterator // self.h)) * (self.screenw // 10)), lila_tuples, words_tuples)
             self.blit_tript(i, gold, self.gw, lambda iterator: (iterator // self.h) * (self.screenw // 10), gold_tuples, code_tuples)  # starts from width 0 for words 1-8 if ln is 8
         self.adjust_loop_window()
@@ -366,7 +370,8 @@ class Game(globale_variablen.Settings):
         surface.fill(self.lila)
         self.blit_clickable_words(text,self.white,(0,self.down),screen=surface)
 
-    def nums(self):
+    def ziffern_und_code_woerter(self):
+        # {} MIT CODE WOERTER UND ZIFFERN
         self.header.fill(self.gray)
         binary_list = {}
         splitinput = self.woerter.input_code.split()
@@ -385,7 +390,7 @@ class Game(globale_variablen.Settings):
                 binary_list[f'{i} '] = f'{opposite} '
         blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font)
         self.end_header = blit_h
-        blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,100)]], self.yellow,
+        blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,1000)]], self.yellow,
                                            (self.screenw // 2, blit_h), no_buttons=False, screen=self.tript2)
         self.top = blit_h
 

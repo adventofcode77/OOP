@@ -86,7 +86,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         pg.display.flip()
 
     def dauer(self):
-        dauer = 1 * 60000 - time.get_ticks()
+        dauer = 5 * 60000 - time.get_ticks()
         seconds = int(dauer / 1000 % 60)
         minutes = int(dauer / 60000 % 24)
         dauer_text = f'{minutes}:{seconds}'
