@@ -54,7 +54,7 @@ class Game(globale_variablen.Settings):
                                                   self.start_third_screen_part - self.end_first_screen_part,
                                                   self.screenh)
         self.end_header = 0
-        self.header = self.screen_copy.subsurface(0,0,self.screenw,self.end_header)
+
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
@@ -377,7 +377,8 @@ class Game(globale_variablen.Settings):
 
     def ziffern_und_code_woerter(self):
         # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
-        self.header.fill(self.gray)
+        header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
+        header.fill(self.gray)
         binary_list = {}
         list_code_satz = self.woerter.code_satz.split()
         for i in range(len(list_code_satz)): # füllt den Woerterbuch auf
@@ -385,17 +386,18 @@ class Game(globale_variablen.Settings):
             opposite = 0 if code_number_at_this_index == '1' else 1
             if i < len(self.guessed_code_words): # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
                 dieses_code_wort = self.guessed_code_words[i].name
+                space_nach_ziffer = " "*(len(dieses_code_wort))
                 if dieses_code_wort == list_code_satz[i]: # checkt, ob das richtige Wort im richtigen Platz ist
-                    binary_list[dieses_code_wort] = f'{code_number_at_this_index} ' # wenn ja, ergibt die originelle Ziffer
+                    binary_list[dieses_code_wort] = f'{code_number_at_this_index}{space_nach_ziffer}' # wenn ja, ergibt die originelle Ziffer
                 else:
-                    binary_list[dieses_code_wort] = f'{opposite} ' # wenn nein, ändert 1 zum 0 oder 0 zum 1
+                    binary_list[dieses_code_wort] = f'{opposite}{space_nach_ziffer}' # wenn nein, ändert 1 zum 0 oder 0 zum 1
             else:
-                binary_list[f'{i} '] = f'{opposite} ' # die nicht-erratene woerter ergeben immer 0
-        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font)
-        self.end_header = blit_h
+                binary_list[f'{i+1} '] = f'{opposite} ' # die nicht-erratene woerter ergeben immer 0
+        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),screen=header)
         blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,1000)]], self.yellow,
-                                           (self.screenw // 2, blit_h), no_buttons=False, screen=self.tript2)
-        self.top = blit_h
+                                           (self.screenw // 2, blit_h + self.space), no_buttons=False, screen=header)
+        self.end_header = blit_h
+        self.top = self.end_header + self.space
 
 
     def check_num_buttons(self,click): # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
