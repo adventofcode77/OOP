@@ -2,7 +2,7 @@ import pygame as pg
 from pygame import *
 from pygame.locals import *
 
-import game
+from Woerterbuchspiel import game
 
 
 class Gameloop():
@@ -85,7 +85,7 @@ class Gameloop():
                     self.wait = True # without self.wait, the loop doesn't lead to game_over
                     self.new_game = True
                 self.info.blit_loop()
-            else:
+            else: #
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     self.click = self.info.scale_click(self.click, self.info.screen_copy,
                                                        self.info.screen_via_display_set_mode)

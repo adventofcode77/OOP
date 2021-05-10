@@ -1,6 +1,6 @@
 import pygame as pg
 
-import gameloop
+from Woerterbuchspiel import gameloop
 import woerterbuch
 
 

@@ -1,4 +1,5 @@
-import silbe
+from Woerterbuchspiel import silbe
+
 
 class Word():
     all_syls = []

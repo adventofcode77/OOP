@@ -9,7 +9,7 @@ class Spieler():
         self.spieler_w, self.spieler_h = self.info.screen_surface // 15, self.info.screen_surface // 15
         self.rect = pg.Rect(self.info.screenw // 2, self.info.screenh // 2, self.spieler_w, self.spieler_h)
         self.my_silben = []
-        self.image = transform.scale(image.load('Roboter.png'), (self.rect.w, self.rect.h))
+        self.image = transform.scale(image.load('Woerterbuchspiel/Roboter.png'), (self.rect.w, self.rect.h))
         self.normal_image = self.image.copy()
         self.brighter_image = self.image.copy()
         brighten = 100
