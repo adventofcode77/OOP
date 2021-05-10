@@ -3,12 +3,12 @@ import random
 import pygame as pg
 from pygame import *
 
-import globale_variablen
-import menu
-import silbe
-import spieler
-import woerter
-import word
+from Woerterbuchspiel import globale_variablen
+from Woerterbuchspiel import menu
+from Woerterbuchspiel import silbe
+from Woerterbuchspiel import spieler
+from Woerterbuchspiel import woerter
+from Woerterbuchspiel import word
 
 
 class Game(globale_variablen.Settings):

@@ -1,4 +1,4 @@
-import word
+from Woerterbuchspiel import word
 
 
 class Woerter:

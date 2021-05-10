@@ -1,12 +1,12 @@
 import pygame as pg
 
 from Woerterbuchspiel import gameloop
-import woerterbuch
+from Woerterbuchspiel import woerterbuch
 
 
 class Main:
     #TODO ? make a script that downloads the wiktionary dump/imports the parser and configures their paths
-    file_paths = ['/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'] # XML FILE AUS WIKTIONARY
+    file_paths = ['/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'] # XML FILE AUS WIKTIONARY https://dumps.wikimedia.org/dewiktionary/20210501/
     code_satz = ["Das Herz der Verliebten Dame schlägt für den Bauern"] # CODE SATZ
     spielwoerter = woerterbuch.Woerterbuch(file_paths[0]).quick_get(50) # SPIELWOERTER
     letztes_spiel_code = "000011001"
