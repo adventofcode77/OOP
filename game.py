@@ -53,6 +53,7 @@ class Game(globale_variablen.Settings):
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                                                   self.start_third_screen_part - self.end_first_screen_part,
                                                   self.screenh)
+        self.header = 0
         self.end_header = 0
 
         self.screen_syls = self.get_screensyls()
@@ -377,8 +378,8 @@ class Game(globale_variablen.Settings):
 
     def ziffern_und_code_woerter(self):
         # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
-        header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
-        header.fill(self.gray)
+        self.header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
+        self.header.fill(self.gray)
         binary_list = {}
         list_code_satz = self.woerter.code_satz.split()
         for i in range(len(list_code_satz)): # füllt den Woerterbuch auf
@@ -393,9 +394,9 @@ class Game(globale_variablen.Settings):
                     binary_list[dieses_code_wort] = f'{opposite}{space_nach_ziffer}' # wenn nein, ändert 1 zum 0 oder 0 zum 1
             else:
                 binary_list[f'{i+1} '] = f'{opposite} ' # die nicht-erratene woerter ergeben immer 0
-        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),screen=header)
+        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),screen=self.header)
         blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,1000)]], self.yellow,
-                                           (self.screenw // 2, blit_h + self.space), no_buttons=False, screen=header)
+                                           (self.screenw // 2, blit_h + self.space), no_buttons=False, screen=self.header)
         self.end_header = blit_h
         self.top = self.end_header + self.space
 
