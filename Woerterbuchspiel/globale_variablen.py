@@ -63,6 +63,12 @@ class Settings:  # there could be a function converting size/location numbers ba
             quit()
         return list_of_lists  # DO NOT FORGET RETURN
 
+    def make_rgb(self):  # hues, each for all in a word
+        hue = random.choice((0, 1, 2))
+        rgb = [random.randint(0, 200), random.randint(0, 200), random.randint(100, 200)]
+        rgb[hue] = 255 if hue != 2 else 200
+        return rgb
+
     def scale_click(self, click, orig_screen, current_screen):
         current_x, current_y = click
         orig_screenw, orig_screenh = orig_screen.get_rect().w, orig_screen.get_rect().h
@@ -70,12 +76,6 @@ class Settings:  # there could be a function converting size/location numbers ba
         current_x_ratio, current_y_ratio = current_x / current_screenw, current_y / current_screenh
         x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh
         return (x, y)
-
-    def make_rgb(self):  # hues, each for all in a word
-        hue = random.choice((0, 1, 2))
-        rgb = [random.randint(0, 200), random.randint(0, 200), random.randint(100, 200)]
-        rgb[hue] = 255 if hue != 2 else 200
-        return rgb
 
     def screen_transfer(self, run=True):
         if run:
@@ -85,8 +85,8 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
         pg.display.flip()
 
-    def dauer(self):
-        dauer = 5 * 60000 - time.get_ticks()
+    def dauer(self): # change it so it starts counting when user is done with the instructions
+        dauer = 15 * 60000 - time.get_ticks()
         seconds = int(dauer / 1000 % 60)
         minutes = int(dauer / 60000 % 24)
         dauer_text = f'{minutes}:{seconds}'

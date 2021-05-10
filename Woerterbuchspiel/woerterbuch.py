@@ -44,10 +44,6 @@ class Woerterbuch:
     def getaword(self):
         j = random.randrange(0, 1000)
         record = self.listofrecords[j]
-        # if self.lang == 0:
-        #     lang_var = 'de'
-        # else:
-        #     lang_var = 'en'
         if 'langCode' not in record or record['langCode'] != 'de':
             return self.getaword()
         result = iterate(record)

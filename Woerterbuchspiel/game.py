@@ -53,7 +53,7 @@ class Game(globale_variablen.Settings):
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                                                   self.start_third_screen_part - self.end_first_screen_part,
                                                   self.screenh)
-        self.end_header = 0
+        self.end_header = self.down
         self.header = self.screen_copy.subsurface(0,0,self.screenw,self.end_header)
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
@@ -119,7 +119,7 @@ class Game(globale_variablen.Settings):
                                            screen=surface)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
-                             no_buttons=True):
+                             no_buttons=True, start_end=None):
         #variablen
         window_counter = 0
         if not screen:
@@ -130,14 +130,14 @@ class Game(globale_variablen.Settings):
         if no_buttons:
             copy_buttons = self.buttons[:]
         self.buttons = []
-        if type(lst) == str:
-            lst = lst.split(" ")
+        if type(lst) == str: lst = lst.split(" ")
         color_copy = color
-        if not afont:
-            afont = self.smaller_font
+        if not afont: afont = self.smaller_font
         spacing = self.font_spacing(afont)
         last_line_down = midtop[1]
-        last_word_right = 0.25 * copy_screen_rect.w
+        if start_end: start, end = start_end
+        else: start, end  = 0.25, 0.75
+        last_word_right = start  * copy_screen_rect.w
         # for loop
         for i in range(len(lst)):
             aword = lst[i]
@@ -153,21 +153,21 @@ class Game(globale_variablen.Settings):
             word_img = afont.render(aword, True, color)
             word_rect = word_img.get_rect()
             color = color_copy
-            if last_word_right >= 0.75 * copy_screen_rect.w:
+            if last_word_right >= end * copy_screen_rect.w:
                 if last_line_down < copy_screen_rect.h - spacing * 3:  # twice the highest spacing?
-                    last_word_right = 0.25 * copy_screen_rect.w
+                    last_word_right = start * copy_screen_rect.w
                     last_line_down += spacing
                 else:
                     copy_screen = screen.copy()
                     last_line_down = midtop[1]
-                    last_word_right = 0.25 * copy_screen_rect.w
+                    last_word_right = start * copy_screen_rect.w
                     window_counter += 1
             word_rect.x, word_rect.y = last_word_right, last_line_down
             self.buttons.append(word.Button(aword, word_img, word_rect, i))
             copy_screen.blit(word_img, word_rect)
             last_word_right = last_word_right + word_rect.w + self.default_space_w
-            if aword[-1] in ".!?:":
-                last_word_right = 0.25 * copy_screen_rect.w
+            if aword[-1] in ".!?:": # mache eine neue Zeile nach diesem SYmbolen
+                last_word_right = start * copy_screen_rect.w
                 last_line_down += spacing * 1.5
             list_snapshots_to_blit[window_counter] = copy_screen.copy()
         # snapshots
@@ -344,13 +344,13 @@ class Game(globale_variablen.Settings):
 
     def find_complete_syls(self, syl_tuples, words_tuples): # Findet ein kompletes Code-Wort in den gesammelten Code-Silben
         try:
-            nxt = next(iter([set for set in words_tuples if [t for t in set if t in syl_tuples] == [t for t in set]]))
+            nxt = next(iter([set for set in words_tuples if [t for t in set if t in syl_tuples] == [t for t in set]])) # ergibt eine Liste aus Tuples
             return nxt
         except:
             return None
 
     def blit_tript(self, i, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
-        if not blinking_word or blinking_word not in syl_tuples:
+        if (not blinking_word) or blinking_word[0] not in syl_tuples: # falls zumindest eine tuple vom blinking word gelöscht wurde
             # Diese if Klause versucht, nur eine Silbe pro Sektor zum blinken zu bringen. Jedoch blinken im Moment mehrere...
             blinking_word = self.find_complete_syls(syl_tuples, words_tuples)
             if list_ist_lila: self.nw = blinking_word # self.nw ist die gespeicherte blinkende Silbe auf dem rechten Sektor
@@ -376,7 +376,9 @@ class Game(globale_variablen.Settings):
         self.blit_clickable_words(text,self.white,(0,self.down),screen=surface)
 
     def ziffern_und_code_woerter(self):
+        # if the header changes size, the subsurface may end up larger than the surface unless the function is called in while loop
         # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
+        self.header = self.screen_copy.subsurface(0,0,self.screenw,self.end_header)
         self.header.fill(self.gray)
         binary_list = {}
         list_code_satz = self.woerter.code_satz.split()
@@ -385,17 +387,20 @@ class Game(globale_variablen.Settings):
             opposite = 0 if code_number_at_this_index == '1' else 1
             if i < len(self.guessed_code_words): # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
                 dieses_code_wort = self.guessed_code_words[i].name
+                space_nach_ziffer = " "*(len(dieses_code_wort))
                 if dieses_code_wort == list_code_satz[i]: # checkt, ob das richtige Wort im richtigen Platz ist
-                    binary_list[dieses_code_wort] = f'{code_number_at_this_index} ' # wenn ja, ergibt die originelle Ziffer
+                    binary_list[dieses_code_wort] = f'{code_number_at_this_index}{space_nach_ziffer}' # wenn ja, ergibt die originelle Ziffer
                 else:
-                    binary_list[dieses_code_wort] = f'{opposite} ' # wenn nein, ändert 1 zum 0 oder 0 zum 1
+                    binary_list[dieses_code_wort] = f'{opposite}{space_nach_ziffer}' # wenn nein, ändert 1 zum 0 oder 0 zum 1
             else:
-                binary_list[f'{i} '] = f'{opposite} ' # die nicht-erratene woerter ergeben immer 0
-        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font)
-        self.end_header = blit_h
+                binary_list[f'{i+1} '] = f'{opposite} ' # die nicht-erratene woerter ergeben immer 0
+        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font, screen=self.header, start_end=(0,100))
         blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,1000)]], self.yellow,
-                                           (self.screenw // 2, blit_h), no_buttons=False, screen=self.tript2)
-        self.top = blit_h
+                                           (self.screenw // 2, blit_h), no_buttons=False, screen=self.header,start_end=(0,100))
+        self.end_header = blit_h
+        print("end header:",self.end_header)
+        self.top = self.end_header + self.space
+
 
 
     def check_num_buttons(self,click): # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
