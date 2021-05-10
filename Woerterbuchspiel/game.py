@@ -388,6 +388,7 @@ class Game(globale_variablen.Settings):
             if i < len(self.guessed_code_words): # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
                 dieses_code_wort = self.guessed_code_words[i].name
                 space_nach_ziffer = " "*(len(dieses_code_wort))
+                print(dieses_code_wort,len(space_nach_ziffer))
                 if dieses_code_wort == list_code_satz[i]: # checkt, ob das richtige Wort im richtigen Platz ist
                     binary_list[dieses_code_wort] = f'{code_number_at_this_index}{space_nach_ziffer}' # wenn ja, ergibt die originelle Ziffer
                 else:
@@ -396,9 +397,8 @@ class Game(globale_variablen.Settings):
                 binary_list[f'{i+1} '] = f'{opposite} ' # die nicht-erratene woerter ergeben immer 0
         blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font, screen=self.header, start_end=(0,100))
         blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,1000)]], self.yellow,
-                                           (self.screenw // 2, blit_h), no_buttons=False, screen=self.header,start_end=(0,100))
+                                           (self.screenw // 2, blit_h), no_buttons=False, screen=self.header,start_end=(0,100), afont=self.bigger_font)
         self.end_header = blit_h
-        print("end header:",self.end_header)
         self.top = self.end_header + self.space
 
 
