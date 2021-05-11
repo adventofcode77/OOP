@@ -143,16 +143,13 @@ class Game(globale_variablen.Settings):
         # for loop
         for i in range(len(lst)):
             aword = lst[i]
-            if not aword:
-                continue
+            if not aword: continue
             if type(aword) is word.Word:
                 if aword.color:
-                    color = aword.color
-                    print(aword.name, "color is", aword.color)
-                    aword = aword.name
+                    color, aword = aword.color, aword.name
             elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
-            word_img = afont.render(aword, True, color)
+            word_img = afont.render(f'{aword} ', True, color)
             word_rect = word_img.get_rect()
             color = color_copy
             if last_word_right >= end * copy_screen_rect.w:
@@ -167,7 +164,7 @@ class Game(globale_variablen.Settings):
             word_rect.x, word_rect.y = last_word_right, last_line_down
             self.buttons.append(word.Button(aword, word_img, word_rect, i))
             copy_screen.blit(word_img, word_rect)
-            last_word_right = last_word_right + word_rect.w + self.default_space_w
+            last_word_right = last_word_right + word_rect.w # + afont.render(" ",True,self.white).get_rect().w
             if aword[-1] in ".!?:":  # mache eine neue Zeile nach diesen SYmbolen
                 last_word_right = start * copy_screen_rect.w
                 last_line_down += spacing * 1.5
@@ -390,36 +387,36 @@ class Game(globale_variablen.Settings):
         surface.fill(self.lila)
         self.blit_clickable_words(text, self.white, (0, self.down), screen=surface)
 
-    def leere_zeilen_berechnen(self,rect,font):
-        string = " "
-        while font.render(string, True,self.black).get_rect().w < rect:
-            string += " "
-        return string
-
-    def ziffern_und_code_woerter(self):
+    def ziffern_und_code_woerter(self): # TODO clicking on a code word currently moves the word on its right; combine the definitions underneath after clicking in the header
         # if the header changes size, the subsurface may end up larger than the surface unless the function is called in the while loop
         # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
-        self.header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
-        hintergrund = self.gray
-        self.header.fill(hintergrund)
-        binary_list = {}
+        self.screen_copy.fill(self.gray, Rect(0, 0, self.screenw, self.end_header))
+        digits_line = self.font_spacing(self.bigger_font)
+        binary_list = {" NEU >>> ": " ALT>>>>"}
+        self.screen_copy.blit(self.bigger_font.render(" ALT >>>> ", True, self.cyan), (0, digits_line))
         list_code_satz = self.woerter.code_satz.split()
+        digit_identation = self.bigger_font.render(" ALT >>>> ", True, self.black).get_rect().w
         for i in range(len(list_code_satz)):  # füllt den Woerterbuch auf
             code_number_at_this_index = list(self.binary_code)[i]
             opposite = 0 if code_number_at_this_index == '1' else 1
-            if i < len(self.guessed_code_words):  # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
+            if i < len(
+                    self.guessed_code_words):  # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
                 dieses_code_wort = self.guessed_code_words[i].name
-                space_nach_ziffer = self.bigger_font.render(dieses_code_wort,True,self.black).get_rect().w
-                leere_zeilen  = self.leere_zeilen_berechnen(space_nach_ziffer,self.bigger_font)
+                space_nach_ziffer = self.bigger_font.render(f'{dieses_code_wort} ', True, self.black).get_rect().w
                 # print(dieses_code_wort,len(space_nach_ziffer))
                 if dieses_code_wort == list_code_satz[i]:  # checkt, ob das richtige Wort im richtigen Platz ist
-                    binary_list[f'{dieses_code_wort} '] = f'{code_number_at_this_index}{leere_zeilen}'  # wenn ja, ergibt die originelle Ziffer
+                    binary_list[
+                        f'{dieses_code_wort}'] = f'{code_number_at_this_index}{"placeholder"}'  # wenn ja, ergibt die originelle Ziffer
                 else:
-                    binary_list[f'{dieses_code_wort} '] = f'{opposite}{leere_zeilen}'  # wenn nein, ändert 1 zum 0 oder 0 zum 1
+                    binary_list[
+                        f'{dieses_code_wort}'] = f'{opposite}{"placeholder"}'  # wenn nein, ändert 1 zum 0 oder 0 zum 1
             else:
-                binary_list[f'{i + 1} '] = f'{opposite} '  # die nicht-erratene woerter ergeben immer 0
-        end_code_numbers = self.blit_clickable_words(list(binary_list.values()), hintergrund, (self.screenw // 2, 0),
-                                                     afont=self.bigger_font, start_end=(0, 100))
+                ziffer = f'{i + 1}'
+                space_nach_ziffer = self.bigger_font.render(ziffer, True, self.black).get_rect().w
+                binary_list[ziffer] = f'{opposite} '  # die nicht-erratene woerter ergeben immer 0
+            self.screen_copy.blit(self.bigger_font.render(f'{code_number_at_this_index}',True,self.cyan), (digit_identation,digits_line))
+            digit_identation += space_nach_ziffer
+        end_code_numbers = 2 * digits_line
         end_header = self.blit_clickable_words(
             [a for a in binary_list.keys() if a not in [str(b) for b in range(0, 1000)]], self.yellow,
             (self.screenw, end_code_numbers), no_buttons=False, start_end=(0, 100), afont=self.bigger_font)

@@ -85,19 +85,21 @@ class Gameloop():
                     self.wait = True # without self.wait, the loop doesn't lead to game_over
                     self.new_game = True
                 self.info.blit_loop()
-            else: # wenn der Loop pausiert ist
+            #  WENN LOOP PAUSIERT IST
+            else:
+                # WENN GEKLICKT WIRD
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
                     #click_in_header = self.info.scale_click(self.click, self.info.screen_copy, self.info.header)
                     #self.info.check_num_buttons(click_in_header)
                     self.click = self.info.scale_click(self.click, self.info.screen_copy,
                                                        self.info.screen_via_display_set_mode)
                     x, y = self.click
-                    self.info.check_num_buttons((x, y))
+                    self.info.check_num_buttons((x, y)) # pixel error might come from here?
                     x -= self.info.end_first_screen_part  # this offset is produced by the def of end_first_screen_part
 
                 self.info.desk(self.click)
                 self.click = False
-                # GEWINNVORAUSSETZUNG
+                # GEWINNVORAUSSETZUNG TESTEN
                 if " ".join([word.name for word in self.info.guessed_code_words]) == self.info.woerter.code_satz:
                     self.won = True
                     self.wait = True
