@@ -19,7 +19,7 @@ class Game(globale_variablen.Settings):
         self.radiuses = []
         self.blink_counter = 0
         self.top = 0
-        self.gw,self.nw = None, None
+        self.gw, self.nw = None, None
         self.h = 10
         self.change_color = True
         self.binary_code = binary_code
@@ -38,7 +38,8 @@ class Game(globale_variablen.Settings):
         self.words = self.woerter.words
         syls = self.woerter.silben + self.woerter.code_syls
         self.syls = random.sample(syls, len(syls))
-        self.silben_copy,self.code_silben_copy, self.syls_copy = self.woerter.silben[:],self.woerter.code_syls[:], self.syls[:]
+        self.silben_copy, self.code_silben_copy, self.syls_copy = self.woerter.silben[:], self.woerter.code_syls[
+                                                                                          :], self.syls[:]
         # self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
         self.syl_pos_change = 0
@@ -55,7 +56,7 @@ class Game(globale_variablen.Settings):
                                                   self.start_third_screen_part - self.end_first_screen_part,
                                                   self.screenh)
         self.end_header = self.down
-        self.header = self.screen_copy.subsurface(0,0,self.screenw,self.end_header)
+        self.header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
@@ -75,8 +76,8 @@ class Game(globale_variablen.Settings):
                         del self.spieler.appendlist[index]
                     else:
                         syl.clicked_on = True
-                        self.draw_word(height_of_all=self.top,syl=syl, screen=self.tript2)
-        self.draw_word(height_of_all=self.top,screen=self.tript2)
+                        self.draw_word(height_of_all=self.top, syl=syl, screen=self.tript2)
+        self.draw_word(height_of_all=self.top, screen=self.tript2)
 
     def draw_word(self, height_of_all=None, syl=None, screen=None):
         # TODO make object word_on_screen and keep the variables that define its state inside of it
@@ -121,24 +122,24 @@ class Game(globale_variablen.Settings):
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
                              no_buttons=True, start_end=None):
-        #variablen
+        # variablen
         window_counter = 0
-        if not screen:
-            screen = self.screen_copy
+        if not screen: screen = self.screen_copy
         copy_screen = screen.copy()
         copy_screen_rect = copy_screen.get_rect()
         list_snapshots_to_blit = {}
-        if no_buttons:
-            copy_buttons = self.buttons[:]
+        if no_buttons: copy_buttons = self.buttons[:]
         self.buttons = []
         if type(lst) == str: lst = lst.split(" ")
         color_copy = color
         if not afont: afont = self.smaller_font
         spacing = self.font_spacing(afont)
         last_line_down = midtop[1]
-        if start_end: start, end = start_end
-        else: start, end  = 0.25, 0.75
-        last_word_right = start  * copy_screen_rect.w
+        if start_end:
+            start, end = start_end
+        else:
+            start, end = 0.25, 0.75
+        last_word_right = start * copy_screen_rect.w
         # for loop
         for i in range(len(lst)):
             aword = lst[i]
@@ -147,7 +148,7 @@ class Game(globale_variablen.Settings):
             if type(aword) is word.Word:
                 if aword.color:
                     color = aword.color
-                    print(aword.name,"color is",aword.color)
+                    print(aword.name, "color is", aword.color)
                     aword = aword.name
             elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
@@ -167,7 +168,7 @@ class Game(globale_variablen.Settings):
             self.buttons.append(word.Button(aword, word_img, word_rect, i))
             copy_screen.blit(word_img, word_rect)
             last_word_right = last_word_right + word_rect.w + self.default_space_w
-            if aword[-1] in ".!?:": # mache eine neue Zeile nach diesem SYmbolen
+            if aword[-1] in ".!?:":  # mache eine neue Zeile nach diesen SYmbolen
                 last_word_right = start * copy_screen_rect.w
                 last_line_down += spacing * 1.5
             list_snapshots_to_blit[window_counter] = copy_screen.copy()
@@ -215,7 +216,7 @@ class Game(globale_variablen.Settings):
                         replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self,
                                                   (0, 0, 0))  # replace with simpler object?
                         replacement.visible = False
-                        replacement.rect.x,replacement.rect.y = 1,1
+                        replacement.rect.x, replacement.rect.y = 1, 1
                         self.syls[index] = replacement
                     else:
                         self.syls.remove(syl)
@@ -239,26 +240,26 @@ class Game(globale_variablen.Settings):
             int(orig_rgb_digit + (new_rgb_digit - orig_rgb_digit) * self.step_fps / num_steps) for
             orig_rgb_digit, new_rgb_digit in list(zip(start_color, new_color))]  # see stackoverflow link on fading
         try:
-            list_ints[0], list_ints[1], list_ints[2] in range(0,255)
+            list_ints[0], list_ints[1], list_ints[2] in range(0, 255)
         except:
-            print("excepted rgb for",syl.name,":",list_ints[0], list_ints[1], list_ints[2])
-        if self.change_color: #step fps changes in the direction towards the new color
-            if self.step_fps < num_steps: # self fps hasn't reached the new color yet
-             self.step_fps += 1
-            else: # the change is complete, but the bool shouldn't be flipped until a second has passed
-                if not self.blink_counter: # blink counter starts counting for a second
+            print("excepted rgb for", syl.name, ":", list_ints[0], list_ints[1], list_ints[2])
+        if self.change_color:  # step fps changes in the direction towards the new color
+            if self.step_fps < num_steps:  # self fps hasn't reached the new color yet
+                self.step_fps += 1
+            else:  # the change is complete, but the bool shouldn't be flipped until a second has passed
+                if not self.blink_counter:  # blink counter starts counting for a second
                     self.blink_counter = 1
-                elif self.blink_counter >= self.fps//2: # blink counter has finished counting for a time unit
+                elif self.blink_counter >= self.fps // 2:  # blink counter has finished counting for a time unit
                     self.change_color = False
         else:
-            if self.step_fps > 0: # step fps is changing in the direction of the original color
+            if self.step_fps > 0:  # step fps is changing in the direction of the original color
                 self.step_fps -= 1
             elif self.step_fps == 0:
                 if not self.blink_counter:  # blink counter starts counting for a second
                     self.blink_counter = 1
-                elif self.blink_counter >= self.fps//2: # blink counter has finished counting for a time unit
+                elif self.blink_counter >= self.fps // 2:  # blink counter has finished counting for a time unit
                     self.change_color = True
-                    self.blink_counter = None # reset blink counter to None so it can start counting again at the right time
+                    self.blink_counter = None  # reset blink counter to None so it can start counting again at the right time
         return (list_ints[0], list_ints[1], list_ints[2])
 
     def get_pos_list(self):
@@ -272,20 +273,20 @@ class Game(globale_variablen.Settings):
 
     def get_screensyls(self):
         syls = self.syls[self.start_syls_cut_at:] + self.syls[:self.start_syls_cut_at]
-        #syls = [syl for syl in syls if syl.visible] #why does this make the loop jerk backwards?
+        # syls = [syl for syl in syls if syl.visible] #why does this make the loop jerk backwards?
         to_return = syls[:len(self.pos_list)]
         for syl in to_return:
             if syl.visible:
                 too_left = syl.rect.x < self.end_first_screen_part
-                too_right = syl.rect.x > self.start_third_screen_part-syl.rect.w
+                too_right = syl.rect.x > self.start_third_screen_part - syl.rect.w
                 if too_left:
                     while syl.rect.x < self.end_first_screen_part:
-                        syl.rect.x += self.screenw//10
+                        syl.rect.x += self.screenw // 10
                 elif too_right:
-                    while syl.rect.x > self.start_third_screen_part-syl.rect.w:
-                        syl.rect.x -= self.screenw//10
+                    while syl.rect.x > self.start_third_screen_part - syl.rect.w:
+                        syl.rect.x -= self.screenw // 10
                 if syl.rect.x < self.end_first_screen_part or syl.rect.x > self.start_third_screen_part - syl.rect.w:
-                    self.end_first_screen_part = self.start_third_screen_part-syl.rect.w # trigger new game?
+                    self.end_first_screen_part = self.start_third_screen_part - syl.rect.w  # trigger new game?
         return to_return  # (now syls should always be bigger than this cut)
 
     def blit_loop(self):
@@ -300,7 +301,8 @@ class Game(globale_variablen.Settings):
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // self.h) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * ((len(self.lila_syls) // self.h) + 1)
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
-                self.start_third_screen_part - self.end_first_screen_part, self.screenh)
+                                                  self.start_third_screen_part - self.end_first_screen_part,
+                                                  self.screenh)
         self.tript2.fill(self.black)
         self.screen_syls = self.get_screensyls()
         # for loop
@@ -310,29 +312,35 @@ class Game(globale_variablen.Settings):
                 circle_width = 2
                 if syl.visible:
                     if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
-                        syl.rgb = self.blink(self.fps*2, syl, self.yellow) # das erste Argument ist die Dauer des Blinkens
+                        syl.rgb = self.blink(self.fps * 2, syl,
+                                             self.yellow)  # das erste Argument ist die Dauer des Blinkens
                         syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
-                        circle_width = int(2 + (self.step_fps // self.fps * 2) * 2) # width goes up and down with the color changes
+                        circle_width = int(
+                            2 + (self.step_fps // self.fps * 2) * 2)  # width goes up and down with the color changes
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
-                    draw.circle(self.screen_copy,syl.rgb,syl.rect.center,syl.rect.w,width=circle_width)
-                elif syl.picked: # picked ist eine zahl zwischen 0 und self.fps
+                    draw.circle(self.screen_copy, syl.rgb, syl.rect.center, syl.rect.w, width=circle_width)
+                elif syl.picked:  # picked ist eine zahl zwischen 0 und self.fps
                     draw.circle(self.screen_copy, syl.rgb, syl.new_spot_rect.center, syl.rect.w // 2, width=syl.picked)
                     draw.circle(self.screen_copy, syl.rgb, syl.ghost_rect.center, syl.rect.w, width=syl.picked)
-                    #TODO 'NoneType' bug: object has no attribute 'center' sometime after loop direction reversal
+                    # TODO 'NoneType' bug: object has no attribute 'center' sometime after loop direction reversal
                     syl.picked = syl.picked - 4 if syl.picked > 0 else 0
-                syl.rect.y = self.pos_list[i] + self.syl_pos_change # syl moves to the current ratio of start_pos/movement_window
+                syl.rect.y = self.pos_list[
+                                 i] + self.syl_pos_change  # syl moves to the current ratio of start_pos/movement_window
                 syl.rect_in_circle.center = syl.rect.center
-                syl.rect_copy = syl.rect.copy() # why does this leave rect in place
-            self.blit_tript(i, True, lil, self.nw, lambda iterator: self.screenw - ((1 + (iterator // self.h)) * (self.screenw // 10)), lila_tuples, words_tuples)
-                # Die lambda funktion berechnet die X koordinate der silben. Sie nimmt ein parameter namens "iterator" (in der definition von blit_trypt() )
-            self.blit_tript(i, False, gold, self.gw, lambda iterator: (iterator // self.h) * (self.screenw // 10), gold_tuples, code_tuples)  # starts from width 0 for words 1-8 if ln is 8
+                syl.rect_copy = syl.rect.copy()  # why does this leave rect in place
+            self.blit_tript(i, True, lil, self.nw,
+                            lambda iterator: self.screenw - ((1 + (iterator // self.h)) * (self.screenw // 10)),
+                            lila_tuples, words_tuples)
+            # Die lambda funktion berechnet die X koordinate der silben. Sie nimmt ein parameter namens "iterator" (in der definition von blit_trypt() )
+            self.blit_tript(i, False, gold, self.gw, lambda iterator: (iterator // self.h) * (self.screenw // 10),
+                            gold_tuples, code_tuples)  # starts from width 0 for words 1-8 if ln is 8
         self.adjust_loop_window()
         self.screen_copy.blit(self.spieler.image, self.spieler.rect)
         self.screen_transfer()
 
-    def adjust_loop_window(self): # Verwaltet den laufenden Loop aus runterfallenden Silben
+    def adjust_loop_window(self):  # Verwaltet den laufenden Loop aus runterfallenden Silben
         self.syl_pos_change += self.syl_speed_change  #
-        if self.syl_pos_change >= self.screenh // self.h: # wenn
+        if self.syl_pos_change >= self.screenh // self.h:  # wenn
             self.syl_pos_change = 0
             self.start_syls_cut_at += 1
             if self.start_syls_cut_at > len(self.syls) - 1:  # "==" doesn't work after words get deleted
@@ -343,20 +351,25 @@ class Game(globale_variablen.Settings):
             if self.start_syls_cut_at < 1:  # "==" doesn't work after words get deleted
                 self.start_syls_cut_at = len(self.syls) - 1
 
-    def find_complete_syls(self, syl_tuples, words_tuples): # Findet ein kompletes Code-Wort in den gesammelten Code-Silben
-        random.shuffle(words_tuples) # sodass die reihenfolge der blinkenden gesammelten code woerter zufaellig ist
+    def find_complete_syls(self, syl_tuples,
+                           words_tuples):  # Findet ein kompletes Code-Wort in den gesammelten Code-Silben
+        random.shuffle(words_tuples)  # sodass die reihenfolge der blinkenden gesammelten code woerter zufaellig ist
         try:
-            nxt = next(iter([set for set in words_tuples if [t for t in set if t in syl_tuples] == [t for t in set]])) # ergibt eine Liste aus Tuples
+            nxt = next(iter([set for set in words_tuples if
+                             [t for t in set if t in syl_tuples] == [t for t in set]]))  # ergibt eine Liste aus Tuples
             return nxt
         except:
             return None
 
     def blit_tript(self, i, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
-        if (not blinking_word) or blinking_word[0] not in syl_tuples: # falls zumindest eine tuple vom blinking word gelöscht wurde
+        if (not blinking_word) or blinking_word[
+            0] not in syl_tuples:  # falls zumindest eine tuple vom blinking word gelöscht wurde
             # Diese if Klause versucht, nur eine Silbe pro Sektor zum blinken zu bringen. Jedoch blinken im Moment mehrere...
             blinking_word = self.find_complete_syls(syl_tuples, words_tuples)
-            if list_ist_lila: self.nw = blinking_word # self.nw ist die gespeicherte blinkende Silbe auf dem rechten Sektor
-            else: self.gw = blinking_word # self.gw ist die gespeicherte blinkende Silbe auf dem linken Sektor
+            if list_ist_lila:
+                self.nw = blinking_word  # self.nw ist die gespeicherte blinkende Silbe auf dem rechten Sektor
+            else:
+                self.gw = blinking_word  # self.gw ist die gespeicherte blinkende Silbe auf dem linken Sektor
         ln = len(lst_syls)
         for iterator in range(i, ln, self.h):  # making the left columns
             syl = lst_syls[iterator]
@@ -367,53 +380,58 @@ class Game(globale_variablen.Settings):
             syl.rect.y = self.top + i * ((self.screenh - self.top) // self.h)
             self.screen_copy.blit(syl.image, syl.rect)
 
-    def game_over(self,text,surface=None):
-        rect = Rect(0.33*self.screenw,0.33*self.screenh,0.33*self.screenw,0.33*self.screenh)
-        offset = 0.03*self.screenh
-        border_rect = Rect(rect.x-offset,rect.y-offset,rect.w+offset*2,rect.h+offset*2)
-        draw.rect(self.screen_copy,self.orange,border_rect)
+    def game_over(self, text, surface=None):
+        rect = Rect(0.33 * self.screenw, 0.33 * self.screenh, 0.33 * self.screenw, 0.33 * self.screenh)
+        offset = 0.03 * self.screenh
+        border_rect = Rect(rect.x - offset, rect.y - offset, rect.w + offset * 2, rect.h + offset * 2)
+        draw.rect(self.screen_copy, self.orange, border_rect)
         rect.center = self.screen_copy.get_rect().center
         surface = self.screen_copy.subsurface(rect)
         surface.fill(self.lila)
-        self.blit_clickable_words(text,self.white,(0,self.down),screen=surface)
+        self.blit_clickable_words(text, self.white, (0, self.down), screen=surface)
+
+    def leere_zeilen_berechnen(self,rect,font):
+        string = " "
+        while font.render(string, True,self.black).get_rect().w < rect:
+            string += " "
+        return string
 
     def ziffern_und_code_woerter(self):
-        # if the header changes size, the subsurface may end up larger than the surface unless the function is called in while loop
+        # if the header changes size, the subsurface may end up larger than the surface unless the function is called in the while loop
         # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
-        self.header = self.screen_copy.subsurface(0,0,self.screenw,self.end_header)
-        self.header.fill(self.gray)
+        self.header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
+        hintergrund = self.gray
+        self.header.fill(hintergrund)
         binary_list = {}
         list_code_satz = self.woerter.code_satz.split()
-        for i in range(len(list_code_satz)): # füllt den Woerterbuch auf
+        for i in range(len(list_code_satz)):  # füllt den Woerterbuch auf
             code_number_at_this_index = list(self.binary_code)[i]
             opposite = 0 if code_number_at_this_index == '1' else 1
-            if i < len(self.guessed_code_words): # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
+            if i < len(self.guessed_code_words):  # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
                 dieses_code_wort = self.guessed_code_words[i].name
-                space_nach_ziffer = " "*(len(dieses_code_wort))
-                print(dieses_code_wort,len(space_nach_ziffer))
-                if dieses_code_wort == list_code_satz[i]: # checkt, ob das richtige Wort im richtigen Platz ist
-                    binary_list[dieses_code_wort] = f'{code_number_at_this_index}{space_nach_ziffer}' # wenn ja, ergibt die originelle Ziffer
+                space_nach_ziffer = self.bigger_font.render(dieses_code_wort,True,self.black).get_rect().w
+                leere_zeilen  = self.leere_zeilen_berechnen(space_nach_ziffer,self.bigger_font)
+                # print(dieses_code_wort,len(space_nach_ziffer))
+                if dieses_code_wort == list_code_satz[i]:  # checkt, ob das richtige Wort im richtigen Platz ist
+                    binary_list[f'{dieses_code_wort} '] = f'{code_number_at_this_index}{leere_zeilen}'  # wenn ja, ergibt die originelle Ziffer
                 else:
-                    binary_list[dieses_code_wort] = f'{opposite}{space_nach_ziffer}' # wenn nein, ändert 1 zum 0 oder 0 zum 1
+                    binary_list[f'{dieses_code_wort} '] = f'{opposite}{leere_zeilen}'  # wenn nein, ändert 1 zum 0 oder 0 zum 1
             else:
-                binary_list[f'{i+1} '] = f'{opposite} ' # die nicht-erratene woerter ergeben immer 0
-        blit_h = self.blit_clickable_words(list(binary_list.values()), self.white, (self.screenw // 2, 0),afont=self.bigger_font, screen=self.header, start_end=(0,100))
-        blit_h = self.blit_clickable_words([a for a in binary_list.keys() if a not in [str(b) for b in range(0,1000)]], self.yellow,
-                                           (self.screenw // 2, blit_h), no_buttons=False, screen=self.header,start_end=(0,100), afont=self.bigger_font)
-        self.end_header = blit_h
+                binary_list[f'{i + 1} '] = f'{opposite} '  # die nicht-erratene woerter ergeben immer 0
+        end_code_numbers = self.blit_clickable_words(list(binary_list.values()), hintergrund, (self.screenw // 2, 0),
+                                                     afont=self.bigger_font, start_end=(0, 100))
+        end_header = self.blit_clickable_words(
+            [a for a in binary_list.keys() if a not in [str(b) for b in range(0, 1000)]], self.yellow,
+            (self.screenw, end_code_numbers), no_buttons=False, start_end=(0, 100), afont=self.bigger_font)
+        self.end_header = end_header
         self.top = self.end_header + self.space
 
-
-
-    def check_num_buttons(self,click): # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
-        if self.buttons: # self.buttons only refers to the guessed code words on trypt2
-            click_rect = Rect(click[0],click[1],1,1)
+    def check_num_buttons(self,
+                          click):  # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
+        if self.buttons:  # self.buttons only refers to the guessed code words on trypt2
+            click_rect = Rect(click[0], click[1], 1, 1)
             index = click_rect.collidelist([a.rect for a in self.buttons])
             if index != -1:
                 self.word_to_move = index
             else:
                 self.word_to_move = None
-
-
-
-

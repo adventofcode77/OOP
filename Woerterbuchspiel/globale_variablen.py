@@ -48,6 +48,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         list_of_lists = []
         while len(alist) < num_parts:
             alist += ["..."]
+        if num_parts == 0: num_parts = 1
         advancement = (len(alist) // num_parts)
         if advancement == 0:
             advancement = 1

@@ -85,15 +85,16 @@ class Gameloop():
                     self.wait = True # without self.wait, the loop doesn't lead to game_over
                     self.new_game = True
                 self.info.blit_loop()
-            else: #
+            else: # wenn der Loop pausiert ist
                 if self.click:  # scale the mouseclick coordinates back to the original screen size
-                    click_in_header = self.info.scale_click(self.click, self.info.screen_copy, self.info.header)
-                    self.info.check_num_buttons(click_in_header)
+                    #click_in_header = self.info.scale_click(self.click, self.info.screen_copy, self.info.header)
+                    #self.info.check_num_buttons(click_in_header)
                     self.click = self.info.scale_click(self.click, self.info.screen_copy,
                                                        self.info.screen_via_display_set_mode)
                     x, y = self.click
-                    x -= self.info.end_first_screen_part  # this offset is produced by the def of end_first_screen_part
                     self.info.check_num_buttons((x, y))
+                    x -= self.info.end_first_screen_part  # this offset is produced by the def of end_first_screen_part
+
                 self.info.desk(self.click)
                 self.click = False
                 # GEWINNVORAUSSETZUNG
