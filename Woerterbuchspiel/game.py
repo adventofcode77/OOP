@@ -1,6 +1,7 @@
 import random
 
 import pygame as pg
+import random
 from pygame import *
 
 from Woerterbuchspiel import globale_variablen
@@ -309,12 +310,12 @@ class Game(globale_variablen.Settings):
                 circle_width = 2
                 if syl.visible:
                     if syl.tuple in [s.tuple for s in self.woerter.code_syls]:
-                        syl.rgb = self.blink(self.fps*2, syl, self.yellow)
+                        syl.rgb = self.blink(self.fps*2, syl, self.yellow) # das erste Argument ist die Dauer des Blinkens
                         syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
-                        circle_width = 2 + (self.step_fps // self.fps * 2) * 2 # width goes up and down with the color changes
+                        circle_width = int(2 + (self.step_fps // self.fps * 2) * 2) # width goes up and down with the color changes
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                     draw.circle(self.screen_copy,syl.rgb,syl.rect.center,syl.rect.w,width=circle_width)
-                elif syl.picked:
+                elif syl.picked: # picked ist eine zahl zwischen 0 und self.fps
                     draw.circle(self.screen_copy, syl.rgb, syl.new_spot_rect.center, syl.rect.w // 2, width=syl.picked)
                     draw.circle(self.screen_copy, syl.rgb, syl.ghost_rect.center, syl.rect.w, width=syl.picked)
                     #TODO 'NoneType' bug: object has no attribute 'center' sometime after loop direction reversal
@@ -343,6 +344,7 @@ class Game(globale_variablen.Settings):
                 self.start_syls_cut_at = len(self.syls) - 1
 
     def find_complete_syls(self, syl_tuples, words_tuples): # Findet ein kompletes Code-Wort in den gesammelten Code-Silben
+        random.shuffle(words_tuples) # sodass die reihenfolge der blinkenden gesammelten code woerter zufaellig ist
         try:
             nxt = next(iter([set for set in words_tuples if [t for t in set if t in syl_tuples] == [t for t in set]])) # ergibt eine Liste aus Tuples
             return nxt
