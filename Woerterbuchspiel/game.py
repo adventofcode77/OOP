@@ -427,8 +427,13 @@ class Game(globale_variablen.Settings):
                           click):  # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
         if self.buttons:  # self.buttons only refers to the guessed code words on trypt2
             click_rect = Rect(click[0], click[1], 1, 1)
-            index = click_rect.collidelist([a.rect for a in self.buttons])
+            index = click_rect.collidelist([a.rect for a in self.buttons]) -1
+            # das "-1" kompensiert dafür, dass der erste object im self.buttons ("NEU>>>") nicht berücksichtigt wird
             if index != -1:
+                try:
+                    print("index is",index,"word at this index is",self.guessed_code_words[index].name)
+                except:
+                    print("no index",index,". len guessed words: ",len(self.guessed_code_words))
                 self.word_to_move = index
             else:
                 self.word_to_move = None
