@@ -10,19 +10,25 @@ class Main:
     file_paths = ['/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'] # XML FILE AUS WIKTIONARY https://dumps.wikimedia.org/dewiktionary/20210501/
     code_satz = ["Das Herz der verliebten Dame schlägt für den Bauern"] # CODE SATZ
     letztes_spiel_code = "000011001"
-    spielwoerter = woerterbuch.Woerterbuch(file_paths[0]).quick_get(50) # SPIELWOERTER
-    # try:
-    #     spielwoerter_file = open('Woerterbuchspiel/alex_spielwoerter.txt', 'wb')
-    #     pickle.dump(spielwoerter, spielwoerter_file)
-    #     spielwoerter_file.close()
-    # except:
-    #     print("spielwoerter versuch gescheitert")
+    woerterbuch_objekt = woerterbuch.Woerterbuch(file_paths[0])
+    # spielwoerter = woerterbuch.Woerterbuch(file_paths[0]).quick_get(50) # SPIELWOERTER
 
-    # with open('Woerterbuchspiel/alex_spielwoerter.txt', 'rb') as handle:
-    #     data = handle.read()
-    #
-    # alex_spielwoerter = pickle.loads(data)
-    # spielwoerter = alex_spielwoerter # woerterbuch.Woerterbuch(file_paths[0]).quick_get(50) # SPIELWOERTER
+    ''' CODE FÜR PASSIVE MODE:
+    erste_1000_word_lists = woerterbuch_objekt.list_of_word_lists
+
+    try:
+        file = open('Woerterbuchspiel/die_erste_1000_word_lists.txt', 'wb')
+        pickle.dump(erste_1000_word_lists, file)
+        file.close()
+    except:
+        print("main.py records versuch gescheitert")
+
+    '''
+    with open('Woerterbuchspiel/die_erste_1000_word_lists.txt', 'rb') as handle:
+        data = handle.read()
+    die_erste_1000_word_lists = pickle.loads(data)
+
+    spielwoerter = woerterbuch_objekt.quick_get(50, list_of_word_lists= die_erste_1000_word_lists)
 
 
     def __init__(self):

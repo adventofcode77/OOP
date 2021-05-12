@@ -410,10 +410,12 @@ class Game(globale_variablen.Settings):
                 else:
                     binary_list[
                         f'{dieses_code_wort}'] = f'{opposite}{"placeholder"}'  # wenn nein, ändert 1 zum 0 oder 0 zum 1
+                    code_number_at_this_index = opposite
             else:
                 ziffer = f'{i + 1}'
                 space_nach_ziffer = self.bigger_font.render(ziffer, True, self.black).get_rect().w
                 binary_list[ziffer] = f'{opposite} '  # die nicht-erratene woerter ergeben immer 0
+                code_number_at_this_index = opposite
             self.screen_copy.blit(self.bigger_font.render(f'{code_number_at_this_index}',True,self.cyan), (digit_identation,digits_line))
             digit_identation += space_nach_ziffer
         end_code_numbers = 2 * digits_line
@@ -429,7 +431,7 @@ class Game(globale_variablen.Settings):
             click_rect = Rect(click[0], click[1], 1, 1)
             index = click_rect.collidelist([a.rect for a in self.buttons]) -1
             # das "-1" kompensiert dafür, dass der erste object im self.buttons ("NEU>>>") nicht berücksichtigt wird
-            if index != -1:
+            if index != -1 and index != -2: # "-2" bedeutet keine Kollision und "-2" bedeutet das nicht zu berücksichtigen element "NEU>>>"
                 try:
                     print("index is",index,"word at this index is",self.guessed_code_words[index].name)
                 except:
