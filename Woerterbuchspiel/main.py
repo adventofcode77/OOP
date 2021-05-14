@@ -11,7 +11,7 @@ class Main:
     code_satz = ["Das Herz der verliebten Dame schlägt für den Bauern"] # CODE SATZ
     letztes_spiel_code = "000011001"
     woerterbuch_objekt = woerterbuch.Woerterbuch(file_paths[0])
-    # spielwoerter = woerterbuch.Woerterbuch(file_paths[0]).quick_get(50) # SPIELWOERTER
+    # spielwoerter = woerterbuch.Woerterbuch(file_paths[0]).quick_get(50) # SPIELWOERTER IN ACTIVE MODE
 
     ''' CODE FÜR PASSIVE MODE:
     erste_1000_word_lists = woerterbuch_objekt.list_of_word_lists

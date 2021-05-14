@@ -24,7 +24,7 @@ class Game(globale_variablen.Settings):
         self.change_color = True
         self.binary_code = binary_code
         self.code_satz = code_satz
-        self.output_code = "Dame schlägt Bauer"
+        self.output_code = "Dame schlägt Bauern"
         self.next_counter = 0
         self.test_next_counter = 0
         self.menu = menu.Menu(self)
@@ -387,7 +387,7 @@ class Game(globale_variablen.Settings):
         surface.fill(self.lila)
         self.blit_clickable_words(text, self.white, (0, self.down), screen=surface)
 
-    def ziffern_und_code_woerter(self): # TODO clicking on a code word currently moves the word on its right; combine the definitions underneath after clicking in the header
+    def ziffern_und_code_woerter(self): # TODO combine the definitions underneath after clicking in the header
         # if the header changes size, the subsurface may end up larger than the surface unless the function is called in the while loop
         # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
         self.screen_copy.fill(self.gray, Rect(0, 0, self.screenw, self.end_header))
@@ -431,11 +431,7 @@ class Game(globale_variablen.Settings):
             click_rect = Rect(click[0], click[1], 1, 1)
             index = click_rect.collidelist([a.rect for a in self.buttons]) -1
             # das "-1" kompensiert dafür, dass der erste object im self.buttons ("NEU>>>") nicht berücksichtigt wird
-            if index != -1 and index != -2: # "-2" bedeutet keine Kollision und "-2" bedeutet das nicht zu berücksichtigen element "NEU>>>"
-                try:
-                    print("index is",index,"word at this index is",self.guessed_code_words[index].name)
-                except:
-                    print("no index",index,". len guessed words: ",len(self.guessed_code_words))
+            if index != -1 and index != -2: # "-2" bedeutet keine Kollision und "-1" bedeutet das nicht zu berücksichtigen element "NEU>>>"
                 self.word_to_move = index
             else:
                 self.word_to_move = None
