@@ -35,10 +35,10 @@ class Main:
         self.newgame(Main.code_satz, Main.file_paths, Main.letztes_spiel_code, Main.spielwoerter)
 
     @staticmethod
-    def newgame(code_satz, file_paths, letztes_spiel_code, dict):
+    def newgame(code_satz, file_paths, letztes_spiel_code, spielwoerter):
         pg.init()
         #print(pg.font.get_fonts())
-        gameloop_ = gameloop.Gameloop(code_satz, file_paths, letztes_spiel_code, dict)
+        gameloop_ = gameloop.Gameloop(code_satz, file_paths, letztes_spiel_code, spielwoerter)
         gameloop_.mainloop()
         # code = game1.output_code
 
