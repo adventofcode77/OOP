@@ -397,16 +397,23 @@ class Game(globale_variablen.Settings):
 
         for row_index in range(0, self.h):
             for column_index in range(0, len_lst_syls):  # making the left columns # iterate over rows
-                syl_index_at_intersection_of_row_and_column = column_index * self.h + row_index
-                if syl_index_at_intersection_of_row_and_column >= len_lst_syls:
+                syl = self.get_syl(column_index,row_index,lst_syls, self.h)
+                if syl is None:
                     break
-                syl = lst_syls[syl_index_at_intersection_of_row_and_column]
                 syl.rect.x = x_position(column_index)
                 if blinking_word and syl.tuple in blinking_word:
                     syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.cyan)
                     syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
                 syl.rect.y = self.top + row_index * ((self.screenh - self.top) // self.h)
                 self.screen_copy.blit(syl.image, syl.rect)
+
+    def get_syl(self,column_index,row_index,lst_syls, elements_in_column):
+        len_lst_syls = len(lst_syls)
+        syl_index_at_intersection_of_row_and_column = column_index * elements_in_column + row_index
+        if syl_index_at_intersection_of_row_and_column >= len_lst_syls:
+            return None
+        syl = lst_syls[syl_index_at_intersection_of_row_and_column]
+        return syl
 
     def game_over(self, text, surface=None):
         rect = Rect(0.33 * self.screenw, 0.33 * self.screenh, 0.33 * self.screenw, 0.33 * self.screenh)
