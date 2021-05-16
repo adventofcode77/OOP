@@ -372,11 +372,7 @@ class Game(globale_variablen.Settings):
         except:
             return None
 
-    def blit_loop_one_side(self, bool_which_list, lst_syls, blinking_syl, x_position, syl_tuples, words_tuples):
-        for i in range(0, self.h):
-            self.blit_tript(i, bool_which_list,lst_syls, blinking_syl, x_position, syl_tuples, words_tuples) # starts from width 0 for words 1-8 if ln is 8
-
-    def blit_tript(self, i, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
+    def blit_loop_one_side(self, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
         if (not blinking_word) or blinking_word[
             0] not in syl_tuples:  # falls zumindest eine tuple vom blinking word gelöscht wurde
             # Diese if Klause versucht, nur eine Silbe pro Sektor zum blinken zu bringen. Jedoch blinken im Moment mehrere...
@@ -385,31 +381,32 @@ class Game(globale_variablen.Settings):
                 self.nw = blinking_word  # self.nw ist die gespeicherte blinkende Silbe auf dem rechten Sektor
             else:
                 self.gw = blinking_word  # self.gw ist die gespeicherte blinkende Silbe auf dem linken Sektor
-        ln = len(lst_syls)
+        len_lst_syls = len(lst_syls)
 
         # what's unusual: the loop has jumps
         # 3,13,23
 
         # usual loop: 0,1,2,3 ...
         # -> index is there
-        # -> iterator: index * h + i
+        # -> syl_index_at_intersection_of_row_and_column: index * h + i
 
 
         # start with i
         # go each h elements because in each column we have h elements
-        # calculate the column index by iterator//h -> 0,1,2,3
+        # calculate the column index by syl_index_at_intersection_of_row_and_column//h -> 0,1,2,3
 
-        for rowIndex in range(0, ln):  # making the left columns # iterate over rows
-            iterator = rowIndex * self.h + i
-            if iterator >= ln:
-                break
-            syl = lst_syls[iterator]
-            syl.rect.x = x_position(rowIndex)
-            if blinking_word and syl.tuple in blinking_word:
-                syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.cyan)
-                syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
-            syl.rect.y = self.top + i * ((self.screenh - self.top) // self.h)
-            self.screen_copy.blit(syl.image, syl.rect)
+        for row_index in range(0, self.h):
+            for column_index in range(0, len_lst_syls):  # making the left columns # iterate over rows
+                syl_index_at_intersection_of_row_and_column = column_index * self.h + row_index
+                if syl_index_at_intersection_of_row_and_column >= len_lst_syls:
+                    break
+                syl = lst_syls[syl_index_at_intersection_of_row_and_column]
+                syl.rect.x = x_position(column_index)
+                if blinking_word and syl.tuple in blinking_word:
+                    syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.cyan)
+                    syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
+                syl.rect.y = self.top + row_index * ((self.screenh - self.top) // self.h)
+                self.screen_copy.blit(syl.image, syl.rect)
 
     def game_over(self, text, surface=None):
         rect = Rect(0.33 * self.screenw, 0.33 * self.screenh, 0.33 * self.screenw, 0.33 * self.screenh)
