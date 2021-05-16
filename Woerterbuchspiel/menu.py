@@ -23,7 +23,7 @@ class Menu:
                                                 (self.info.midtop[0],
                                                  self.info.midtop[1] + self.info.down * 2),
                                                 afont=self.info.smaller_font)
-        self.info.screen_transfer()
+        self.info.resize_screen()
         return next_counter
 
     def list_lists_instructions(self):

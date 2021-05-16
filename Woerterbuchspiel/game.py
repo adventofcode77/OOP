@@ -287,13 +287,15 @@ class Game(globale_variablen.Settings):
         return to_return  # (now syls should always be bigger than this cut)
 
     def blit_loop(self):
+        self.blit_loop_middle()
+        self.blit_loop_left()
+        self.blit_loop_right()
+        self.adjust_loop_window()
+        self.screen_copy.blit(self.spieler.image, self.spieler.rect)
+        self.resize_screen()
+
+    def blit_loop_middle(self):
         # variablen
-        gold = self.gold_syls[:]
-        gold_tuples = [syl.tuple for syl in gold]
-        code_tuples = [w.tuples for w in self.woerter.code_words]
-        lil = self.lila_syls[:]
-        lila_tuples = [syl.tuple for syl in lil]
-        words_tuples = [word.tuples for word in self.words]
         self.screen_copy.fill(self.gray)
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // self.h) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * ((len(self.lila_syls) // self.h) + 1)
@@ -325,15 +327,27 @@ class Game(globale_variablen.Settings):
                                  i] + self.syl_pos_change  # syl moves to the current ratio of start_pos/movement_window
                 syl.rect_in_circle.center = syl.rect.center
                 syl.rect_copy = syl.rect.copy()  # why does this leave rect in place
-            self.blit_tript(i, True, lil, self.nw,
-                            lambda iterator: self.screenw - ((1 + (iterator // self.h)) * (self.screenw // 10)),
-                            lila_tuples, words_tuples)
-            # Die lambda funktion berechnet die X koordinate der silben. Sie nimmt ein parameter namens "iterator" (in der definition von blit_trypt() )
-            self.blit_tript(i, False, gold, self.gw, lambda iterator: (iterator // self.h) * (self.screenw // 10),
-                            gold_tuples, code_tuples)  # starts from width 0 for words 1-8 if ln is 8
-        self.adjust_loop_window()
-        self.screen_copy.blit(self.spieler.image, self.spieler.rect)
-        self.screen_transfer()
+
+
+
+    def blit_loop_right(self):
+        lil = self.lila_syls[:]
+        columnWidth = self.screenw // 10
+        lila_tuples = [syl.tuple for syl in lil]
+        non_code_tuples = [word.tuples for word in self.words]
+
+        # Die lambda funktion berechnet die X koordinate der silben. Sie nimmt ein parameter namens "rowIndex" (in der definition von blit_trypt() )
+        self.blit_loop_one_side(True, lil, lambda rowIndex: self.screenw - columnWidth - rowIndex * columnWidth, lila_tuples, non_code_tuples)
+
+    def blit_loop_left(self):
+        gold = self.gold_syls[:]
+        columnWidth = self.screenw // 10
+        gold_tuples = [syl.tuple for syl in gold]
+        code_tuples = [w.tuples for w in self.woerter.code_words]
+
+        self.blit_loop_one_side(False, gold, lambda rowIndex: rowIndex * columnWidth, gold_tuples, code_tuples)
+
+
 
     def adjust_loop_window(self):  # Verwaltet den laufenden Loop aus runterfallenden Silben
         self.syl_pos_change += self.syl_speed_change  #
@@ -358,6 +372,10 @@ class Game(globale_variablen.Settings):
         except:
             return None
 
+    def blit_loop_one_side(self, lst_syls, lil, x_position, syl_tuples, words_tuples):
+        for i in range(0, self.h):
+            self.blit_tript(i, lst_syls, lil, self.nw, x_position, syl_tuples, words_tuples) # starts from width 0 for words 1-8 if ln is 8
+
     def blit_tript(self, i, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
         if (not blinking_word) or blinking_word[
             0] not in syl_tuples:  # falls zumindest eine tuple vom blinking word gelöscht wurde
@@ -368,9 +386,25 @@ class Game(globale_variablen.Settings):
             else:
                 self.gw = blinking_word  # self.gw ist die gespeicherte blinkende Silbe auf dem linken Sektor
         ln = len(lst_syls)
-        for iterator in range(i, ln, self.h):  # making the left columns
+
+        # what's unusual: the loop has jumps
+        # 3,13,23
+
+        # usual loop: 0,1,2,3 ...
+        # -> index is there
+        # -> iterator: index * h + i
+
+
+        # start with i
+        # go each h elements because in each column we have h elements
+        # calculate the column index by iterator//h -> 0,1,2,3
+
+        for rowIndex in range(0, ln):  # making the left columns # iterate over rows
+            iterator = rowIndex * self.h + i
+            if iterator >= ln:
+                break
             syl = lst_syls[iterator]
-            syl.rect.x = x_position(iterator)
+            syl.rect.x = x_position(rowIndex)
             if blinking_word and syl.tuple in blinking_word:
                 syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.cyan)
                 syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))

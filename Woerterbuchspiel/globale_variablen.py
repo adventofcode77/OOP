@@ -78,7 +78,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh
         return (x, y)
 
-    def screen_transfer(self, run=True):
+    def resize_screen(self, run=True):
         if run:
             self.dauer()  # should be in screen_transfer() in order to appear in every frame
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy,

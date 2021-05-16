@@ -28,15 +28,20 @@ class Gameloop():
             if time_left < 0:
                 self.lost = True
                 self.wait = True # warten, bis der Spieler Space druckt
-            self.info.screen_transfer()  # resizes the last iteration's image to the current screen size and draws it
+            self.info.resize_screen()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
             if self.info.blink_counter:
                 self.info.blink_counter += 1
             # EVENT LOOP
             for e in event.get():  # how to clear events?
+                '''switch e.type
+                case QUIT:
+                    quit();
+                case KEYDOWN:
+                    ..'''
                 if e.type == QUIT:
                     quit()
-                elif e.type == KEYDOWN:  # enum instead of if/else? dict with states and functions
+                elif e.type == KEYDOWN:
                     ln = len(self.info.guessed_code_words)
                     if e.key == K_0:
                         self.new_start()
