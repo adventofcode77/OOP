@@ -397,7 +397,8 @@ class Game(globale_variablen.Settings):
 
         for row_index in range(0, self.h):
             for column_index in range(0, len_lst_syls):  # making the left columns # iterate over rows
-                syl = self.get_syl(column_index,row_index,lst_syls, self.h)
+
+                syl = Game.get_syl(column_index,row_index,lst_syls, self.h)
                 if syl is None:
                     break
                 syl.rect.x = x_position(column_index)
@@ -407,7 +408,8 @@ class Game(globale_variablen.Settings):
                 syl.rect.y = self.top + row_index * ((self.screenh - self.top) // self.h)
                 self.screen_copy.blit(syl.image, syl.rect)
 
-    def get_syl(self,column_index,row_index,lst_syls, elements_in_column):
+    @classmethod
+    def get_syl(cls,column_index,row_index,lst_syls, elements_in_column):
         len_lst_syls = len(lst_syls)
         syl_index_at_intersection_of_row_and_column = column_index * elements_in_column + row_index
         if syl_index_at_intersection_of_row_and_column >= len_lst_syls:
