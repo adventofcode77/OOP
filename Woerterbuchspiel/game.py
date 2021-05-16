@@ -337,7 +337,7 @@ class Game(globale_variablen.Settings):
         non_code_tuples = [word.tuples for word in self.words]
 
         # Die lambda funktion berechnet die X koordinate der silben. Sie nimmt ein parameter namens "rowIndex" (in der definition von blit_trypt() )
-        self.blit_loop_one_side(True, lil, lambda rowIndex: self.screenw - columnWidth - rowIndex * columnWidth, lila_tuples, non_code_tuples)
+        self.blit_loop_one_side(True, lil, self.nw,lambda rowIndex: self.screenw - columnWidth - rowIndex * columnWidth, lila_tuples, non_code_tuples)
 
     def blit_loop_left(self):
         gold = self.gold_syls[:]
@@ -345,7 +345,7 @@ class Game(globale_variablen.Settings):
         gold_tuples = [syl.tuple for syl in gold]
         code_tuples = [w.tuples for w in self.woerter.code_words]
 
-        self.blit_loop_one_side(False, gold, lambda rowIndex: rowIndex * columnWidth, gold_tuples, code_tuples)
+        self.blit_loop_one_side(False, gold, self.gw,lambda rowIndex: rowIndex * columnWidth, gold_tuples, code_tuples)
 
 
 
@@ -372,9 +372,9 @@ class Game(globale_variablen.Settings):
         except:
             return None
 
-    def blit_loop_one_side(self, lst_syls, lil, x_position, syl_tuples, words_tuples):
+    def blit_loop_one_side(self, bool_which_list, lst_syls, blinking_syl, x_position, syl_tuples, words_tuples):
         for i in range(0, self.h):
-            self.blit_tript(i, lst_syls, lil, self.nw, x_position, syl_tuples, words_tuples) # starts from width 0 for words 1-8 if ln is 8
+            self.blit_tript(i, bool_which_list,lst_syls, blinking_syl, x_position, syl_tuples, words_tuples) # starts from width 0 for words 1-8 if ln is 8
 
     def blit_tript(self, i, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
         if (not blinking_word) or blinking_word[
