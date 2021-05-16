@@ -397,7 +397,6 @@ class Game(globale_variablen.Settings):
 
         for row_index in range(0, self.h):
             for column_index in range(0, len_lst_syls):  # making the left columns # iterate over rows
-
                 syl = Game.get_syl(column_index,row_index,lst_syls, self.h)
                 if syl is None:
                     break
@@ -436,6 +435,9 @@ class Game(globale_variablen.Settings):
         self.screen_copy.blit(self.bigger_font.render(" ALT >>>> ", True, self.cyan), (0, digits_line))
         list_code_satz = self.woerter.code_satz.split()
         digit_identation = self.bigger_font.render(" ALT >>>> ", True, self.black).get_rect().w
+
+        the_calculation_result = []
+
         for i in range(len(list_code_satz)):  # füllt den Woerterbuch auf
             code_number_at_this_index = list(self.binary_code)[i]
             opposite = 0 if code_number_at_this_index == '1' else 1
@@ -456,8 +458,15 @@ class Game(globale_variablen.Settings):
                 space_nach_ziffer = self.bigger_font.render(ziffer, True, self.black).get_rect().w
                 binary_list[ziffer] = f'{opposite} '  # die nicht-erratene woerter ergeben immer 0
                 code_number_at_this_index = opposite
-            self.screen_copy.blit(self.bigger_font.render(f'{code_number_at_this_index}',True,self.cyan), (digit_identation,digits_line))
+
+            the_calculation_result.append((code_number_at_this_index, digit_identation))
+
             digit_identation += space_nach_ziffer
+
+        for (code_number, indentation) in the_calculation_result:
+            self.screen_copy.blit(self.bigger_font.render(f'{code_number}',True,self.cyan), (indentation,digits_line))
+
+
         end_code_numbers = 2 * digits_line
         end_header = self.blit_clickable_words(
             [a for a in binary_list.keys() if a not in [str(b) for b in range(0, 1000)]], self.yellow,
