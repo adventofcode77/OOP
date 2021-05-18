@@ -9,7 +9,7 @@ import math
 class Settings:  # there could be a function converting size/location numbers based on screen size
     def __init__(self):
         self.top = 0
-        self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE | DOUBLEBUF)
+        self.screen_via_display_set_mode = pg.display.set_mode((480, 270), RESIZABLE | DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         self.screen_copy = pg.transform.scale(self.screen_copy, (1920, 1080))
         self.screenw, self.screenh = self.screen_copy.get_rect().size
