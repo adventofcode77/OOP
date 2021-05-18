@@ -15,7 +15,6 @@ from Woerterbuchspiel import word
 class Game(globale_variablen.Settings):
     def __init__(self, code_satz, file_paths, binary_code, dict):
         super().__init__()
-        pg.font.init()
         self.radiuses = []
         self.blink_counter = 0
         self.top = 0

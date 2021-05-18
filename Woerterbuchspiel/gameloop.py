@@ -25,9 +25,7 @@ class Gameloop():
         self.info.ziffern_und_code_woerter()  # called here once to create self.info.top so that picked syls get painted starting from there
         while True:  # TODO: make more object-oriented (with classes producing the state of one object each?)
             time_left = self.info.dauer()
-            if time_left < 0:
-                self.lost = True
-                self.wait = True # warten, bis der Spieler Space druckt
+            self.check_time_left(time_left)
             self.info.resize_screen()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
             if self.info.blink_counter:
@@ -108,6 +106,11 @@ class Gameloop():
                 if " ".join([word.name for word in self.info.guessed_code_words]) == self.info.woerter.code_satz:
                     self.won = True
                     self.wait = True
+
+    def check_time_left(self, time_left):
+        if time_left < 0:
+            self.lost = True
+            self.wait = True  # warten, bis der Spieler Space druckt
 
     def new_start(self): # Startet das ganze Spiel von neu, aber behaltet die Spielwoerter aus dem letzten
         self.info = game.Game(self.input_codes, self.file_paths, self.binary_code, self.spielwoerter)

@@ -31,6 +31,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.green = (0, 205, 0)
         self.red = (255, 0, 0)
         self.fps = 45  # keine konstante geschwindigkeit
+        pg.font.init()
         self.default_font = font.SysFont(None, self.screen_surface // 20)  # make one rendering function? # try excepts
         self.default_space_w = self.default_font.render(" ", True, (0, 0, 0)).get_rect().w
         self.bigger_font = font.SysFont(None, self.screen_surface // 17)
