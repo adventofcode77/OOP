@@ -11,8 +11,8 @@ class TestGameloop(TestCase):
         self.font = self.globale_variablen.default_font
         file_paths = [
             '/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml']  # XML FILE AUS WIKTIONARY https://dumps.wikimedia.org/dewiktionary/20210501/
-        code_satz = ["Das Herz der verliebten Dame schlägt für den Bauern"]  # CODE SATZ
-        letztes_spiel_code = "000011001"
+        code_satz = ["Das Herz der Dame im Turm schlägt für den Bauern"]  # CODE SATZ
+        letztes_spiel_code = "0000011001"
         woerterbuch_objekt = woerterbuch.Woerterbuch(file_paths[0])
 
         with open('die_erste_1000_word_lists.txt', 'rb') as handle:
@@ -30,8 +30,7 @@ class TestGameloop(TestCase):
             self.f.write(f'{message} \n')
 
     def reset_testlog(self):
-        with open('testlog', 'a') as self.f:
-            pass
+        open('testlog', 'w').close()
 
     def test_mainloop_wait_is_initially_false(self):
         self.append_to_testlog(" in test_mainloop_wait_is_initially_false")

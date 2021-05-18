@@ -1,27 +1,10 @@
-Testen,Testen,Testen,Testen,in test_mainloop_wait_is_initially_falsein test_negative_time_left_changes_lost_to_trueself.gameloop_.clock.get_time() 
-in test_mainloop_wait_is_initially_falseself.gameloop_.clock.get_time() 
-in test_negative_time_left_changes_lost_to_trueself.gameloop_.clock.get_time() 
-in test_mainloop_wait_is_initially_false 
-self.gameloop_.clock.get_time() 
-in test_negative_time_left_changes_lost_to_true 
-0 
-in test_mainloop_wait_is_initially_false 
-0 
-in test_negative_time_left_changes_lost_to_true 
-10:15:53 
-in test_mainloop_wait_is_initially_false 
-10:15:53 
-in test_negative_time_left_changes_lost_to_true 
-10:18:33 
-in test_mainloop_wait_is_initially_false 
-10:18:34 
-in test_negative_time_left_changes_lost_to_true 
-10:37:07 
-f{message} 
-10:37:07 
-f{message} 
-10:37:38 
+10:44:06 
  in test_mainloop_wait_is_initially_false 
-10:37:38 
+10:44:06 
+in test_negative_time_left_changes_lost_to_true 
+ 
+11:10:25 
+ in test_mainloop_wait_is_initially_false 
+11:10:25 
 in test_negative_time_left_changes_lost_to_true 
  

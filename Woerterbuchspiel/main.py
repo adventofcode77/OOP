@@ -8,8 +8,8 @@ from Woerterbuchspiel import woerterbuch
 class Main:
     #TODO ? make a script that downloads the wiktionary dump/imports the parser and configures their paths
     file_paths = ['/Users/ellie/Downloads/dewiktionary-20210101-pages-articles-multistream-2.xml'] # XML FILE AUS WIKTIONARY https://dumps.wikimedia.org/dewiktionary/20210501/
-    code_satz = ["Das Herz der im Turm Gefangenen schlägt für den Bauern"] # CODE SATZ
-    letztes_spiel_code = "000011001"
+    code_satz = ["Das Herz der Dame im Turm schlägt für den Bauern"] # CODE SATZ
+    letztes_spiel_code = "0000011001"
     woerterbuch_objekt = woerterbuch.Woerterbuch(file_paths[0])
     # spielwoerter = woerterbuch.Woerterbuch(file_paths[0]).quick_get(50) # SPIELWOERTER IN ACTIVE MODE
 
