@@ -62,6 +62,7 @@ class Game(globale_variablen.Settings):
         self.word_to_move = None
         self.step_fps = 1
 
+
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
         self.tript2.fill(self.black)
         self.ziffern_und_code_woerter()

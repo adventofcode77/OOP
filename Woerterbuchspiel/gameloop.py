@@ -17,15 +17,17 @@ class Gameloop():
         self.menu = True
         self.click = False
         self.binary_click = False
+        self.time_left = self.info.dauer()
 
         self.clock = pg.time.Clock()  # speed depends on cpu
+
+
 
 
     def mainloop(self):
         self.info.ziffern_und_code_woerter()  # called here once to create self.info.top so that picked syls get painted starting from there
         while True:  # TODO: make more object-oriented (with classes producing the state of one object each?)
-            time_left = self.info.dauer()
-            self.check_time_left(time_left)
+            self.check_time_left(self.time_left)
             self.info.resize_screen()  # resizes the last iteration's image to the current screen size and draws it
             self.clock.tick(self.info.fps)  # one loop
             if self.info.blink_counter:
@@ -71,6 +73,7 @@ class Gameloop():
             # AFTER GOING THROUGH THE EVENTS LIST
             # AFTER A NEW GAME HAS STARTED
             if self.wait:
+                self.info.anleitung_gelesen = False
                 text = f"Gewonnen! Dein Code ist: {self.info.output_code.upper()}." if self.won \
                     else "VERLOREN!" if self.lost else "NEU STARTEN!"
                 text += " Drucke SPACE, um fortzufahren."
@@ -81,6 +84,7 @@ class Gameloop():
                 next = self.info.menu.tutorial(self.info.next_counter)
                 self.info.next_counter = next
             elif self.main_loop:
+                self.info.anleitung_gelesen = True
                 self.info.spieler.act(self.info.tript2.get_rect())  # PLAYER MOVES ONCE A LOOP
                 self.info.spieler.pick([syl for syl in self.info.syls if syl.visible])
                 # CHECKING FOR ENOUGH SPACE ON THE SCREEN
@@ -107,7 +111,10 @@ class Gameloop():
                     self.won = True
                     self.wait = True
 
-    def check_time_left(self, time_left):
+
+    def check_time_left(self, time_left=None):
+        if not time_left:
+            time_left = self.time_left
         if time_left < 0:
             self.lost = True
             self.wait = True  # warten, bis der Spieler Space druckt

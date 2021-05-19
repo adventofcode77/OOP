@@ -40,6 +40,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.space = self.font_spacing(self.default_font)
         self.invisible = self.default_font.render("o", False, self.black)
         # self.dauer_img = self.smaller_font.render(f'{5}:{0}',True,self.white)
+        self.anleitung_gelesen = False
 
     def font_spacing(self, font):
         img = font.render("A|&%)<QY", True, self.black)
@@ -80,7 +81,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         return (x, y)
 
     def resize_screen(self, run=True):
-        if run:
+        if run and self.anleitung_gelesen:
             self.dauer()  # should be in screen_transfer() in order to appear in every frame
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy,
                                                        self.screen_via_display_set_mode.get_rect().size)

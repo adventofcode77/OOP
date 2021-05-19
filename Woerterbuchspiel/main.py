@@ -24,7 +24,7 @@ class Main:
         print("main.py records versuch gescheitert")
 
     '''
-    with open('die_erste_1000_word_lists.txt', 'rb') as handle:
+    with open('Woerterbuchspiel/die_erste_1000_word_lists.txt', 'rb') as handle:
         data = handle.read()
     die_erste_1000_word_lists = pickle.loads(data)
 
