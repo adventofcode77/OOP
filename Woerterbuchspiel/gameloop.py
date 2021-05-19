@@ -17,9 +17,9 @@ class Gameloop():
         self.menu = True
         self.click = False
         self.binary_click = False
-        self.time_left = self.info.dauer()
+        self.time_left = None
 
-        self.clock = pg.time.Clock()  # speed depends on cpu
+        self.clock = pg.time.Clock()  # speed depends on cpu?
 
 
 
@@ -27,9 +27,8 @@ class Gameloop():
     def mainloop(self):
         self.info.ziffern_und_code_woerter()  # called here once to create self.info.top so that picked syls get painted starting from there
         while True:  # TODO: make more object-oriented (with classes producing the state of one object each?)
-            self.check_time_left(self.time_left)
+            self.clock.tick(self.info.fps)  # one loop?
             self.info.resize_screen()  # resizes the last iteration's image to the current screen size and draws it
-            self.clock.tick(self.info.fps)  # one loop
             if self.info.blink_counter:
                 self.info.blink_counter += 1
             # EVENT LOOP
@@ -58,6 +57,8 @@ class Gameloop():
                             self.main_loop = False
                         else:
                             self.menu = False
+                            if not self.info.start_ticks:
+                                self.info.start_ticks = time.get_ticks()
                             self.info.next_counter = 0
                             self.main_loop = True
                             for item in self.info.spieler.my_silben:
@@ -73,7 +74,6 @@ class Gameloop():
             # AFTER GOING THROUGH THE EVENTS LIST
             # AFTER A NEW GAME HAS STARTED
             if self.wait:
-                self.info.anleitung_gelesen = False
                 text = f"Gewonnen! Dein Code ist: {self.info.output_code.upper()}." if self.won \
                     else "VERLOREN!" if self.lost else "NEU STARTEN!"
                 text += " Drucke SPACE, um fortzufahren."
@@ -81,10 +81,12 @@ class Gameloop():
                 continue
             # BEFORE THE GAMELOOP HAS STARTED
             elif self.menu:
+                self.info.nicht_in_bewegung = True
                 next = self.info.menu.tutorial(self.info.next_counter)
                 self.info.next_counter = next
             elif self.main_loop:
-                self.info.anleitung_gelesen = True
+                self.info.nicht_in_bewegung = False
+                self.check_time_left(self.time_left)
                 self.info.spieler.act(self.info.tript2.get_rect())  # PLAYER MOVES ONCE A LOOP
                 self.info.spieler.pick([syl for syl in self.info.syls if syl.visible])
                 # CHECKING FOR ENOUGH SPACE ON THE SCREEN
@@ -114,13 +116,15 @@ class Gameloop():
 
     def check_time_left(self, time_left=None):
         if not time_left:
-            time_left = self.time_left
+            time_left = self.info.dauer()
         if time_left < 0:
             self.lost = True
             self.wait = True  # warten, bis der Spieler Space druckt
 
     def new_start(self): # Startet das ganze Spiel von neu, aber behaltet die Spielwoerter aus dem letzten
+        start_ticks = self.info.start_ticks # transfer the timer status  to the new game
         self.info = game.Game(self.input_codes, self.file_paths, self.binary_code, self.spielwoerter)
+        self.info.start_ticks = start_ticks
         self.main_loop = False
         self.menu = True
         self.click = False

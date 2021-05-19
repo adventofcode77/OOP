@@ -12,6 +12,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.screen_via_display_set_mode = pg.display.set_mode((480, 270), RESIZABLE | DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         self.screen_copy = pg.transform.scale(self.screen_copy, (1920, 1080))
+        self.screen_rect = self.screen_copy.get_rect()
         self.screenw, self.screenh = self.screen_copy.get_rect().size
         self.midtop = self.screen_copy.get_rect().midtop
         self.screen_surface = int(math.sqrt(self.screenw * self.screenh))
@@ -40,7 +41,8 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.space = self.font_spacing(self.default_font)
         self.invisible = self.default_font.render("o", False, self.black)
         # self.dauer_img = self.smaller_font.render(f'{5}:{0}',True,self.white)
-        self.anleitung_gelesen = False
+        self.nicht_in_bewegung = True
+        self.start_ticks = None
 
     def font_spacing(self, font):
         img = font.render("A|&%)<QY", True, self.black)
@@ -81,7 +83,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         return (x, y)
 
     def resize_screen(self, run=True):
-        if run and self.anleitung_gelesen:
+        if run and not self.nicht_in_bewegung:
             self.dauer()  # should be in screen_transfer() in order to appear in every frame
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy,
                                                        self.screen_via_display_set_mode.get_rect().size)
@@ -89,12 +91,14 @@ class Settings:  # there could be a function converting size/location numbers ba
         pg.display.flip()
 
     def dauer(self): # change it so it starts counting when user is done with the instructions
-        dauer = 15 * 60000 - time.get_ticks()
+        dauer = 15 * 60000 + self.start_ticks - time.get_ticks()
         seconds = int(dauer / 1000 % 60)
         minutes = int(dauer / 60000 % 24)
         dauer_text = f'{minutes}:{seconds}'
         dauer_img = self.default_font.render(dauer_text, True, self.white)
-        self.screen_copy.blit(dauer_img, (
-            self.screen_copy.get_rect().w - dauer_img.get_rect().w,
-            self.screen_copy.get_rect().h - dauer_img.get_rect().h))
+        dauer_rect = dauer_img.get_rect()
+        dauer_rect.x = self.screen_rect.w - dauer_rect.w
+        dauer_rect.y = self.screen_rect.h - dauer_rect.h
+        self.screen_copy.fill(self.gray,dauer_rect)
+        self.screen_copy.blit(dauer_img, dauer_rect)
         return dauer
