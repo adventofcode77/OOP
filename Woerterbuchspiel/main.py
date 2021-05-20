@@ -54,17 +54,18 @@ class Main:
         '''
         Hier wird ein Objekt aus der Klasse Gameloop erzeugt.
         Danach ruft dieses Objekt die mainloop() Methode, die das Spiel zum Laufen bringt.
-        :param code_satz: Main.code_satz
-        :param file_paths: Main.file_paths
-        :param letztes_spiel_code: Main.letztes_spiel_code
+        :param code_satz: Main.code_satz (Das Code-Satz, das die Aufgabe des Spielers ist, zu erraten)
+        :param file_paths: Main.file_paths (Das ganze Woerterbuch im XML Format;
+        wird momentan durch die variable "spielwoerter" ersaetzt)
+        :param letztes_spiel_code: Main.letztes_spiel_code (Das uebernommene Code aus dem letzten Spiel)
         :param spielwoerter: Main.spielwoerter
-        :return:
+        :return: None
         '''
         pg.init()
         #print(pg.font.get_fonts())
         gameloop_ = gameloop.Gameloop(code_satz, file_paths, letztes_spiel_code, spielwoerter)
         gameloop_.mainloop()
-        print("Uebergabe Code:", gameloop_.info.output_code)
+        print("Uebergabe Code:", gameloop_.game_objekt.output_code)
 
 if __name__ == '__main__':
      Main()

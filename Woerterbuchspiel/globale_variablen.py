@@ -7,6 +7,10 @@ import math
 
 
 class Settings:  # there could be a function converting size/location numbers based on screen size
+    '''
+    Diese Klasse bereitet allgemeine Variablen und Methoden, die in den anderen Klassen
+    mithilfe von dem Game-Objekt (das diese Klasse vererbt) benutzt werden
+    '''
     def __init__(self):
         self.top = 0
         self.screen_via_display_set_mode = pg.display.set_mode((480, 270), RESIZABLE | DOUBLEBUF)

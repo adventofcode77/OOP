@@ -31,6 +31,10 @@ def iterate(record):
 
 
 class Woerterbuch:
+    '''
+    Diese Klasse erzeugt (wenn aktiviert)
+    eine Liste aus Spielwoerter und ihre Silben und Bedeutungen
+    '''
     # replace with escape game file / rewrite using wiktionary_de_parser's method
     def __init__(self, file_path):
         self.file_path = file_path

@@ -1,5 +1,5 @@
 from unittest import TestCase
-import game
+from Woerterbuchspiel import game
 
 
 class TestGame(TestCase):

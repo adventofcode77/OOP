@@ -13,6 +13,12 @@ from Woerterbuchspiel import word
 
 
 class Game(globale_variablen.Settings):
+    '''
+    Diese Klasse ist eine Hilfklasse mit Methoden und Variablen
+    fuer die Gameloop Klasse, wo das Spiel laeuft.
+    Die Game Klasse vererbt die Settings Klasse, wo sich
+    zusaetzliche allgemeine Werte und Funktionen befinden.
+    '''
     def __init__(self, code_satz, file_paths, binary_code, dict):
         super().__init__()
         self.radiuses = []
@@ -64,8 +70,15 @@ class Game(globale_variablen.Settings):
 
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
+        '''
+        Hier wird jedes Mausclick bearbeitet.
+        Zudem wird der obene mittlere Teil des Schirms aktualisiert.
+
+        :param click: Das Mausclick
+        :return: None
+        '''
         self.tript2.fill(self.black)
-        self.ziffern_und_code_woerter()
+        self.ziffern_und_code_woerter() # aktualisiert der obene mittlere Teil des Schirms (header)
         if click:
             x, y = click
             for syl in self.gold_syls + self.lila_syls:
@@ -80,6 +93,14 @@ class Game(globale_variablen.Settings):
         self.draw_word(height_of_all=self.top, screen=self.tript2)
 
     def draw_word(self, height_of_all=None, syl=None, screen=None):
+        '''
+        Zeichnet die geclickten Silben in der Mitte des Schirms
+
+        :param height_of_all: Das Ende des gezeichten Wortes (die Y-koordinate)
+        :param syl: Ein SIlbe-Objekt
+        :param screen: Der Schirm
+        :return: None
+        '''
         # TODO make object word_on_screen and keep the variables that define its state inside of it
         if not height_of_all:
             height_of_all = self.down
@@ -96,6 +117,10 @@ class Game(globale_variablen.Settings):
         self.blit_word(height_of_all, surface=screen)
 
     def make_def_list(self):
+        '''
+        Erzeugt eine Liste mit Teilen von der Definition des Wortes
+        :return: diese Liste
+        '''
         if self.deleted_word_bool or self.deleted_code_word_bool:
             bitlists = [word for a in self.deletedlist[:] for word in a.bit]
         else:
@@ -103,7 +128,14 @@ class Game(globale_variablen.Settings):
         return bitlists
 
     def blit_word(self, height_of_all=0,
-                  surface=None):  # replace with a pygame gui that works with sql? or word by word? # None due to self.colors not working
+                  surface=None):  # =None due to self.parameter not working (due to being out of the init?)
+        '''
+        Zeichnet die geclickten Silben (als Teil der draw_word() Methode)
+
+        :param height_of_all: Das Ende des gezeichten Wortes (die Y-koordinate)
+        :param surface: Der Schirm
+        :return: None
+        '''
         if self.deleted_word_bool or self.deleted_code_word_bool:
             farbe = (self.yellow, self.yellow)
             word_string = self.deleted_word
@@ -122,6 +154,20 @@ class Game(globale_variablen.Settings):
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
                              no_buttons=True, start_end=None):
+        '''
+        Zeichnet eine String (z.B. Anleitung-Saetze oder Wort-Definitionen) auf dem Schirm.
+        Die gezeichneten Objekten (z.B. Woerter) koennen auf Wunsch zum Button-Objekts werden,
+        auf die man clicken kann. (die Button Klasse ist im file "word").
+
+        :param lst: die String zum Zeichnen
+        :param color: farbe
+        :param midtop: koordinaten, wo gezeichnet wird (bestimmt die Hoehe)
+        :param afont: der Font
+        :param screen: der Schirm
+        :param no_buttons: Buttons erzeugen oder nicht
+        :param start_end: koordinaten, wo gezeichnet wird (bestimmt die Breite)
+        :return: Das Ende des Gezeichnetes (Y-Koordinate)
+        '''
         # variablen
         window_counter = 0
         if not screen: screen = self.screen_copy
@@ -184,6 +230,10 @@ class Game(globale_variablen.Settings):
         return h  # how far down the screen there is curently text
 
     def check_word(self):
+        '''
+        Prueft, ob das aufgebaute Wort richtig ist.
+        :return: None
+        '''
         temp_bool = True
         appendlisttuples = [a.tuple for a in self.spieler.appendlist]
         for word in self.words:  # check for the word in non-code words
@@ -205,6 +255,10 @@ class Game(globale_variablen.Settings):
                     self.deleted_code_word_bool = True
 
     def delete_word(self):  # same syl is actually different objects in different lists, why?
+        '''
+        Loescht ein erratenes Wort
+        :return:
+        '''
         for this in self.spieler.appendlist:
             for syl in self.syls:
                 if this.tuple == syl.tuple:
@@ -231,6 +285,15 @@ class Game(globale_variablen.Settings):
         self.spieler.appendlist = []
 
     def blink(self, num_steps, syl, new_color, start_color=None):
+        '''
+        Bringt ein Silbe-Objekt zum Blinken (d.h. seine Farbe auf der Startfarbe
+        langsam nach der Zielfarbe aendern).
+        :param num_steps: die Spielmomente (FPS), die es dauern soll, bis die Zielfarbe erreicht wird
+        :param syl: die Silbe
+        :param new_color: die Zielfarbe
+        :param start_color: die Startfarbe
+        :return: die aktuelle Farbe der Silbe (meist zwischen der Startfarbe und der Zielfarbe)
+        '''
         if not start_color:
             start_color = syl.rgb
         list_ints = [
@@ -260,6 +323,10 @@ class Game(globale_variablen.Settings):
         return (list_ints[0], list_ints[1], list_ints[2])
 
     def get_pos_list(self):
+        '''
+        Erzeugt die Startpositionen der sich bewegenden Silbe-Objekte
+        :return: die Startpositionen
+        '''
         poslist = []
         space = self.screenh // self.h
         pos = self.screenh
@@ -269,6 +336,12 @@ class Game(globale_variablen.Settings):
         return poslist
 
     def get_screensyls(self):
+        '''
+        Bereitet Silbe-Objekte, die auf dem Schirm im Bewegung gezeichnet werden.
+        Sie sind so ausgewaehlt, dass wenn die untersten-gezeichnete den Schirm verlaesst,
+        wird sie aus der Liste ausgeschlossen und eine neue am Anfang hinzugefuegt.
+        :return: Silben fuer den sich bewegenden Loop
+        '''
         syls = self.syls[self.start_syls_cut_at:] + self.syls[:self.start_syls_cut_at]
         # syls = [syl for syl in syls if syl.visible] #why does this make the loop jerk backwards?
         to_return = syls[:len(self.pos_list)]
@@ -287,6 +360,10 @@ class Game(globale_variablen.Settings):
         return to_return  # (now syls should always be bigger than this cut)
 
     def blit_loop(self):
+        '''
+        Zeichnet den ganzen sich bewegenden Loop
+        :return:
+        '''
         self.blit_loop_middle()
         self.blit_loop_left()
         self.blit_loop_right()
@@ -295,6 +372,10 @@ class Game(globale_variablen.Settings):
         self.resize_screen()
 
     def blit_loop_middle(self):
+        '''
+        Zeichnet der mittlere Teil des Loops
+        :return: None
+        '''
         # variablen
         self.screen_copy.fill(self.gray)
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // self.h) + 1)
@@ -331,6 +412,10 @@ class Game(globale_variablen.Settings):
 
 
     def blit_loop_right(self):
+        '''
+        Zeichnet der rechte Teil des Loops
+        :return:
+        '''
         lil = self.lila_syls[:]
         columnWidth = self.screenw // 10
         lila_tuples = [syl.tuple for syl in lil]
@@ -340,6 +425,10 @@ class Game(globale_variablen.Settings):
         self.blit_loop_one_side(True, lil, self.nw,lambda rowIndex: self.screenw - columnWidth - rowIndex * columnWidth, lila_tuples, non_code_tuples)
 
     def blit_loop_left(self):
+        '''
+        Zeichnet der linke Teil des Loops
+        :return: None
+        '''
         gold = self.gold_syls[:]
         columnWidth = self.screenw // 10
         gold_tuples = [syl.tuple for syl in gold]
@@ -350,6 +439,11 @@ class Game(globale_variablen.Settings):
 
 
     def adjust_loop_window(self):  # Verwaltet den laufenden Loop aus runterfallenden Silben
+        '''
+        Aendert die Variable, die der Anfang der Liste aus laufenden Silben bestimmt (self.start_syls_cut_at)
+        und die der Abstand zwischen einer Startposition und die aktuelle Position der Silben bestimmt (self.syl_pos_change)
+        :return: None
+        '''
         self.syl_pos_change += self.syl_speed_change  #
         if self.syl_pos_change >= self.screenh // self.h:  # wenn
             self.syl_pos_change = 0
@@ -364,6 +458,14 @@ class Game(globale_variablen.Settings):
 
     def find_complete_syls(self, syl_tuples,
                            words_tuples):  # Findet ein kompletes Code-Wort in den gesammelten Code-Silben
+        '''
+        Checkt, ob aus gen vom Spieler gesammelten Silben ein (oder mehrere) ganze Woerter aufgebaut
+        werden koennen. Wenn ja, nimmt die Silben aus dem ersten solchen Wort.
+        :param syl_tuples: die Tuple-eigenschaften von den Silbe-Objekten
+        (Sie sind ein Weg, das Objekt zu identifizieren)
+        :param words_tuples: die Tuple-eigenschaften von allen Silbe-Objekten, die ein Wort aufbauen
+        :return:
+        '''
         random.shuffle(words_tuples)  # sodass die reihenfolge der blinkenden gesammelten code woerter zufaellig ist
         try:
             nxt = next(iter([set for set in words_tuples if
@@ -373,6 +475,17 @@ class Game(globale_variablen.Settings):
             return None
 
     def blit_loop_one_side(self, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
+        '''
+        Zeichnet der linke oder der Rechte Teil des Loops (je nachdem,
+        ob der Argument "list_ist_lila" True oder Falsch ist)
+        :param list_ist_lila: bestimmt, welcher Teil des Schirms gezeichnet wird
+        :param lst_syls: die Silbe-Objekte zum zeichnen
+        :param blinking_word: die blinkenden Silben
+        :param x_position: der Index der Reihe, wo eine Silbe gezeichnet wird
+        :param syl_tuples: die Tuple-eigenschaften von den Silbe-Objekten
+        :param words_tuples: die Tuple-eigenschaften von allen Silbe-Objekten, die ein Wort aufbauen
+        :return: None
+        '''
         if (not blinking_word) or blinking_word[
             0] not in syl_tuples:  # falls zumindest eine tuple vom blinking word gelöscht wurde
             # Diese if Klause versucht, nur eine Silbe pro Sektor zum blinken zu bringen. Jedoch blinken im Moment mehrere...
@@ -408,15 +521,24 @@ class Game(globale_variablen.Settings):
                 self.screen_copy.blit(syl.image, syl.rect)
 
     @classmethod
-    def get_syl(cls,column_index,row_index,lst_syls, elements_in_column):
+    def get_syl(cls, column_index, row_index, lst_syls, n_elements_in_column):
+        '''
+        Findet die Silbe in einer Liste mit bestimmten Reihe- und Spalte-Indexen
+        '''
         len_lst_syls = len(lst_syls)
-        syl_index_at_intersection_of_row_and_column = column_index * elements_in_column + row_index
+        syl_index_at_intersection_of_row_and_column = column_index * n_elements_in_column + row_index
         if syl_index_at_intersection_of_row_and_column >= len_lst_syls:
             return None
         syl = lst_syls[syl_index_at_intersection_of_row_and_column]
         return syl
 
     def game_over(self, text, surface=None):
+        '''
+        Zeichnet ein Zeichen, dass das Spiel beendet hat
+        :param text: das Zeichen
+        :param surface: der Schirm
+        :return: None
+        '''
         rect = Rect(0.33 * self.screenw, 0.33 * self.screenh, 0.33 * self.screenw, 0.33 * self.screenh)
         offset = 0.03 * self.screenh
         border_rect = Rect(rect.x - offset, rect.y - offset, rect.w + offset * 2, rect.h + offset * 2)
@@ -427,6 +549,11 @@ class Game(globale_variablen.Settings):
         self.blit_clickable_words(text, self.white, (0, self.down), screen=surface)
 
     def ziffern_und_code_woerter(self): # TODO combine the definitions underneath after clicking in the header
+        '''
+        Erzeugt der Header (obene Teil des Schirms) mit dem vom letzten Spiel uebernommene Code
+        und das neue Code aus gesammelten Code-Woerter
+        :return: None
+        '''
         # if the header changes size, the subsurface may end up larger than the surface unless the function is called in the while loop
         # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
         self.screen_copy.fill(self.gray, Rect(0, 0, self.screenw, self.end_header))
@@ -476,6 +603,12 @@ class Game(globale_variablen.Settings):
 
     def check_num_buttons(self,
                           click):  # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
+        '''
+        Prueft, ob auf einem Button-Objekt geclickt wurde. Wenn ja, speichert der Index von diesem Objekt
+        in der Variabel "self.word_to_move"
+        :param click: das Mausclick
+        :return: None
+        '''
         if self.buttons:  # self.buttons only refers to the guessed code words on trypt2
             click_rect = Rect(click[0], click[1], 1, 1)
             index = click_rect.collidelist([a.rect for a in self.buttons]) -1

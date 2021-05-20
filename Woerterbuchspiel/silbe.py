@@ -2,6 +2,9 @@ import random
 import pygame, math
 
 class Silbe(): #do with sprites
+    '''
+    Diese Klasse erzeugt Silbe-Objekten
+    '''
     silbe_all_syls = []
     def __init__(self,it,word,bit,order,worder, info, rgb): #or make it inherit from word
         self.info = info

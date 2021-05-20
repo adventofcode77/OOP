@@ -4,6 +4,11 @@ from pygame.locals import *
 
 
 class Spieler():
+    '''
+    Diese Klasse erzeugt der Spieler-Objekt mit den Methoden
+     "act" (sich bewegen und seine Geschwindigkeit aendern)
+     und "pick" (Silbe-Objekte aus dem Schirm sammeln)
+    '''
     def __init__(self, game_instance):
         self.info = game_instance
         self.spieler_w, self.spieler_h = self.info.screen_surface // 15, self.info.screen_surface // 15

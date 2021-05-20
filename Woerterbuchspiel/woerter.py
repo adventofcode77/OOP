@@ -2,6 +2,11 @@ from Woerterbuchspiel import word
 
 
 class Woerter:
+    '''
+    Diese Klasse erzeugt ein Woerter-Objekt.
+    Durch dieses Objekt bekommt die Klasse Game die notwendigen
+    Listen mit Spielwoerter und Spielsilben
+    '''
     all_syls = []
 
     def __init__(self, game_instance):

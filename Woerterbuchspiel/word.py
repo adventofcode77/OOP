@@ -2,6 +2,9 @@ from Woerterbuchspiel import silbe
 
 
 class Word():
+    '''
+    Diese Klasse erzeugt Wort-Objekte
+    '''
     all_syls = []
     def __init__(self, key, meaning,txtsilben,worder,totalsyls,info,color=None):
         self.info = info
@@ -37,6 +40,9 @@ class Word():
         return syls
 
 class Button():
+    '''
+        Diese Klasse erzeugt Button-Objekte
+        '''
     def __init__(self, word_string,word_img,word_rect,word_index):
         self.text = word_string
         self.img = word_img
