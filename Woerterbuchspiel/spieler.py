@@ -14,7 +14,7 @@ class Spieler():
         self.spieler_w, self.spieler_h = self.info.screen_surface // 15, self.info.screen_surface // 15
         self.rect = pg.Rect(self.info.screenw // 2, self.info.screenh // 2, self.spieler_w, self.spieler_h)
         self.my_silben = []
-        self.image = transform.scale(image.load('Roboter.png'), (self.rect.w, self.rect.h))
+        self.image = transform.scale(image.load('Woerterbuchspiel/Roboter.png'), (self.rect.w, self.rect.h))
         self.normal_image = self.image.copy()
         self.brighter_image = self.image.copy()
         brighten = 100
@@ -39,11 +39,11 @@ class Spieler():
         Das Reste der Methode aendert die Geschwindigkeit
         '''
         if self.loop_down:
-            if keys[K_f]:
+            if keys[K_w]:
                 self.speed = round(1.1 * self.speed, 2) if self.speed <= self.initial_speed * 3 else self.speed
                 self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,
                                                    2) if self.info.syl_speed_change <= self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
-            elif keys[K_d]:
+            elif keys[K_s]:
                 self.speed = round(0.9 * self.speed, 2)
                 self.info.syl_speed_change = round(0.9 * self.info.syl_speed_change,
                                                    2) if self.info.syl_speed_change >= self.info.initial_syl_speed_change * 0.05 else self.info.syl_speed_change
@@ -51,11 +51,11 @@ class Spieler():
                     self.loop_down = False
                     self.info.syl_speed_change = -self.info.syl_speed_change
         else:
-            if keys[K_d]:
+            if keys[K_s]:
                 self.speed = round(1.1 * self.speed, 2) if self.speed <= self.initial_speed * 3 else self.speed
                 self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,
                                                    2) if self.info.syl_speed_change >= -self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
-            elif keys[K_f]:
+            elif keys[K_w]:
                 self.speed = round(0.9 * self.speed, 2)
                 self.info.syl_speed_change = round(0.9 * self.info.syl_speed_change,
                                                    2) if self.info.syl_speed_change <= -self.info.initial_syl_speed_change * 0.05 else self.info.syl_speed_change

@@ -369,7 +369,7 @@ class Game(globale_variablen.Settings):
         self.blit_loop_right()
         self.adjust_loop_window()
         self.screen_copy.blit(self.spieler.image, self.spieler.rect)
-        self.resize_screen()
+        self.resize_and_display_screen()
 
     def blit_loop_middle(self):
         '''
@@ -377,7 +377,7 @@ class Game(globale_variablen.Settings):
         :return: None
         '''
         # variablen
-        self.screen_copy.fill(self.gray)
+        self.screen_copy.blit(self.faster_hintergrund,(0,0))
         self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // self.h) + 1)
         self.start_third_screen_part = self.screenw - (self.screenw // 10) * ((len(self.lila_syls) // self.h) + 1)
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,

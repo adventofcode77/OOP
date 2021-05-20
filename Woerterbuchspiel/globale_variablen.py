@@ -47,12 +47,26 @@ class Settings:  # there could be a function converting size/location numbers ba
         # self.dauer_img = self.smaller_font.render(f'{5}:{0}',True,self.white)
         self.nicht_in_bewegung = True
         self.start_ticks = None
+        self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Sternenhintergrund.png'), (self.screenw,self.screenh))
+        self.faster_hintergrund = self.hintergrund.convert()
+        self.first_screen = transform.scale(image.load('Woerterbuchspiel/Intro.png'), (self.screenw, self.screenh)).convert()
+        self.credits_screen = transform.scale(image.load('Woerterbuchspiel/Credits.png'),
+                                            (self.screenw, self.screenh)).convert()
+        self.anleitung_screen = transform.scale(image.load('Woerterbuchspiel/Anleitung.png'),
+                                            (self.screenw, self.screenh)).convert()
+        # self.gute_silbe_getroffen = mixer.Sound("Sound.irgendwas1.mp3")
 
     def font_spacing(self, font):
         img = font.render("A|&%)<QY", True, self.black)
         return img.get_rect().h
 
     def get_bits(self, alist, num_parts):  # goal: divide a list into roughly equal parts such that no part is empty
+        """
+        Teilt eine Liste in so viele Teilen wie num_parts.
+        :param alist: die Liste
+        :param num_parts: die Anzahl an Teilen
+        :return: Liste mit den Teilen
+        """
         list_of_lists = []
         while len(alist) < num_parts:
             alist += ["..."]
@@ -67,18 +81,27 @@ class Settings:  # there could be a function converting size/location numbers ba
             else:
                 list_of_lists.append(alist[:advancement])
                 alist = alist[advancement:]
-        if len(list_of_lists) > num_parts:
-            print("get_bits() outputs more list parts than the parameter specifies")
-            quit()
-        return list_of_lists  # DO NOT FORGET RETURN
+        return list_of_lists
 
     def make_rgb(self):  # hues, each for all in a word
+        """
+        erzeugt eine RGB-Farbe aus 3 zufaellige Zahlen
+        :return:
+        """
         hue = random.choice((0, 1, 2))
         rgb = [random.randint(0, 200), random.randint(0, 200), random.randint(100, 200)]
         rgb[hue] = 255 if hue != 2 else 200
         return rgb
 
     def scale_click(self, click, orig_screen, current_screen):
+        """
+        Wandelt ein Mausclick auf dem Schirm-Copy in einem Click auf dem echten Schirm,
+        indem die Click-koordinaten angepasst werden
+        :param click: das Mausclick
+        :param orig_screen: das echte Schirm
+        :param current_screen: das Schirm-Copy
+        :return: das angepasste Mausclick
+        """
         current_x, current_y = click
         orig_screenw, orig_screenh = orig_screen.get_rect().w, orig_screen.get_rect().h
         current_screenw, current_screenh = current_screen.get_rect().size
@@ -86,18 +109,27 @@ class Settings:  # there could be a function converting size/location numbers ba
         x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh
         return (x, y)
 
-    def resize_screen(self, run=True):
-        if run and not self.nicht_in_bewegung:
-            self.dauer()  # should be in screen_transfer() in order to appear in every frame
+    def resize_and_display_screen(self):
+        """
+        Aendert die Groesse des Schirm-Copys auf die Groesse vom echten Schirm
+        und zeichnet das Schirm-Copy auf dem echten Schirm
+        :return: None
+        """
+        if not self.nicht_in_bewegung:
+            self.timer()  # should be in resize_screen() in order to appear in every frame
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy,
                                                        self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
         pg.display.flip()
 
-    def dauer(self): # change it so it starts counting when user is done with the instructions
-        dauer = 15 * 60000 + self.start_ticks - time.get_ticks()
-        seconds = int(dauer / 1000 % 60)
-        minutes = int(dauer / 60000 % 24)
+    def timer(self):
+        """
+        Hier wird die gebliebene Zeit mittels "time.get_ticks()" berechnet
+        :return: die gebliebene Zeit
+        """
+        time_left = 15 * 60000 + self.start_ticks - time.get_ticks()
+        seconds = int(time_left / 1000 % 60)
+        minutes = int(time_left / 60000 % 24)
         dauer_text = f'{minutes}:{seconds}'
         dauer_img = self.default_font.render(dauer_text, True, self.white)
         dauer_rect = dauer_img.get_rect()
@@ -105,4 +137,4 @@ class Settings:  # there could be a function converting size/location numbers ba
         dauer_rect.y = self.screen_rect.h - dauer_rect.h
         self.screen_copy.fill(self.gray,dauer_rect)
         self.screen_copy.blit(dauer_img, dauer_rect)
-        return dauer
+        return time_left

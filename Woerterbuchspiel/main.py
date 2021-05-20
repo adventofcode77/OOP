@@ -32,7 +32,7 @@ class Main:
 
     '''
 
-    with open('die_erste_1000_word_lists.txt', 'rb') as handle:
+    with open('Woerterbuchspiel/die_erste_1000_word_lists.txt', 'rb') as handle:
         '''
         Hier wird die Textdatei aus dem Format XML zum Format Python (.py) umwandelt 
         und in der Variabel "spielwoerter" gespeichert.

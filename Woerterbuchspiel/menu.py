@@ -12,9 +12,22 @@ class Menu:
         self.main_loop = "SPACE"
         self.drop_objects = 0
         self.next, self.back = "RECHTS", "LINKS"
-        self.accelerate, self.decelerate = "F", "D"
+        self.accelerate, self.decelerate = "W", "S"
         self.instructions = "I"
         self.list_instructions = self.list_lists_instructions()
+
+
+    def intro(self, schirm_zahl):
+        intro_screens = {
+            0: self.info.first_screen,
+            1: self.info.anleitung_screen,
+            -1: self.info.credits_screen
+        }
+        screen_to_blit = intro_screens.get(schirm_zahl, intro_screens[0])
+        if schirm_zahl not in intro_screens.keys():
+            schirm_zahl = 0
+        self.info.screen_copy.blit(screen_to_blit, (0,0))
+        return schirm_zahl
 
     def tutorial(self, next_counter):
         '''
@@ -31,14 +44,16 @@ class Menu:
                                                 (self.info.midtop[0],
                                                  self.info.midtop[1] + self.info.down * 2),
                                                 afont=self.info.smaller_font)
-        self.info.resize_screen()
+        self.info.resize_and_display_screen()
         return next_counter
 
     def list_lists_instructions(self):
+        # bug: if the elements are too long, the blitting function divides them into screenshots
+        # through which you can't iterate in order with the next_counter variable
         start = f"Willkommen zur Spielanleitung! " \
                 f"Um die Anleitung zu SKIPPEN, drücke {self.main_loop}. " \
-                f"Drücke {self.next} um die naechste Seite dieser Anletiung zu lesen," \
-                f" oder {self.back} um den vorherige Seite wieder aufzurufen. "
+                f"Drücke {self.next} um die naechste Seite dieser Anletiung zu lesen, " \
+                f"oder {self.back} um den vorherige Seite wieder aufzurufen. "
         move = f"Um dich zu bewegen, nutze die {self.move} Tasten. Um schneller oder langsamer zu werden, " \
                f"nutze {self.accelerate} oder {self.decelerate}. " \
                f"Um die Schirmgröße anzupassen, bewege die Schirmenden. " \
@@ -46,21 +61,21 @@ class Menu:
                 f"Um die Pause zu beenden, druecke wieder {self.pause}. " \
                f"Mit {self.pause} kannst du ausserdem die Resultate von deinen bisherigen Mausclicks aktualisieren. " \
                f"{self.pause} bietet allerlei Moeglichkeiten! "
-        goal = f"Dein Ziel ist, den naechsten Code zu finden. Er ist in Form eines Saetzes. " \
+        goal1 = f"Dein Ziel ist, den naechsten Code zu finden. Der Code ist ein SATZ. " \
                 f"Um den Code zu bekommen, musst du Silben sammeln und mit denen " \
                f"den richtigen Satz erstellen. " \
                f"Die richtige Silben sind GELB und erscheinen LINKS. " \
                f"Die falschen Silben sind alle andere Farben. " \
                f"Sie erscheinen RECHTS und hoeren sich SCHLECHT an. Vermeide sie! " \
-                f"Je mehr falsche Silben du sammelst, desto weniger platz du hast, um zu spielen." \
-               f"Vorsicht: zu wenig Platz fuehrt zum Verlieren." \
-                f"Klicke auf die gesammelten Silben mit dem Maus, nachdem du das Spiel pausierst. " \
+                f"Je mehr falsche Silben du sammelst, desto weniger platz du hast, um zu spielen. " \
+                f"VORSICHT: zu wenig Platz fuehrt zum Verlieren. "
+        goal2 = f"Klicke auf die gesammelten Silben mit dem Maus, nachdem du das Spiel pausierst. " \
                 f"Indem du auf sie klickst, kannst du Woerter aufbauen. " \
                    f"Die Woerter aus falschen Silben verschwinden und schaffen mehr Platz zum Spieler. " \
                f"Die Wörter den richtigen gelben Silben erscheinen unter den Ziffern. " \
                    f"Bewege sie mit {self.next} und {self.back}, um den Satz zu fertigen. "
-        game_window = f"Um diese Anleitung nochmals zu sehen, druecke {self.instructions}. " \
+        conclusion = f"Um diese Anleitung nochmals zu sehen, druecke {self.instructions}. " \
                       f"Drücke {self.main_loop} um zurück zum Spiel zu gehen. " \
                       f"Um fortzufahren, drücke jetzt {self.main_loop}. "
-        list_de = [start+move, goal, game_window]
+        list_de = [start+move,goal1, goal2+conclusion] # +conclusion]
         return list_de

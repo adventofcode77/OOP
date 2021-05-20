@@ -49,7 +49,7 @@ class Gameloop():
         self.game_objekt.ziffern_und_code_woerter()  # called here once to create self.info.top so that picked syls get painted starting from there
         while True:  # TODO: make more object-oriented (with classes producing the state of one object each?)
             self.clock.tick(self.game_objekt.fps)  # one loop?
-            self.game_objekt.resize_screen()  # resizes the last iteration's image to the current screen size and draws it
+            self.game_objekt.resize_and_display_screen()  # resizes the last iteration's image to the current screen size and draws it
             if self.game_objekt.blink_counter:
                 self.game_objekt.blink_counter += 1
             # EVENT LOOP
@@ -114,7 +114,8 @@ class Gameloop():
                 "pausiert, um die Anleitung nochmals zu lesen"
                 '''
                 self.game_objekt.nicht_in_bewegung = True
-                next = self.game_objekt.menu.tutorial(self.game_objekt.next_counter)
+                # next = self.game_objekt.menu.tutorial(self.game_objekt.next_counter)
+                next = self.game_objekt.menu.intro(self.game_objekt.next_counter)
                 self.game_objekt.next_counter = next
             elif self.main_loop:
                 '''
@@ -172,7 +173,7 @@ class Gameloop():
         Wenn keine, aendert den Spielzustand auf "verloren".
         '''
         if not time_left:
-            time_left = self.game_objekt.dauer()
+            time_left = self.game_objekt.timer()
         if time_left < 0:
             self.lost = True
             self.wait = True  # warten, bis der Spieler Space druckt
