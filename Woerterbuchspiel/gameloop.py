@@ -6,6 +6,9 @@ from Woerterbuchspiel import game
 
 
 class Gameloop():
+    '''
+    Diese Klasse
+    '''
     def __init__(self, input_codes, file_paths, binary_code,dict):
         self.wait, self.lost, self.won, self.new_game = False, False, False, False
         self.spielwoerter = dict
