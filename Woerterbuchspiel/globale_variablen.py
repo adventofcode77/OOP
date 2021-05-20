@@ -54,7 +54,9 @@ class Settings:  # there could be a function converting size/location numbers ba
                                             (self.screenw+200, self.screenh)).convert()
         self.anleitung_screen = transform.scale(image.load('Woerterbuchspiel/Anleitung.png'),
                                             (self.screenw+200, self.screenh)).convert()
-        # self.gute_silbe_getroffen = mixer.Sound("Sound.irgendwas1.mp3")
+        mixer.init()
+        self.gute_silbe_sound = mixer.Sound("Woerterbuchspiel/gute_silbe_sound.mp3")
+        # self.bad_silbe_sound = mixer.Sound("Woerterbuchspiel/bad_silbe_sound.mp3")
 
     def font_spacing(self, font):
         img = font.render("A|&%)<QY", True, self.black)
