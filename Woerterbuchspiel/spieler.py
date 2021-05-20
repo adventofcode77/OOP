@@ -83,5 +83,5 @@ class Spieler():
                 # time.wait(int(self.info.gute_silbe_sound.get_length()))
             else:
                 self.info.lila_syls.append(pikd)
-                # self.info.gute_silbe_sound.play()
+                self.info.bad_silbe_sound.play()
                 # time.wait(int(self.info.gute_silbe_sound.get_length()))
