@@ -43,7 +43,7 @@ class Menu:
                f"Um die Schirmgröße anzupassen, bewege die Schirmenden. " \
                f"Pausiere das Spiel mit {self.pause}, um klicken zu können. " \
                 f"Um die Pause zu beenden, druecke wieder {self.pause}. "
-        goal = len(f"Dein Ziel ist, den naechsten Code zu finden. Er ist in Form eines Saetzes. " \
+        goal = f"Dein Ziel ist, den naechsten Code zu finden. Er ist in Form eines Saetzes. " \
                 f"Um den Code zu bekommen, musst du Silben sammeln und mit denen " \
                f"den richtigen Satz erstellen. " \
                f"Die richtige Silben sind GELB und erscheinen LINKS. " \
@@ -51,10 +51,12 @@ class Menu:
                 f"Je mehr falsche Silben du sammelst, desto weniger platz du hast, um zu spielen." \
                f"Vorsicht: zu wenig Platz fuehrt zum Verlieren." \
                 f"Klicke auf die gesammelten Silben mit dem Maus, nachdem du das Spiel pausierst. " \
-                f"Indem du auf sie klickst, kannst du Woerter aufbauen " \
-               f"Die fertige Wörter erscheinen unter den Ziffern. Bewege sie mit {self.next} und {self.back}."
+                f"Indem du auf sie klickst, kannst du Woerter aufbauen. " \
+                   f"Die Woerter aus falschen Silben verschwinden und schaffen mehr Platz zum Spieler. " \
+               f"Die Wörter den richtigen gelben Silben erscheinen unter den Ziffern. " \
+                   f"Bewege sie mit {self.next} und {self.back}, um den Satz zu fertigen. "
         game_window = f"Um diese Anleitung nochmals zu sehen, druecke {self.instructions}. " \
                       f"Drücke {self.main_loop} um zurück zum Spiel zu gehen. " \
                       f"Um fortzufahren, drücke jetzt {self.main_loop}. "
-        list_de = [start, move, goal, game_window]
+        list_de = [start+move, goal, game_window]
         return list_de
