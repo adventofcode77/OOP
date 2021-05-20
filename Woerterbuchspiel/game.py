@@ -288,6 +288,7 @@ class Game(globale_variablen.Settings):
         '''
         Bringt ein Silbe-Objekt zum Blinken (d.h. seine Farbe auf der Startfarbe
         langsam nach der Zielfarbe aendern).
+        Gesehen hier: https://stackoverflow.com/questions/51973441/how-to-fade-from-one-colour-to-another-in-pygame
         :param num_steps: die Spielmomente (FPS), die es dauern soll, bis die Zielfarbe erreicht wird
         :param syl: die Silbe
         :param new_color: die Zielfarbe
