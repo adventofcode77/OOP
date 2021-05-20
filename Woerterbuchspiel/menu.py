@@ -7,7 +7,7 @@ class Menu:
         self.offset = 0
         self.text_pos = (self.info.midtop[0], self.info.midtop[1] + self.offset + self.info.space)
         # keys
-        self.move = "AWDS / LEFT RIGHT UP DOWN"
+        self.move = "LEFT RIGHT UP DOWN"
         self.pause = "SPACE"
         self.main_loop = "SPACE"
         self.drop_objects = 0
@@ -35,19 +35,23 @@ class Menu:
         return next_counter
 
     def list_lists_instructions(self):
-        start = f"Willkommen zur Spielanleitung! Drücke {self.next} um die naechste Seite dieser Anletiung zu lesen," \
-                f" oder {self.back} um den vorherige Seite wieder aufzurufen. " \
-                f"Um die Anleitung zu SKIPPEN, drücke {self.main_loop}. "
+        start = f"Willkommen zur Spielanleitung! " \
+                f"Um die Anleitung zu SKIPPEN, drücke {self.main_loop}. " \
+                f"Drücke {self.next} um die naechste Seite dieser Anletiung zu lesen," \
+                f" oder {self.back} um den vorherige Seite wieder aufzurufen. "
         move = f"Um dich zu bewegen, nutze die {self.move} Tasten. Um schneller oder langsamer zu werden, " \
                f"nutze {self.accelerate} oder {self.decelerate}. " \
                f"Um die Schirmgröße anzupassen, bewege die Schirmenden. " \
                f"Pausiere das Spiel mit {self.pause}, um klicken zu können. " \
-                f"Um die Pause zu beenden, druecke wieder {self.pause}. "
+                f"Um die Pause zu beenden, druecke wieder {self.pause}. " \
+               f"Mit {self.pause} kannst du ausserdem die Resultate von deinen bisherigen Mausclicks aktualisieren. " \
+               f"{self.pause} bietet allerlei Moeglichkeiten! "
         goal = f"Dein Ziel ist, den naechsten Code zu finden. Er ist in Form eines Saetzes. " \
                 f"Um den Code zu bekommen, musst du Silben sammeln und mit denen " \
                f"den richtigen Satz erstellen. " \
                f"Die richtige Silben sind GELB und erscheinen LINKS. " \
-               f"Die falschen Silben sind alle andere Farben. Vermeide sie! " \
+               f"Die falschen Silben sind alle andere Farben. " \
+               f"Sie erscheinen RECHTS und hoeren sich SCHLECHT an. Vermeide sie! " \
                 f"Je mehr falsche Silben du sammelst, desto weniger platz du hast, um zu spielen." \
                f"Vorsicht: zu wenig Platz fuehrt zum Verlieren." \
                 f"Klicke auf die gesammelten Silben mit dem Maus, nachdem du das Spiel pausierst. " \

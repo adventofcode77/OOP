@@ -26,21 +26,24 @@ class Spieler():
 
     def act(self, screen_rect):
         keys = key.get_pressed()
-        if keys[K_LEFT] or keys[K_a]:
+        if keys[K_LEFT]:
             self.rect.x = self.info.end_first_screen_part if self.rect.x - self.speed < self.info.end_first_screen_part else self.rect.x - self.speed
-        elif keys[K_RIGHT] or keys[K_d]:
+        elif keys[K_RIGHT]:
             self.rect.right = self.info.start_third_screen_part if self.rect.right + self.speed > self.info.start_third_screen_part else self.rect.right + self.speed
-        elif keys[K_UP] or keys[K_w]:
+        elif keys[K_UP]:
             self.rect.top = 0 if self.rect.top - self.speed < 0 else self.rect.top - self.speed
-        elif keys[K_DOWN] or keys[K_s]:
+        elif keys[K_DOWN]:
             self.rect.bottom = screen_rect.h if self.rect.bottom + self.speed > screen_rect.h else self.rect.bottom + self.speed
         # change speed of itself (changes speed/direction of the loop too)
+        '''
+        Das Reste der Methode aendert die Geschwindigkeit
+        '''
         if self.loop_down:
-            if keys[K_EQUALS] or keys[K_2]:
+            if keys[K_f]:
                 self.speed = round(1.1 * self.speed, 2) if self.speed <= self.initial_speed * 3 else self.speed
                 self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,
                                                    2) if self.info.syl_speed_change <= self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
-            elif keys[K_MINUS] or keys[K_1]:
+            elif keys[K_d]:
                 self.speed = round(0.9 * self.speed, 2)
                 self.info.syl_speed_change = round(0.9 * self.info.syl_speed_change,
                                                    2) if self.info.syl_speed_change >= self.info.initial_syl_speed_change * 0.05 else self.info.syl_speed_change
@@ -48,11 +51,11 @@ class Spieler():
                     self.loop_down = False
                     self.info.syl_speed_change = -self.info.syl_speed_change
         else:
-            if keys[K_MINUS] or keys[K_1]:
+            if keys[K_d]:
                 self.speed = round(1.1 * self.speed, 2) if self.speed <= self.initial_speed * 3 else self.speed
                 self.info.syl_speed_change = round(1.1 * self.info.syl_speed_change,
                                                    2) if self.info.syl_speed_change >= -self.info.initial_syl_speed_change * 3 else self.info.syl_speed_change
-            elif keys[K_EQUALS] or keys[K_2]:
+            elif keys[K_f]:
                 self.speed = round(0.9 * self.speed, 2)
                 self.info.syl_speed_change = round(0.9 * self.info.syl_speed_change,
                                                    2) if self.info.syl_speed_change <= -self.info.initial_syl_speed_change * 0.05 else self.info.syl_speed_change
