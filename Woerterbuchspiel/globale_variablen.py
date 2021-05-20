@@ -43,17 +43,17 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.smaller_font = font.SysFont(None, self.screen_surface // 30)
         self.tiny_font = font.SysFont(None, self.screen_surface // 45)
         self.space = self.font_spacing(self.default_font)
-        self.invisible = self.default_font.render("o", False, self.black)
         # self.dauer_img = self.smaller_font.render(f'{5}:{0}',True,self.white)
         self.nicht_in_bewegung = True
         self.start_ticks = None
         self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Sternenhintergrund.png'), (self.screenw,self.screenh))
         self.faster_hintergrund = self.hintergrund.convert()
-        self.first_screen = transform.scale(image.load('Woerterbuchspiel/Intro.png'), (self.screenw, self.screenh)).convert()
+        # why re the below intro screens 200 short?
+        self.first_screen = transform.scale(image.load('Woerterbuchspiel/Intro.png'), (self.screenw+200, self.screenh)).convert()
         self.credits_screen = transform.scale(image.load('Woerterbuchspiel/Credits.png'),
-                                            (self.screenw, self.screenh)).convert()
+                                            (self.screenw+200, self.screenh)).convert()
         self.anleitung_screen = transform.scale(image.load('Woerterbuchspiel/Anleitung.png'),
-                                            (self.screenw, self.screenh)).convert()
+                                            (self.screenw+200, self.screenh)).convert()
         # self.gute_silbe_getroffen = mixer.Sound("Sound.irgendwas1.mp3")
 
     def font_spacing(self, font):

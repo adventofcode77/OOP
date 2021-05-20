@@ -4,8 +4,6 @@ class Menu:
     '''
     def __init__(self, game_instance):
         self.info = game_instance
-        self.offset = 0
-        self.text_pos = (self.info.midtop[0], self.info.midtop[1] + self.offset + self.info.space)
         # keys
         self.move = "LEFT RIGHT UP DOWN"
         self.pause = "SPACE"
@@ -14,6 +12,7 @@ class Menu:
         self.next, self.back = "RECHTS", "LINKS"
         self.accelerate, self.decelerate = "W", "S"
         self.instructions = "I"
+
         self.list_instructions = self.list_lists_instructions()
 
 
@@ -23,9 +22,8 @@ class Menu:
             1: self.info.anleitung_screen,
             -1: self.info.credits_screen
         }
+        schirm_zahl = -1 if schirm_zahl > 1 else 0 if schirm_zahl not in intro_screens.keys() else schirm_zahl
         screen_to_blit = intro_screens.get(schirm_zahl, intro_screens[0])
-        if schirm_zahl not in intro_screens.keys():
-            schirm_zahl = 0
         self.info.screen_copy.blit(screen_to_blit, (0,0))
         return schirm_zahl
 

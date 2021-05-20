@@ -92,6 +92,14 @@ class Gameloop():
                         self.move_things_left_and_right(ln, e.key)
                     elif e.key == K_i:
                         self.menu = True
+                    elif e.key == K_DOWN:
+                        self.menu = False
+                        if not self.game_objekt.start_ticks:
+                            self.game_objekt.start_ticks = time.get_ticks()
+                        self.game_objekt.next_counter = 0
+                        self.main_loop = True
+                        for item in self.game_objekt.spieler.my_silben:
+                            item.clicked_on = False
                 elif e.type == MOUSEBUTTONDOWN:
                     self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
