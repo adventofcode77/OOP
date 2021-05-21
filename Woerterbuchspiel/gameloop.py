@@ -70,8 +70,6 @@ class Gameloop():
                     if e.key == K_0:
                         self.new_start()
                     elif e.key == K_SPACE:  # go to the desk
-                        print("space")
-                        print("wait is",self.wait)
                         if self.wait:
                             if self.won or self.lost:
                                 quit()
@@ -86,8 +84,10 @@ class Gameloop():
                                 self.game_objekt.start_ticks = time.get_ticks()
                             self.game_objekt.next_counter = 0
                             self.main_loop = True
+                            # clear the list and attributes for making words so that you start anew next time
                             for item in self.game_objekt.spieler.my_silben:
                                 item.clicked_on = False
+                            self.game_objekt.spieler.appendlist = []
                     elif e.key == K_LEFT or e.key == K_RIGHT:  # show next code_string explanation installment
                         self.move_things_left_and_right(ln, e.key)
                     elif e.key == K_i:
