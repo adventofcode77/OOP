@@ -559,11 +559,11 @@ class Game(globale_variablen.Settings):
         :param surface: der Schirm
         :return: None
         '''
-        rect = Rect(0.33 * self.screenw, 0.33 * self.screenh, 0.33 * self.screenw, 0.33 * self.screenh)
-        offset = 0.03 * self.screenh
-        border_rect = Rect(rect.x - offset, rect.y - offset, rect.w + offset * 2, rect.h + offset * 3) # wrong dimensions?
-        draw.rect(self.screen_copy, self.orange, border_rect)
+        rect = Rect(0.33 * self.screenw, 0.33 * self.screenh, 0.66 * self.screenw, 0.33 * self.screenh)
         rect.center = self.screen_rect.center
+        offset = 0.03 * self.screenh
+        border_rect = Rect(rect.x - offset, rect.y - offset, rect.w + offset * 2, rect.h + offset * 2) # wrong dimensions?
+        draw.rect(self.screen_copy, self.orange, border_rect)
         surface = self.screen_copy.subsurface(rect)
         surface.fill(self.lila)
         self.blit_clickable_words(text, self.white, (0, self.down), screen=surface)
