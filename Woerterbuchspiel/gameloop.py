@@ -110,10 +110,13 @@ class Gameloop():
                 '''
                 Hier ist der Zustand des Spiels entweden gewonnen, verloren oder Neustart
                 '''
-                text = f"Gewonnen! Dein Code ist: {self.game_objekt.output_code.upper()}." if self.won \
-                    else "VERLOREN!" if self.lost else "NEU STARTEN!"
-                text += " Drucke SPACE, um fortzufahren."
-                self.game_objekt.game_over(text)
+                if self.won:
+                    self.game_objekt.screen_copy.blit(self.game_objekt.last_screen, (0,0))
+
+                else:
+                    text = "VERLOREN!" if self.lost else "NEU STARTEN!"
+                    text += " Drucke SPACE, um fortzufahren."
+                    self.game_objekt.game_over(text)
                 continue
             # BEFORE THE GAMELOOP HAS STARTED
             elif self.menu:
@@ -156,8 +159,6 @@ class Gameloop():
                     Hier ist der Zustand des Spiels "nach Mausclick".
                     Das Mausclick wird hier nach der aktuelle Schirmgroesse skaliert.
                     '''
-                    #click_in_header = self.info.scale_click(self.click, self.info.screen_copy, self.info.header)
-                    #self.info.check_num_buttons(click_in_header)
                     self.click = self.game_objekt.scale_click(self.click, self.game_objekt.screen_copy,
                                                               self.game_objekt.screen_via_display_set_mode)
                     x, y = self.click
