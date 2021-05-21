@@ -67,6 +67,7 @@ class Game(globale_variablen.Settings):
         self.buttons = []
         self.word_to_move = None
         self.step_fps = 1
+        self.temp_update_code_defs = None
 
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
@@ -79,6 +80,12 @@ class Game(globale_variablen.Settings):
         '''
         self.tript2.fill(self.black)
         self.ziffern_und_code_woerter() # aktualisiert der obene mittlere Teil des Schirms (header)
+        # if self.temp:
+        #     print("in game temp")
+        #     temper = self.temp
+        #     tempest = Rect(self.end_header,self.end_first_screen_part,self.screenh-self.end_header,self.start_third_screen_part-self.end_first_screen_part)
+        #     self.screen_copy.fill(self.black,tempest)
+        #     self.blit_clickable_words(temper,self.yellow,self.screen_rect.center,screen=self.tript2)
         if click:
             x, y = click
             for syl in self.gold_syls + self.lila_syls:
@@ -145,12 +152,24 @@ class Game(globale_variablen.Settings):
         if not surface:
             surface = self.screen_copy
         word_img = self.default_font.render(word_string, True, farbe[0])
-        surface.blit(word_img, (
-            surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all + self.down))
-        height_of_all += self.down * 2
-        blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
-            self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1], height_of_all)),
-                                           screen=surface)  # starts one line below the blitted word per the function
+        if self.temp_update_code_defs or self.word_to_move:
+
+            guessed_code_words_definitions_ll = [bit for word in self.guessed_code_words[:] for bit in
+                                                 word.bits]
+            guessed_code_words_definitions_l = [" ".join(lst) for lst in guessed_code_words_definitions_ll]
+            guessed_code_words_definitions_str = " ".join(guessed_code_words_definitions_l)
+            self.temp_update_code_defs = guessed_code_words_definitions_str
+            temper = self.temp_update_code_defs
+            blit_h = self.blit_clickable_words(temper, farbe[1], (
+                self.screen_copy.get_rect().center[0], self.end_header+0.5*self.down),
+                                               screen=surface)  # starts one line below the blitted word per the function
+        else:
+            surface.blit(word_img, (
+                surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all + self.down))
+            height_of_all += self.down * 2
+            blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
+                self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1], height_of_all)),
+                                               screen=surface)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
                              no_buttons=True, start_end=None):
@@ -610,6 +629,7 @@ class Game(globale_variablen.Settings):
         :param click: das Mausclick
         :return: None
         '''
+
         if self.buttons:  # self.buttons only refers to the guessed code words on trypt2
             click_rect = Rect(click[0], click[1], 1, 1)
             index = click_rect.collidelist([a.rect for a in self.buttons]) -1
@@ -618,3 +638,4 @@ class Game(globale_variablen.Settings):
                 self.word_to_move = index
             else:
                 self.word_to_move = None
+                self.temp_update_code_defs = None
