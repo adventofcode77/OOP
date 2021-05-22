@@ -93,10 +93,10 @@ class Settings:  # there could be a function converting size/location numbers ba
     def make_rgb(self):  # hues, each for all in a word
         """
         erzeugt eine RGB-Farbe aus 3 zufaellige Zahlen
-        :return:
+        :return: die Farbe
         """
         hue = random.choice((0, 1, 2))
-        rgb = [random.randint(0, 200), random.randint(0, 200), random.randint(100, 200)]
+        rgb = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 200)]
         rgb[hue] = 255 if hue != 2 else 200
         return rgb
 
