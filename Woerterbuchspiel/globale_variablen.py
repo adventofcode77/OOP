@@ -35,6 +35,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.purple = (255, 0, 255)
         self.green = (0, 205, 0)
         self.red = (255, 0, 0)
+        self.navy = (0,0,128)
         self.fps = 45  # keine konstante geschwindigkeit
         pg.font.init()
         self.default_font = font.SysFont(None, self.screen_surface // 20)  # make one rendering function? # try excepts
@@ -46,19 +47,21 @@ class Settings:  # there could be a function converting size/location numbers ba
         # self.dauer_img = self.smaller_font.render(f'{5}:{0}',True,self.white)
         self.nicht_in_bewegung = True
         self.start_ticks = None
-        self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Sternenhintergrund.png'), (self.screenw,self.screenh))
+        self.time_left = 10 * 60000
+        # MEDIA
+        self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Media/Sternenhintergrund.png'), (self.screenw,self.screenh))
         self.faster_hintergrund = self.hintergrund.convert()
         # why re the below intro screens 200 short?
-        self.first_screen = transform.scale(image.load('Woerterbuchspiel/Intro.png'), (self.screenw+200, self.screenh)).convert()
-        self.credits_screen = transform.scale(image.load('Woerterbuchspiel/Credits.png'),
+        self.first_screen = transform.scale(image.load('Woerterbuchspiel/Media/Intro.png'), (self.screenw+200, self.screenh)).convert()
+        self.credits_screen = transform.scale(image.load('Woerterbuchspiel/Media/Credits.png'),
                                             (self.screenw+200, self.screenh)).convert()
-        self.anleitung_screen = transform.scale(image.load('Woerterbuchspiel/Anleitung.png'),
+        self.anleitung_screen = transform.scale(image.load('Woerterbuchspiel/Media/Anleitung.png'),
                                             (self.screenw+200, self.screenh)).convert()
-        self.last_screen = transform.scale(image.load('Woerterbuchspiel/Outro.png'),
+        self.last_screen = transform.scale(image.load('Woerterbuchspiel/Media/Outro.png'),
                                                 (self.screenw + 200, self.screenh)).convert()
         mixer.init()
-        self.gute_silbe_sound = mixer.Sound("Woerterbuchspiel/gute_silbe_sound.mp3")
-        self.bad_silbe_sound = mixer.Sound("Woerterbuchspiel/bad_silbe_sound.mp3")
+        self.gute_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/gute_silbe_sound.mp3")
+        self.bad_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/bad_silbe_sound.mp3")
 
     def font_spacing(self, font):
         img = font.render("A|&%)<QY", True, self.black)
@@ -120,7 +123,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         :return: None
         """
         if not self.nicht_in_bewegung:
-            self.timer()  # should be in resize_screen() in order to appear in every frame
+            self.time_left = self.timer()  # should be in resize_screen() in order to appear in every frame
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy,
                                                        self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))
@@ -131,14 +134,14 @@ class Settings:  # there could be a function converting size/location numbers ba
         Hier wird die gebliebene Zeit mittels "time.get_ticks()" berechnet
         :return: die gebliebene Zeit
         """
-        time_left = 15 * 60000 + self.start_ticks - time.get_ticks()
-        seconds = int(time_left / 1000 % 60)
-        minutes = int(time_left / 60000 % 24)
+        seconds_left = 0.3 * 60 + (self.start_ticks - time.get_ticks()) // 1000
+        minutes = max(0, int(seconds_left // 60))
+        seconds = max(0, int(seconds_left - minutes))
         dauer_text = f'{minutes}:{seconds}'
         dauer_img = self.default_font.render(dauer_text, True, self.white)
         dauer_rect = dauer_img.get_rect()
         dauer_rect.x = self.screen_rect.w - dauer_rect.w
         dauer_rect.y = self.screen_rect.h - dauer_rect.h
-        self.screen_copy.fill(self.gray,dauer_rect)
+        self.screen_copy.fill(self.navy,dauer_rect)
         self.screen_copy.blit(dauer_img, dauer_rect)
-        return time_left
+        return seconds_left

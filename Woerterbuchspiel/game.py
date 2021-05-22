@@ -174,8 +174,8 @@ class Game(globale_variablen.Settings):
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
                              no_buttons=True, start_end=None):
         '''
-        Zeichnet eine String (z.B. Anleitung-Saetze oder Wort-Definitionen) auf dem Schirm.
-        Die gezeichneten Objekten (z.B. Woerter) koennen auf Wunsch zum Button-Objekts werden,
+        Zeichnet eine String (z.Media. Anleitung-Saetze oder Wort-Definitionen) auf dem Schirm.
+        Die gezeichneten Objekten (z.Media. Woerter) koennen auf Wunsch zum Button-Objekts werden,
         auf die man clicken kann. (die Button Klasse ist im file "word").
 
         :param lst: die String zum Zeichnen
@@ -403,7 +403,6 @@ class Game(globale_variablen.Settings):
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                                                   self.start_third_screen_part - self.end_first_screen_part,
                                                   self.screenh)
-        self.tript2.fill(self.black)
         self.screen_syls = self.get_screensyls()
         # for loop
         for i in range(len(self.pos_list)):

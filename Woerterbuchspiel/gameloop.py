@@ -106,6 +106,7 @@ class Gameloop():
                     self.screen_via_display_set_mode = pg.display.set_mode(e.size, RESIZABLE)
             # AFTER GOING THROUGH THE EVENTS LIST
             # AFTER A NEW GAME HAS STARTED
+            self.check_time_left(self.time_left)
             if self.wait:
                 '''
                 Hier ist der Zustand des Spiels entweden gewonnen, verloren oder Neustart
@@ -134,7 +135,6 @@ class Gameloop():
                 Der Loop besteht aus dem Spieler-Objekt und Silbe-Objekte.
                 '''
                 self.game_objekt.nicht_in_bewegung = False
-                self.check_time_left(self.time_left)
                 self.game_objekt.spieler.act(self.game_objekt.tript2.get_rect())  # PLAYER MOVES ONCE A LOOP
                 self.game_objekt.spieler.pick([syl for syl in self.game_objekt.syls if syl.visible])
                 # CHECKING FOR ENOUGH SPACE ON THE SCREEN
@@ -182,7 +182,7 @@ class Gameloop():
         Wenn keine, aendert den Spielzustand auf "verloren".
         '''
         if not time_left:
-            time_left = self.game_objekt.timer()
+            time_left = self.game_objekt.time_left
         if time_left < 0:
             self.lost = True
             self.wait = True  # warten, bis der Spieler Space druckt
@@ -222,7 +222,6 @@ class Gameloop():
                 insert_at = ln-1
             else:
                 insert_at = self.game_objekt.word_to_move + plusminus1
-            print("word to move", self.game_objekt.guessed_code_words[self.game_objekt.word_to_move].name)
             popped = self.game_objekt.guessed_code_words.pop(self.game_objekt.word_to_move) # nimmt das geklickte Wort raus aus der Liste
             popped.color = self.game_objekt.orange
             try:
