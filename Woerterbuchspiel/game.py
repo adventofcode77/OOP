@@ -25,7 +25,7 @@ class Game(globale_variablen.Settings):
         self.blink_counter = 0
         self.top = 0
         self.gw, self.nw = None, None
-        self.h = 10
+        self.h = 10 # (= die maximale Anzahl von Silben in einer der Spalten)
         self.change_color = True
         self.binary_code = binary_code
         self.code_satz = code_satz
@@ -55,8 +55,9 @@ class Game(globale_variablen.Settings):
         self.start_syls_cut_at = 0
         self.pos_list = self.get_pos_list()
         self.gold_syls, self.lila_syls = [], []
-        self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // 10) + 1)
-        self.start_third_screen_part = self.screenw - (self.screenw // 10) * (len(self.lila_syls) // 10 + 1)
+        self.columnWidth = self.screenw // 8
+        self.end_first_screen_part = (self.columnWidth) * ((len(self.gold_syls) // self.h) + 1)
+        self.start_third_screen_part = self.screenw - self.columnWidth * (len(self.lila_syls) // self.h + 1)
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                                                   self.start_third_screen_part - self.end_first_screen_part,
                                                   self.screenh)
@@ -371,10 +372,10 @@ class Game(globale_variablen.Settings):
                 too_right = syl.rect.x > self.start_third_screen_part - syl.rect.w
                 if too_left:
                     while syl.rect.x < self.end_first_screen_part:
-                        syl.rect.x += self.screenw // 10
+                        syl.rect.x += self.screenw // self.columnWidth
                 elif too_right:
                     while syl.rect.x > self.start_third_screen_part - syl.rect.w:
-                        syl.rect.x -= self.screenw // 10
+                        syl.rect.x -= self.screenw // self.columnWidth
                 if syl.rect.x < self.end_first_screen_part or syl.rect.x > self.start_third_screen_part - syl.rect.w:
                     self.end_first_screen_part = self.start_third_screen_part - syl.rect.w  # trigger new game?
         return to_return  # (now syls should always be bigger than this cut)
@@ -398,8 +399,8 @@ class Game(globale_variablen.Settings):
         '''
         # variablen
         self.screen_copy.blit(self.faster_hintergrund,(0,0))
-        self.end_first_screen_part = (self.screenw // 10) * ((len(self.gold_syls) // self.h) + 1)
-        self.start_third_screen_part = self.screenw - (self.screenw // 10) * ((len(self.lila_syls) // self.h) + 1)
+        self.end_first_screen_part = self.columnWidth * ((len(self.gold_syls) // self.h) + 1)
+        self.start_third_screen_part = self.screenw - self.columnWidth * ((len(self.lila_syls) // self.h) + 1)
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
                                                   self.start_third_screen_part - self.end_first_screen_part,
                                                   self.screenh)
@@ -436,12 +437,11 @@ class Game(globale_variablen.Settings):
         :return:
         '''
         lil = self.lila_syls[:]
-        columnWidth = self.screenw // 10
         lila_tuples = [syl.tuple for syl in lil]
         non_code_tuples = [word.tuples for word in self.words]
 
         # Die lambda funktion berechnet die X koordinate der silben. Sie nimmt ein parameter namens "rowIndex" (in der definition von blit_trypt() )
-        self.blit_loop_one_side(True, lil, self.nw,lambda rowIndex: self.screenw - columnWidth - rowIndex * columnWidth, lila_tuples, non_code_tuples)
+        self.blit_loop_one_side(True, lil, self.nw, lambda columnIndex: self.screenw - self.columnWidth - columnIndex * self.columnWidth, lila_tuples, non_code_tuples)
 
     def blit_loop_left(self):
         '''
@@ -449,13 +449,45 @@ class Game(globale_variablen.Settings):
         :return: None
         '''
         gold = self.gold_syls[:]
-        columnWidth = self.screenw // 10
         gold_tuples = [syl.tuple for syl in gold]
         code_tuples = [w.tuples for w in self.woerter.code_words]
 
-        self.blit_loop_one_side(False, gold, self.gw,lambda rowIndex: rowIndex * columnWidth, gold_tuples, code_tuples)
+        self.blit_loop_one_side(False, gold, self.gw, lambda columnIndex: columnIndex * self.columnWidth, gold_tuples, code_tuples)
 
-
+    def blit_loop_one_side(self, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
+        '''
+        Zeichnet der linke oder der Rechte Teil des Loops (je nachdem,
+        ob der Argument "list_ist_lila" True oder Falsch ist)
+        :param list_ist_lila: bestimmt, welcher Teil des Schirms gezeichnet wird
+        :param lst_syls: die Silbe-Objekte zum zeichnen
+        :param blinking_word: die blinkenden Silben
+        :param x_position: der Index der Reihe, wo eine Silbe gezeichnet wird
+        :param syl_tuples: die Tuple-eigenschaften von den Silbe-Objekten
+        :param words_tuples: die Tuple-eigenschaften von allen Silbe-Objekten, die ein Wort aufbauen
+        :return: None
+        '''
+        if (not blinking_word) or blinking_word[
+            0] not in syl_tuples:  # falls zumindest eine tuple vom blinking word gelöscht wurde
+            # Diese if Klause versucht, nur eine Silbe pro Sektor zum blinken zu bringen. Jedoch blinken im Moment mehrere...
+            blinking_word = self.find_complete_syls(syl_tuples, words_tuples)
+            if list_ist_lila:
+                self.nw = blinking_word  # self.nw ist die gespeicherte blinkende Silbe auf dem rechten Sektor
+            else:
+                self.gw = blinking_word  # self.gw ist die gespeicherte blinkende Silbe auf dem linken Sektor
+        len_lst_syls = len(lst_syls)
+        # go through each of h elements because in each column we have h elements
+        # calculate the column index by syl_index_at_intersection_of_row_and_column//h -> 0,1,2,3
+        for row_index in range(0, self.h):
+            for column_index in range(0, len_lst_syls):
+                syl = Game.get_syl(column_index,row_index,lst_syls, self.h)
+                if syl is None:
+                    break
+                syl.rect.x = x_position(column_index)
+                if blinking_word and syl.tuple in blinking_word:
+                    syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.cyan)
+                    syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
+                syl.rect.y = self.top + row_index * ((self.screenh - self.top) // self.h)
+                self.screen_copy.blit(syl.image, syl.rect)
 
     def adjust_loop_window(self):  # Verwaltet den laufenden Loop aus runterfallenden Silben
         '''
@@ -492,52 +524,6 @@ class Game(globale_variablen.Settings):
             return nxt
         except:
             return None
-
-    def blit_loop_one_side(self, list_ist_lila, lst_syls, blinking_word, x_position, syl_tuples, words_tuples):
-        '''
-        Zeichnet der linke oder der Rechte Teil des Loops (je nachdem,
-        ob der Argument "list_ist_lila" True oder Falsch ist)
-        :param list_ist_lila: bestimmt, welcher Teil des Schirms gezeichnet wird
-        :param lst_syls: die Silbe-Objekte zum zeichnen
-        :param blinking_word: die blinkenden Silben
-        :param x_position: der Index der Reihe, wo eine Silbe gezeichnet wird
-        :param syl_tuples: die Tuple-eigenschaften von den Silbe-Objekten
-        :param words_tuples: die Tuple-eigenschaften von allen Silbe-Objekten, die ein Wort aufbauen
-        :return: None
-        '''
-        if (not blinking_word) or blinking_word[
-            0] not in syl_tuples:  # falls zumindest eine tuple vom blinking word gelöscht wurde
-            # Diese if Klause versucht, nur eine Silbe pro Sektor zum blinken zu bringen. Jedoch blinken im Moment mehrere...
-            blinking_word = self.find_complete_syls(syl_tuples, words_tuples)
-            if list_ist_lila:
-                self.nw = blinking_word  # self.nw ist die gespeicherte blinkende Silbe auf dem rechten Sektor
-            else:
-                self.gw = blinking_word  # self.gw ist die gespeicherte blinkende Silbe auf dem linken Sektor
-        len_lst_syls = len(lst_syls)
-
-        # what's unusual: the loop has jumps
-        # 3,13,23
-
-        # usual loop: 0,1,2,3 ...
-        # -> index is there
-        # -> syl_index_at_intersection_of_row_and_column: index * h + i
-
-
-        # start with i
-        # go each h elements because in each column we have h elements
-        # calculate the column index by syl_index_at_intersection_of_row_and_column//h -> 0,1,2,3
-
-        for row_index in range(0, self.h):
-            for column_index in range(0, len_lst_syls):  # making the left columns # iterate over rows
-                syl = Game.get_syl(column_index,row_index,lst_syls, self.h)
-                if syl is None:
-                    break
-                syl.rect.x = x_position(column_index)
-                if blinking_word and syl.tuple in blinking_word:
-                    syl.rgb = self.blink(self.fps * 2, syl, self.red, start_color=self.cyan)
-                    syl.image = self.default_font.render(syl.name, True, tuple(syl.rgb))
-                syl.rect.y = self.top + row_index * ((self.screenh - self.top) // self.h)
-                self.screen_copy.blit(syl.image, syl.rect)
 
     @classmethod
     def get_syl(cls, column_index, row_index, lst_syls, n_elements_in_column):

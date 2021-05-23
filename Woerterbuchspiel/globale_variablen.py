@@ -48,7 +48,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.nicht_in_bewegung = True
         self.start_ticks = None
         self.time_left = 10 * 60000
-        # MEDIA
+        # MEDIA (falls die Pfäde falsch sind, probier die Verzeichnisse aus dem Pfad rauszunehmen)
         self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Media/Sternenhintergrund.png'), (self.screenw,self.screenh))
         self.faster_hintergrund = self.hintergrund.convert()
         # why re the below intro screens 200 short?
@@ -134,7 +134,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         Hier wird die gebliebene Zeit mittels "time.get_ticks()" berechnet
         :return: die gebliebene Zeit
         """
-        seconds_left = 0.3 * 60 + (self.start_ticks - time.get_ticks()) // 1000
+        seconds_left = 10 * 60 + (self.start_ticks - time.get_ticks()) // 1000
         minutes = max(0, int(seconds_left // 60))
         seconds = max(0, int(seconds_left - minutes))
         dauer_text = f'{minutes}:{seconds}'
