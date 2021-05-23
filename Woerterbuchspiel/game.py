@@ -59,7 +59,7 @@ class Game(globale_variablen.Settings):
         self.end_first_screen_part = (self.columnWidth) * ((len(self.gold_syls) // self.h) + 1)
         self.start_third_screen_part = self.screenw - self.columnWidth * (len(self.lila_syls) // self.h + 1)
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
-                                                  self.start_third_screen_part - self.end_first_screen_part,
+                                                  self.start_third_screen_part - self.end_first_screen_part, # times two?
                                                   self.screenh)
         self.end_header = self.down
         self.header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
@@ -193,7 +193,6 @@ class Game(globale_variablen.Settings):
         if not screen: screen = self.screen_copy
         copy_screen = screen.copy()
         copy_screen_rect = copy_screen.get_rect()
-        list_snapshots_to_blit = {}
         if no_buttons: copy_buttons = self.buttons[:]
         self.buttons = []
         if type(lst) == str: lst = lst.split(" ")
@@ -201,25 +200,42 @@ class Game(globale_variablen.Settings):
         if not afont: afont = self.smaller_font
         spacing = self.font_spacing(afont)
         last_line_down = midtop[1]
-        if start_end:
-            start, end = start_end
-        else:
-            start, end = 0.25, 0.75
+        if start_end: start, end = start_end
+        else: start, end = 0.25, 0.75
         last_word_right = start * copy_screen_rect.w
         # for loop
+        last_line_down, window_counter, list_snapshots_to_blit = self.loop_through_text_to_display(afont, color, color_copy, copy_screen,
+                                                                           copy_screen_rect, end, last_line_down,
+                                                                           last_word_right, lst,
+                                                                           midtop, screen, spacing, start,
+                                                                           window_counter)
+        # snapshots
+        self.divide_text_into_surfaces(list_snapshots_to_blit, screen, window_counter)
+        # buttons
+        if no_buttons:
+            self.buttons = copy_buttons
+        return last_line_down + self.font_spacing(afont)  # how far down the screen there is curently text
+
+    def loop_through_text_to_display(self, afont, color, color_copy, copy_screen, copy_screen_rect, end, last_line_down,
+                                     last_word_right, lst, midtop, screen, spacing, start,
+                                     window_counter):
+        list_snapshots_to_blit = {}
         for i in range(len(lst)):
             aword = lst[i]
             if not aword: continue
             if type(aword) is word.Word:
                 if aword.color:
                     color, aword = aword.color, aword.name
-                    print("blitclick",color,aword)
+                    print("blitclick", color, aword)
             elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
             word_img = afont.render(f'{aword} ', True, color)
             word_rect = word_img.get_rect()
             color = color_copy
-            if last_word_right >= end * copy_screen_rect.w:
+            if last_word_right + word_rect.w >= end * copy_screen_rect.w:
+                print("tript2 is:",self.tript2.get_rect().w)
+                print("copy screen w is:",copy_screen_rect.w,"of which 75% is:",end * copy_screen_rect.w)
+                print("right end text is:",last_word_right)
                 if last_line_down < copy_screen_rect.h - spacing * 3:  # twice the highest spacing?
                     last_word_right = start * copy_screen_rect.w
                     last_line_down += spacing
@@ -231,24 +247,21 @@ class Game(globale_variablen.Settings):
             word_rect.x, word_rect.y = last_word_right, last_line_down
             self.buttons.append(word.Button(aword, word_img, word_rect, i))
             copy_screen.blit(word_img, word_rect)
-            last_word_right = last_word_right + word_rect.w # + afont.render(" ",True,self.white).get_rect().w
+            last_word_right = last_word_right + word_rect.w  # + afont.render(" ",True,self.white).get_rect().w
             if aword[-1] in ".!?:":  # mache eine neue Zeile nach diesen SYmbolen
                 last_word_right = start * copy_screen_rect.w
                 last_line_down += spacing * 1.5
             list_snapshots_to_blit[window_counter] = copy_screen.copy()
-        # snapshots
+        return last_line_down, window_counter, list_snapshots_to_blit
+
+    def divide_text_into_surfaces(self, list_snapshots_to_blit, screen, window_counter):
         if len(list_snapshots_to_blit) == 0:
             list_snapshots_to_blit[window_counter] = screen.copy()
         if self.test_next_counter < 0:  # temp? counter adjusts the text window counter without changing it, so that it doesnt keep resetting to the first or last window when it's outside the bounds
             temp_counter = len(list_snapshots_to_blit) - 1 - (self.test_next_counter % len(list_snapshots_to_blit))
         else:
             temp_counter = self.test_next_counter % len(list_snapshots_to_blit)
-        h = last_line_down + self.font_spacing(afont)
         screen.blit(list_snapshots_to_blit[temp_counter], (0, 0))
-        # buttons
-        if no_buttons:
-            self.buttons = copy_buttons
-        return h  # how far down the screen there is curently text
 
     def check_word(self):
         '''
@@ -400,11 +413,6 @@ class Game(globale_variablen.Settings):
         '''
         # variablen
         self.screen_copy.blit(self.faster_hintergrund,(0,0))
-        self.end_first_screen_part = self.columnWidth * ((len(self.gold_syls) // self.h) + 1)
-        self.start_third_screen_part = self.screenw - self.columnWidth * ((len(self.lila_syls) // self.h) + 1)
-        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
-                                                  self.start_third_screen_part - self.end_first_screen_part,
-                                                  self.screenh)
         self.screen_syls = self.get_screensyls()
         # for loop
         for i in range(len(self.pos_list)):
