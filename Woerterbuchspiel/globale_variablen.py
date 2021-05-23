@@ -22,10 +22,10 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.screen_surface = int(math.sqrt(self.screenw * self.screenh))
         self.right = self.screenw // 6
         self.down = self.screenh // 12
-        self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.zuff = (200, 255, 200)
-        self.gray = (50, 50, 50)
+        self.gray = (40, 60, 80)
+        self.black = (20,30,40)
         self.gold = (212, 175, 55)
         self.lila = (125, 33, 200)
         self.lime = (0, 255, 0)
@@ -136,7 +136,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         """
         seconds_left = 10 * 60 + (self.start_ticks - time.get_ticks()) // 1000
         minutes = max(0, int(seconds_left // 60))
-        seconds = max(0, int(seconds_left - minutes))
+        seconds = max(0, int(seconds_left - minutes*60))
         dauer_text = f'{minutes}:{seconds}'
         dauer_img = self.default_font.render(dauer_text, True, self.white)
         dauer_rect = dauer_img.get_rect()

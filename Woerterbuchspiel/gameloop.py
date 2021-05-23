@@ -47,6 +47,7 @@ class Gameloop():
         :return: None
         '''
         self.game_objekt.ziffern_und_code_woerter()  # called here once to create self.info.top so that picked syls get painted starting from there
+
         while True:  # TODO: make more object-oriented (with classes producing the state of one object each?)
             self.clock.tick(self.game_objekt.fps)  # one loop?
             self.game_objekt.resize_and_display_screen()  # resizes the last iteration's image to the current screen size and draws it
@@ -64,7 +65,9 @@ class Gameloop():
                 case KEYDOWN:
                     ..'''
                 if e.type == QUIT:
+                    print("closed the game window")
                     quit()
+                    print("should not print")
                 elif e.type == KEYDOWN:
                     ln = len(self.game_objekt.guessed_code_words)
                     if e.key == K_0:
@@ -75,6 +78,7 @@ class Gameloop():
                                 quit()
                             elif self.new_game:
                                 self.new_start()
+                                self.game_objekt.ziffern_und_code_woerter()  # called here once to create self.info.top so that picked syls get painted starting from there
                             self.wait = False
                         elif self.main_loop:
                             self.main_loop = False

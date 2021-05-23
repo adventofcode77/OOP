@@ -213,6 +213,7 @@ class Game(globale_variablen.Settings):
             if type(aword) is word.Word:
                 if aword.color:
                     color, aword = aword.color, aword.name
+                    print("blitclick",color,aword)
             elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
             word_img = afont.render(f'{aword} ', True, color)
@@ -548,9 +549,9 @@ class Game(globale_variablen.Settings):
         rect.center = self.screen_rect.center
         offset = 0.03 * self.screenh
         border_rect = Rect(rect.x - offset, rect.y - offset, rect.w + offset * 2, rect.h + offset * 2) # wrong dimensions?
-        draw.rect(self.screen_copy, self.orange, border_rect)
+        draw.rect(self.screen_copy, self.navy, border_rect)
         surface = self.screen_copy.subsurface(rect)
-        surface.fill(self.lila)
+        surface.fill(self.gray)
         self.blit_clickable_words(text, self.white, (0, self.down), screen=surface)
 
     def ziffern_und_code_woerter(self): # TODO combine the definitions underneath after clicking in the header
