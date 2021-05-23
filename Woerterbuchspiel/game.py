@@ -69,6 +69,7 @@ class Game(globale_variablen.Settings):
         self.word_to_move = None
         self.step_fps = 1
         self.temp_update_code_defs = None
+        self.text_snapshot_counter = 0
 
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
@@ -163,7 +164,7 @@ class Game(globale_variablen.Settings):
             temper = self.temp_update_code_defs
             blit_h = self.blit_clickable_words(temper, farbe[1], (
                 self.screen_copy.get_rect().center[0], self.end_header+0.5*self.down),
-                                               screen=surface)  # starts one line below the blitted word per the function
+                                               screen=surface,snapshots=True)  # starts one line below the blitted word per the function
         else:
             surface.blit(word_img, (
                 surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all + self.down))
@@ -173,7 +174,7 @@ class Game(globale_variablen.Settings):
                                                screen=surface)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
-                             no_buttons=True, start_end=None):
+                             no_buttons=True, snapshots=False,start_end=None):
         '''
         Zeichnet eine String (z.Media. Anleitung-Saetze oder Wort-Definitionen) auf dem Schirm.
         Die gezeichneten Objekten (z.Media. Woerter) koennen auf Wunsch zum Button-Objekts werden,
@@ -189,7 +190,6 @@ class Game(globale_variablen.Settings):
         :return: Das Ende des Gezeichnetes (Y-Koordinate)
         '''
         # variablen
-        window_counter = 0
         if not screen: screen = self.screen_copy
         copy_screen = screen.copy()
         copy_screen_rect = copy_screen.get_rect()
@@ -204,21 +204,29 @@ class Game(globale_variablen.Settings):
         else: start, end = 0.25, 0.75
         last_word_right = start * copy_screen_rect.w
         # for loop
-        last_line_down, window_counter, list_snapshots_to_blit = self.loop_through_text_to_display(afont, color, color_copy, copy_screen,
+        last_line_down, snapshots_counter, list_snapshots_to_blit = self.loop_through_text_to_display(afont, color, color_copy, copy_screen,
                                                                            copy_screen_rect, end, last_line_down,
                                                                            last_word_right, lst,
-                                                                           midtop, screen, spacing, start,
-                                                                           window_counter)
+                                                                           midtop, screen, spacing, start)
         # snapshots
-        self.divide_text_into_surfaces(list_snapshots_to_blit, screen, window_counter)
+        if snapshots_counter >0:
+            print("win counter is",snapshots_counter)
+        if snapshots:
+            print("in snapsh")
+            if snapshots_counter > 0:
+                print("in snaps win counter is", snapshots_counter)
+            snapshot_to_blit = self.divide_text_into_surfaces(list_snapshots_to_blit, copy_screen, snapshots_counter)
+        else:
+            snapshot_to_blit = copy_screen.copy()
+        screen.blit(snapshot_to_blit, (0, 0))
         # buttons
         if no_buttons:
             self.buttons = copy_buttons
         return last_line_down + self.font_spacing(afont)  # how far down the screen there is curently text
 
     def loop_through_text_to_display(self, afont, color, color_copy, copy_screen, copy_screen_rect, end, last_line_down,
-                                     last_word_right, lst, midtop, screen, spacing, start,
-                                     window_counter):
+                                     last_word_right, lst, midtop, screen, spacing, start):
+        snapshots_counter = 0
         list_snapshots_to_blit = {}
         for i in range(len(lst)):
             aword = lst[i]
@@ -233,9 +241,6 @@ class Game(globale_variablen.Settings):
             word_rect = word_img.get_rect()
             color = color_copy
             if last_word_right + word_rect.w >= end * copy_screen_rect.w:
-                print("tript2 is:",self.tript2.get_rect().w)
-                print("copy screen w is:",copy_screen_rect.w,"of which 75% is:",end * copy_screen_rect.w)
-                print("right end text is:",last_word_right)
                 if last_line_down < copy_screen_rect.h - spacing * 3:  # twice the highest spacing?
                     last_word_right = start * copy_screen_rect.w
                     last_line_down += spacing
@@ -243,7 +248,7 @@ class Game(globale_variablen.Settings):
                     copy_screen = screen.copy()
                     last_line_down = midtop[1]
                     last_word_right = start * copy_screen_rect.w
-                    window_counter += 1
+                    snapshots_counter += 1
             word_rect.x, word_rect.y = last_word_right, last_line_down
             self.buttons.append(word.Button(aword, word_img, word_rect, i))
             copy_screen.blit(word_img, word_rect)
@@ -251,17 +256,23 @@ class Game(globale_variablen.Settings):
             if aword[-1] in ".!?:":  # mache eine neue Zeile nach diesen SYmbolen
                 last_word_right = start * copy_screen_rect.w
                 last_line_down += spacing * 1.5
-            list_snapshots_to_blit[window_counter] = copy_screen.copy()
-        return last_line_down, window_counter, list_snapshots_to_blit
+            list_snapshots_to_blit[snapshots_counter] = copy_screen.copy()
+        return last_line_down, snapshots_counter, list_snapshots_to_blit
 
-    def divide_text_into_surfaces(self, list_snapshots_to_blit, screen, window_counter):
+    def divide_text_into_surfaces(self, list_snapshots_to_blit, screen, snapshots_counter):
+        #print("counter is:", self.text_snapshot_counter)
         if len(list_snapshots_to_blit) == 0:
-            list_snapshots_to_blit[window_counter] = screen.copy()
-        if self.test_next_counter < 0:  # temp? counter adjusts the text window counter without changing it, so that it doesnt keep resetting to the first or last window when it's outside the bounds
-            temp_counter = len(list_snapshots_to_blit) - 1 - (self.test_next_counter % len(list_snapshots_to_blit))
-        else:
-            temp_counter = self.test_next_counter % len(list_snapshots_to_blit)
-        screen.blit(list_snapshots_to_blit[temp_counter], (0, 0))
+            list_snapshots_to_blit[snapshots_counter] = screen.copy()
+        if self.text_snapshot_counter < 0:  # temp? counter adjusts the text window counter without changing it, so that it doesnt keep resetting to the first or last window when it's outside the bounds
+            self.text_snapshot_counter = len(list_snapshots_to_blit) - 1
+        elif self.text_snapshot_counter > len(list_snapshots_to_blit) - 1:
+            print("in >len clause, counter is:", self.text_snapshot_counter)
+            self.text_snapshot_counter = 0
+        if snapshots_counter > 0:
+            print("more thn one window!")
+            print("len list snaps:",len(list_snapshots_to_blit))
+        return list_snapshots_to_blit[self.text_snapshot_counter]
+
 
     def check_word(self):
         '''

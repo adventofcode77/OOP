@@ -59,6 +59,7 @@ class Gameloop():
             In dieser FOR Schleife wird durch die Maus- und Taste- Events gegangen 
             und die Folgen von jedem bestimmt
             '''
+            #print("before adjustments:", self.game_objekt.text_snapshot_counter)
             for e in event.get():  # how to clear events?
                 '''switch e.type
                 case QUIT:
@@ -67,7 +68,7 @@ class Gameloop():
                     ..'''
                 if e.type == QUIT:
                     print("closed the game window")
-                    quit()
+                    exit()
                     print("should not print")
                 elif e.type == KEYDOWN:
                     ln = len(self.game_objekt.guessed_code_words)
@@ -98,13 +99,18 @@ class Gameloop():
                     elif e.key == K_i:
                         self.menu = True
                     elif e.key == K_DOWN:
-                        self.menu = False
-                        if not self.game_objekt.start_ticks:
-                            self.game_objekt.start_ticks = time.get_ticks()
-                        self.game_objekt.next_counter = 0
-                        self.main_loop = True
-                        for item in self.game_objekt.spieler.my_silben:
-                            item.clicked_on = False
+                        if self.menu:
+                            self.menu = False
+                            if not self.game_objekt.start_ticks:
+                                self.game_objekt.start_ticks = time.get_ticks()
+                            self.game_objekt.next_counter = 0
+                            self.main_loop = True
+                        else:
+                            self.game_objekt.text_snapshot_counter += 1
+                            print(self.game_objekt.text_snapshot_counter)
+                    elif e.key == K_UP:
+                        self.game_objekt.text_snapshot_counter -= 1
+                        print(self.game_objekt.text_snapshot_counter)
                 elif e.type == MOUSEBUTTONDOWN:
                     self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
