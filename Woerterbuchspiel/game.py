@@ -209,13 +209,9 @@ class Game(globale_variablen.Settings):
                                                                            last_word_right, lst,
                                                                            midtop, screen, spacing, start)
         # snapshots
-        if snapshots_counter >0:
-            print("win counter is",snapshots_counter)
-        if snapshots:
-            print("in snapsh")
-            if snapshots_counter > 0:
-                print("in snaps win counter is", snapshots_counter)
-            snapshot_to_blit = self.divide_text_into_surfaces(list_snapshots_to_blit, copy_screen, snapshots_counter)
+        if snapshots and snapshots_counter:
+            snapshot_to_blit = self.divide_text_into_surfaces(list_snapshots_to_blit, copy_screen)
+            self.blit_snapshots_arrows(snapshot_to_blit,last_line_down)
         else:
             snapshot_to_blit = copy_screen.copy()
         screen.blit(snapshot_to_blit, (0, 0))
@@ -223,6 +219,15 @@ class Game(globale_variablen.Settings):
         if no_buttons:
             self.buttons = copy_buttons
         return last_line_down + self.font_spacing(afont)  # how far down the screen there is curently text
+
+    def blit_snapshots_arrows(self,screen,last_line_down):
+        y = 0.1*self.screenh
+        x = 0.1*self.tript2.get_rect().right
+
+        draw.polygon(screen,self.orange,((8*x,6*y),(9*x,4*y),(1*x,6*y)))
+        draw.polygon(screen, self.orange, ((8 * x, 7 * y), (9 * x, 9 * y), (10 * x, 7 * y)))
+
+
 
     def loop_through_text_to_display(self, afont, color, color_copy, copy_screen, copy_screen_rect, end, last_line_down,
                                      last_word_right, lst, midtop, screen, spacing, start):
@@ -259,18 +264,13 @@ class Game(globale_variablen.Settings):
             list_snapshots_to_blit[snapshots_counter] = copy_screen.copy()
         return last_line_down, snapshots_counter, list_snapshots_to_blit
 
-    def divide_text_into_surfaces(self, list_snapshots_to_blit, screen, snapshots_counter):
-        #print("counter is:", self.text_snapshot_counter)
+    def divide_text_into_surfaces(self, list_snapshots_to_blit, screen):
         if len(list_snapshots_to_blit) == 0:
-            list_snapshots_to_blit[snapshots_counter] = screen.copy()
+            return screen.copy()
         if self.text_snapshot_counter < 0:  # temp? counter adjusts the text window counter without changing it, so that it doesnt keep resetting to the first or last window when it's outside the bounds
             self.text_snapshot_counter = len(list_snapshots_to_blit) - 1
         elif self.text_snapshot_counter > len(list_snapshots_to_blit) - 1:
-            print("in >len clause, counter is:", self.text_snapshot_counter)
             self.text_snapshot_counter = 0
-        if snapshots_counter > 0:
-            print("more thn one window!")
-            print("len list snaps:",len(list_snapshots_to_blit))
         return list_snapshots_to_blit[self.text_snapshot_counter]
 
 
