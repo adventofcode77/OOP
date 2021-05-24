@@ -440,8 +440,11 @@ class Game(globale_variablen.Settings):
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
                     draw.circle(self.screen_copy, syl.rgb, syl.rect.center, syl.rect.w, width=circle_width)
                 elif syl.picked:  # picked ist eine zahl zwischen 0 und self.fps
-                    draw.circle(self.screen_copy, syl.rgb, syl.new_spot_rect.center, syl.rect.w // 2, width=syl.picked)
-                    draw.circle(self.screen_copy, syl.rgb, syl.ghost_rect.center, syl.rect.w, width=syl.picked)
+                    try: # had error "Nonetype object has no center" when the direction was upwards
+                        draw.circle(self.screen_copy, syl.rgb, syl.new_spot_rect.center, syl.rect.w // 2, width=syl.picked)
+                        draw.circle(self.screen_copy, syl.rgb, syl.ghost_rect.center, syl.rect.w, width=syl.picked)
+                    except:
+                        pass
                     # TODO 'NoneType' bug: object has no attribute 'center' sometime after loop direction reversal
                     syl.picked = syl.picked - 4 if syl.picked > 0 else 0
                 syl.rect.y = self.pos_list[

@@ -63,7 +63,7 @@ class Gameloop():
             for e in event.get():  # how to clear events?
                 '''switch e.type
                 case QUIT:
-                    quit();
+                    quit()
                 case KEYDOWN:
                     ..'''
                 if e.type == QUIT:
