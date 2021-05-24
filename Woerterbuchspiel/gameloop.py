@@ -105,8 +105,8 @@ class Gameloop():
                             self.main_loop = True
                         else:
                             self.game_objekt.help_sign_index = 1
-                            self.main_loop = False
                             self.menu_aenderbar = True
+                            self.main_loop = False
                     elif e.key == K_DOWN:
                         if self.menu:
                             self.menu = False
@@ -151,7 +151,7 @@ class Gameloop():
                 self.game_objekt.next_counter = next
             elif self.menu_aenderbar:
                 self.game_objekt.nicht_in_bewegung = True
-                next = self.game_objekt.menu.tutorial(self.game_objekt.next_counter)
+                self.game_objekt.next_counter = self.game_objekt.menu.tutorial(self.game_objekt.next_counter)
             elif self.main_loop:
                 '''
                 Hier ist der Zustand des Spiels "im Action-Loop".

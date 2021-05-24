@@ -123,8 +123,6 @@ class Settings:  # there could be a function converting size/location numbers ba
         x, y = current_x_ratio * orig_screenw, current_y_ratio * orig_screenh
         return (x, y)
 
-
-
     def resize_and_display_screen(self):
         """
         Aendert die Groesse des Schirm-Copys auf die Groesse vom echten Schirm
