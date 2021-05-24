@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Menu:
     '''
     Diese Klasse erzeugt Die Spielanleitung
@@ -33,7 +34,7 @@ class Menu:
         :param next_counter: der aus der Liste von Anleitung-Elementen (self.list_instructions)
         :return: der Counter-Index
         '''
-        self.info.screen_copy.fill(self.info.black)
+        self.info.screen_copy.fill(self.info.dark)
         if next_counter > len(self.list_instructions) - 1:
             next_counter = 0
         elif next_counter < 0:

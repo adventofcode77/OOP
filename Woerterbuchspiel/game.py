@@ -1,15 +1,11 @@
+# -*- coding: utf-8 -*-
 import random
 
 import pygame as pg
 import random
 from pygame import *
 
-from Woerterbuchspiel import globale_variablen
-from Woerterbuchspiel import menu
-from Woerterbuchspiel import silbe
-from Woerterbuchspiel import spieler
-from Woerterbuchspiel import woerter
-from Woerterbuchspiel import word
+from Woerterbuchspiel import globale_variablen, menu, silbe, spieler, woerter, word
 
 
 class Game(globale_variablen.Settings):
@@ -80,7 +76,7 @@ class Game(globale_variablen.Settings):
         :param click: Das Mausclick
         :return: None
         '''
-        self.tript2.fill(self.black)
+        self.tript2.fill(self.dark)
         self.ziffern_und_code_woerter() # aktualisiert der obene mittlere Teil des Schirms (header)
         # if self.temp:
         #     print("in game temp")
@@ -410,6 +406,8 @@ class Game(globale_variablen.Settings):
         Zeichnet den ganzen sich bewegenden Loop
         :return:
         '''
+        self.screen_copy.fill(self.gray, (0, 0, self.screenw,self.screenh))
+        self.tript2.blit(self.hintergrund, (0, 0)) # der Hintergrund ist links dunkler als rechts und ergibt auf diese Weise Wände
         self.blit_loop_middle()
         self.blit_loop_left()
         self.blit_loop_right()
@@ -423,7 +421,6 @@ class Game(globale_variablen.Settings):
         :return: None
         '''
         # variablen
-        self.screen_copy.blit(self.faster_hintergrund,(0,0))
         self.screen_syls = self.get_screensyls()
         # for loop
         for i in range(len(self.pos_list)):
@@ -438,13 +435,14 @@ class Game(globale_variablen.Settings):
                         circle_width = int(
                             2 + (self.step_fps // self.fps * 2) * 2)  # width goes up and down with the color changes
                     self.screen_copy.blit(syl.image, (syl.rect.x, self.pos_list[i] + self.syl_pos_change))
-                    draw.circle(self.screen_copy, syl.rgb, syl.rect.center, syl.rect.w, width=circle_width)
+                    try:
+                        draw.circle(self.screen_copy, syl.rgb, syl.rect.center, syl.rect.w, width=circle_width)
+                    except: pass
                 elif syl.picked:  # picked ist eine zahl zwischen 0 und self.fps
                     try: # had error "Nonetype object has no center" when the direction was upwards
                         draw.circle(self.screen_copy, syl.rgb, syl.new_spot_rect.center, syl.rect.w // 2, width=syl.picked)
                         draw.circle(self.screen_copy, syl.rgb, syl.ghost_rect.center, syl.rect.w, width=syl.picked)
-                    except:
-                        pass
+                    except: pass
                     # TODO 'NoneType' bug: object has no attribute 'center' sometime after loop direction reversal
                     syl.picked = syl.picked - 4 if syl.picked > 0 else 0
                 syl.rect.y = self.pos_list[
@@ -584,12 +582,12 @@ class Game(globale_variablen.Settings):
         '''
         # if the header changes size, the subsurface may end up larger than the surface unless the function is called in the while loop
         # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
-        self.screen_copy.fill(self.gray, Rect(0, 0, self.screenw, self.end_header))
+        self.screen_copy.fill(self.black, Rect(0, 0, self.screenw, self.end_header))
         digits_line = self.font_spacing(self.bigger_font)
         binary_list = {" NEU >>> ": " ALT>>>>"}
         self.screen_copy.blit(self.bigger_font.render(" ALT >>>> ", True, self.cyan), (0, digits_line))
         list_code_satz = self.woerter.code_satz.split()
-        digit_identation = self.bigger_font.render(" ALT >>>> ", True, self.black).get_rect().w
+        digit_identation = self.bigger_font.render(" ALT >>>> ", True, self.dark).get_rect().w
 
         the_calculation_result = []
 
@@ -599,7 +597,7 @@ class Game(globale_variablen.Settings):
             if i < len(
                     self.guessed_code_words):  # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
                 dieses_code_wort = self.guessed_code_words[i].name
-                space_nach_ziffer = self.bigger_font.render(f'{dieses_code_wort} ', True, self.black).get_rect().w
+                space_nach_ziffer = self.bigger_font.render(f'{dieses_code_wort} ', True, self.dark).get_rect().w
                 # print(dieses_code_wort,len(space_nach_ziffer))
                 if dieses_code_wort == list_code_satz[i]:  # checkt, ob das richtige Wort im richtigen Platz ist
                     binary_list[
@@ -610,7 +608,7 @@ class Game(globale_variablen.Settings):
                     code_number_at_this_index = opposite
             else:
                 ziffer = f'{i + 1}'
-                space_nach_ziffer = self.bigger_font.render(ziffer, True, self.black).get_rect().w
+                space_nach_ziffer = self.bigger_font.render(ziffer, True, self.dark).get_rect().w
                 binary_list[ziffer] = f'{opposite} '  # die nicht-erratene woerter ergeben immer 0
                 code_number_at_this_index = opposite
 

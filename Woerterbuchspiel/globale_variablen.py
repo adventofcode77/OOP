@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 import random
 
 import pygame as pg
@@ -25,7 +25,8 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.white = (255, 255, 255)
         self.zuff = (200, 255, 200)
         self.gray = (40, 60, 80)
-        self.black = (20,30,40)
+        self.dark = (20, 30, 40)
+        self.black = (10,15,20)
         self.gold = (212, 175, 55)
         self.lila = (125, 33, 200)
         self.lime = (0, 255, 0)
@@ -49,8 +50,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.start_ticks = None
         self.time_left = 10 * 60000
         # MEDIA (falls die Pfäde falsch sind, probier die Verzeichnisse aus dem Pfad rauszunehmen)
-        self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Media/Sternenhintergrund.png'), (self.screenw,self.screenh))
-        self.faster_hintergrund = self.hintergrund.convert()
+        self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Media/Sternenhintergrund.png'), (self.screenw,self.screenh)).convert()
         # why re the below intro screens 200 short?
         self.first_screen = transform.scale(image.load('Woerterbuchspiel/Media/Intro.png'), (self.screenw+200, self.screenh)).convert()
         self.credits_screen = transform.scale(image.load('Woerterbuchspiel/Media/Credits.png'),
@@ -64,7 +64,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.bad_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/bad_silbe_sound.mp3")
 
     def font_spacing(self, font):
-        img = font.render("A|&%)<QY", True, self.black)
+        img = font.render("A|&%)<QY", True, self.dark)
         return img.get_rect().h
 
     def get_bits(self, alist, num_parts):  # goal: divide a list into roughly equal parts such that no part is empty

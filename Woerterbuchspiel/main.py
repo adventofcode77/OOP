@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pygame as pg
 import pickle
 
