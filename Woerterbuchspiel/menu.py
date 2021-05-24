@@ -22,7 +22,7 @@ class Menu:
             1: self.info.anleitung_screen,
             -1: self.info.credits_screen
         }
-        schirm_zahl = -1 if schirm_zahl > 1 else 0 if schirm_zahl not in intro_screens.keys() else schirm_zahl
+        schirm_zahl = -1 if schirm_zahl > 1 or schirm_zahl < -1 else schirm_zahl
         screen_to_blit = intro_screens.get(schirm_zahl, intro_screens[0])
         self.info.screen_copy.blit(screen_to_blit, (0,0))
         return schirm_zahl
