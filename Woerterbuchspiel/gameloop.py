@@ -30,6 +30,7 @@ class Gameloop():
         self.game_objekt = game.Game(self.input_codes, self.file_paths, self.binary_code, dict)
         self.main_loop = False
         self.menu = True
+        self.menu_aenderbar = False
         self.click = False
         self.binary_click = False
         self.time_left = None
@@ -98,7 +99,14 @@ class Gameloop():
                     elif e.key == K_LEFT or e.key == K_RIGHT:  # show next code_string explanation installment
                         self.move_things_left_and_right(ln, e.key)
                     elif e.key == K_i:
-                        self.menu = True
+                        if self.menu_aenderbar:
+                            self.game_objekt.help_sign_index = 0
+                            self.menu_aenderbar = False
+                            self.main_loop = True
+                        else:
+                            self.game_objekt.help_sign_index = 1
+                            self.main_loop = False
+                            self.menu_aenderbar = True
                     elif e.key == K_DOWN:
                         if self.menu:
                             self.menu = False
@@ -141,6 +149,9 @@ class Gameloop():
                 # next = self.game_objekt.menu.tutorial(self.game_objekt.next_counter)
                 next = self.game_objekt.menu.intro(self.game_objekt.next_counter)
                 self.game_objekt.next_counter = next
+            elif self.menu_aenderbar:
+                self.game_objekt.nicht_in_bewegung = True
+                next = self.game_objekt.menu.tutorial(self.game_objekt.next_counter)
             elif self.main_loop:
                 '''
                 Hier ist der Zustand des Spiels "im Action-Loop".
