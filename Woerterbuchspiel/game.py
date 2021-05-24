@@ -29,7 +29,7 @@ class Game(globale_variablen.Settings):
         self.change_color = True
         self.binary_code = binary_code
         self.code_satz = code_satz
-        self.output_code = "Dame schlägt Bauern"
+        self.output_code = code_satz[0]
         self.next_counter = 0
         self.test_next_counter = 0
         self.menu = menu.Menu(self)
@@ -221,11 +221,11 @@ class Game(globale_variablen.Settings):
         return last_line_down + self.font_spacing(afont)  # how far down the screen there is curently text
 
     def blit_snapshots_arrows(self,screen,last_line_down):
-        y = 0.1*self.screenh
+        y = 0.1* (self.screenh - self.end_header)
         x = 0.1*self.tript2.get_rect().right
 
-        draw.polygon(screen,self.orange,((8*x,6*y),(9*x,4*y),(1*x,6*y)))
-        draw.polygon(screen, self.orange, ((8 * x, 7 * y), (9 * x, 9 * y), (10 * x, 7 * y)))
+        draw.polygon(screen,self.orange,((8*x,6*y),(8.5*x,5.5*y),(9*x,6*y)))
+        draw.polygon(screen, self.orange, ((8 * x, 6.5 * y), (8.5 * x, 7 * y), (9 * x, 6.5 * y)))
 
 
 
