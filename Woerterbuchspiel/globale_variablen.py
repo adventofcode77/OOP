@@ -50,18 +50,21 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.start_ticks = None
         self.time_left = 10 * 60000
         # MEDIA (falls die Pfäde falsch sind, probier die Verzeichnisse aus dem Pfad rauszunehmen)
-        self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Media/Sternenhintergrund.png'), (self.screenw,self.screenh)).convert()
+        self.hintergrund = transform.scale(image.load('Media/Sternenhintergrund.png'), (self.screenw,self.screenh)).convert()
+        #self.background_alpha = Surface(self.screenw, self.screenh)
+        #self.background_alpha.fill(self.gray)
+        #self.background_alpha.set_alpha(128)
         # why re the below intro screens 200 short?
-        self.first_screen = transform.scale(image.load('Woerterbuchspiel/Media/Intro.png'), (self.screenw+200, self.screenh)).convert()
-        self.credits_screen = transform.scale(image.load('Woerterbuchspiel/Media/Credits.png'),
+        self.first_screen = transform.scale(image.load('Media/Intro.png'), (self.screenw+200, self.screenh)).convert()
+        self.credits_screen = transform.scale(image.load('Media/Credits.png'),
                                             (self.screenw+200, self.screenh)).convert()
-        self.anleitung_screen = transform.scale(image.load('Woerterbuchspiel/Media/Anleitung.png'),
+        self.anleitung_screen = transform.scale(image.load('Media/Anleitung.png'),
                                             (self.screenw+200, self.screenh)).convert()
-        self.last_screen = transform.scale(image.load('Woerterbuchspiel/Media/Outro.png'),
+        self.last_screen = transform.scale(image.load('Media/Outro.png'),
                                                 (self.screenw + 200, self.screenh)).convert()
         mixer.init()
-        self.gute_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/gute_silbe_sound.mp3")
-        self.bad_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/bad_silbe_sound.mp3")
+        self.gute_silbe_sound = mixer.Sound('Media/gute_silbe_sound.mp3')
+        self.bad_silbe_sound = mixer.Sound('Media/bad_silbe_sound.mp3')
 
     def font_spacing(self, font):
         img = font.render("A|&%)<QY", True, self.dark)

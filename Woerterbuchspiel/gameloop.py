@@ -33,7 +33,7 @@ class Gameloop():
         self.click = False
         self.binary_click = False
         self.time_left = None
-
+        self.end = False
         self.clock = pg.time.Clock()  # speed depends on cpu?
 
 
@@ -49,7 +49,7 @@ class Gameloop():
         '''
         self.game_objekt.ziffern_und_code_woerter()  # called here once to create self.info.top so that picked syls get painted starting from there
 
-        while True:  # TODO: make more object-oriented (with classes producing the state of one object each?)
+        while not self.end:  # TODO: make more object-oriented (with classes producing the state of one object each?)
             self.clock.tick(self.game_objekt.fps)  # one loop?
             self.game_objekt.resize_and_display_screen()  # resizes the last iteration's image to the current screen size and draws it
             if self.game_objekt.blink_counter:
@@ -68,9 +68,7 @@ class Gameloop():
                 case KEYDOWN:
                     ..'''
                 if e.type == QUIT:
-                    print("closed the game window")
-                    exit()
-                    print("should not print")
+                    self.end = True
                 elif e.type == KEYDOWN:
                     ln = len(self.game_objekt.guessed_code_words)
                     if e.key == K_0:
@@ -78,7 +76,7 @@ class Gameloop():
                     elif e.key == K_SPACE:  # go to the desk
                         if self.wait:
                             if self.won or self.lost:
-                                quit()
+                                self.end = True
                             elif self.new_game:
                                 self.new_start()
                                 self.game_objekt.ziffern_und_code_woerter()  # called here once to create self.info.top so that picked syls get painted starting from there
@@ -185,7 +183,7 @@ class Gameloop():
                 if " ".join([word.name for word in self.game_objekt.guessed_code_words]) == self.game_objekt.woerter.code_satz:
                     self.won = True
                     self.wait = True
-
+        quit()
 
     def check_time_left(self, time_left=None):
         '''
@@ -251,5 +249,19 @@ class Gameloop():
         self.game_objekt.tript2 = self.game_objekt.screen_copy.subsurface(self.game_objekt.end_first_screen_part, 0,
                                                   self.game_objekt.start_third_screen_part - self.game_objekt.end_first_screen_part,
                                                   self.game_objekt.screenh)
+        self.game_objekt.tript1 = Surface((self.game_objekt.tript1rect.w, self.game_objekt.tript1rect.h),
+                                          pg.SRCALPHA)
+        alpha = 120
+        self.game_objekt.tript1.set_alpha(alpha)
+        self.game_objekt.tript3 = Surface((self.game_objekt.tript3rect.w, self.game_objekt.tript3rect.h),
+                                          pg.SRCALPHA)
+        self.game_objekt.tript3.set_alpha(alpha)
+        self.game_objekt.tript1.fill(self.game_objekt.gray)
+        self.game_objekt.tript3.fill(self.game_objekt.gray)
+        self.game_objekt.tript1rect = Rect(0, 0, self.game_objekt.end_first_screen_part, self.game_objekt.screenh)
+        self.game_objekt.tript3rect = Rect(self.game_objekt.start_third_screen_part, 0, self.game_objekt.screenw - self.game_objekt.start_third_screen_part,
+                               self.game_objekt.screenh)
+
+        # self.background_alpha.set_alpha(128)
 
 

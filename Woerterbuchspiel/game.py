@@ -59,6 +59,12 @@ class Game(globale_variablen.Settings):
                                                   self.screenh)
         self.end_header = self.down
         self.header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
+        self.tript1 = Surface((self.tript2.get_rect().w, self.tript2.get_rect().w),
+                                          pg.SRCALPHA) # SRCALPHA initialises the surface to transparent
+        self.tript1rect = Rect(0,0,self.end_first_screen_part,self.screenh)
+        self.tript3 = Surface((self.tript2.get_rect().w, self.tript2.get_rect().w),
+                                          pg.SRCALPHA)
+        self.tript3rect = Rect(self.start_third_screen_part, 0, self.screenw-self.start_third_screen_part, self.screenh)
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
@@ -406,8 +412,13 @@ class Game(globale_variablen.Settings):
         Zeichnet den ganzen sich bewegenden Loop
         :return:
         '''
-        self.screen_copy.fill(self.gray, (0, 0, self.screenw,self.screenh))
-        self.tript2.blit(self.hintergrund, (0, 0)) # der Hintergrund ist links dunkler als rechts und ergibt auf diese Weise Wände
+        #self.screen_copy.fill(self.white)
+        self.screen_copy.blit(self.hintergrund, (0, 0))
+        print("t1rect",self.tript1rect)
+        self.screen_copy.blit(self.tript1,self.tript1rect)
+        self.screen_copy.blit(self.tript3, self.tript3rect)
+        print("tript3",self.tript3rect)
+        #self.tript3.fill(self.gray)
         self.blit_loop_middle()
         self.blit_loop_left()
         self.blit_loop_right()
