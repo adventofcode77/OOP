@@ -17,6 +17,8 @@ class Menu:
         self.list_instructions = self.list_lists_instructions()
 
 
+
+
     def intro(self, schirm_zahl):
         intro_screens = {
             0: self.info.first_screen,
@@ -27,6 +29,8 @@ class Menu:
         screen_to_blit = intro_screens.get(schirm_zahl, intro_screens[0])
         self.info.screen_copy.blit(screen_to_blit, (0,0))
         return schirm_zahl
+
+
 
     def tutorial(self, next_counter):
         '''

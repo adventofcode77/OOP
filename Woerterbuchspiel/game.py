@@ -59,6 +59,12 @@ class Game(globale_variablen.Settings):
                                                   self.screenh)
         self.end_header = self.down
         self.header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
+        self.tript1 = Surface((self.tript2.get_rect().w, self.tript2.get_rect().w),
+                                          pg.SRCALPHA) # SRCALPHA initialises the surface to transparent
+        self.tript1rect = Rect(0,0,self.end_first_screen_part,self.screenh)
+        self.tript3 = Surface((self.tript2.get_rect().w, self.tript2.get_rect().w),
+                                          pg.SRCALPHA)
+        self.tript3rect = Rect(self.start_third_screen_part, 0, self.screenw-self.start_third_screen_part, self.screenh)
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
@@ -406,8 +412,10 @@ class Game(globale_variablen.Settings):
         Zeichnet den ganzen sich bewegenden Loop
         :return:
         '''
-        self.screen_copy.fill(self.gray, (0, 0, self.screenw,self.screenh))
-        self.tript2.blit(self.hintergrund, (0, 0)) # der Hintergrund ist links dunkler als rechts und ergibt auf diese Weise Wände
+        #self.screen_copy.fill(self.white)
+        self.screen_copy.blit(self.hintergrund, (0, 0))
+        self.screen_copy.blit(self.tript1,self.tript1rect)
+        self.screen_copy.blit(self.tript3, self.tript3rect)
         self.blit_loop_middle()
         self.blit_loop_left()
         self.blit_loop_right()
@@ -645,3 +653,33 @@ class Game(globale_variablen.Settings):
             else:
                 self.word_to_move = None
                 self.temp_update_code_defs = None
+
+    def localised_instructions(self):
+
+        text_header = "Die Code-Wörter werden unter den Ziffern erscheinen, nachdem du sie aufbaust. " \
+                      "Klicke auf ein Wort und bewege es mit den Pfeiltasten."
+        text_left = "Hier erscheinen die gesammelten Code-Silben. " \
+                    "Aus denen besteht den Code-Satz, den du brauchst. " \
+                    "Du musst die Code-Wörter aus den Code-Silben aufbauen. "
+        text_right = "Hier erscheinen die Silben, die du hättest vermeiden sollen. " \
+                     "Mache Wörten aus denen, um sie zu entfernen. "
+        text_middle = "Bewege dich mit den Pfeiltasten. " \
+                      "Sammele Code-Silben. Sie blinken in gelb. " \
+                      "Vermeide die anderen Silben, um nicht zu verlieren. " \
+                      "Klicke auf die gesammelten Silben, um ein Wort aufzubauen. " \
+                      "Wenn du blinkende Silben siehst, ist dies ein Hinweis. Sie sind Teil von demselben Wort. " \
+                      "Du kannst auf sie klicken, nachdem du mit der LEERTASTE den Action-Modus verlässt. " \
+                      "Wenn du fertig bist, gehe zurück in den Action-Modus mit der Leertaste. " \
+                      "Nutze w und s für die Geschwindigkeit. "
+
+        text_and_locations = {
+            text_header: self.header,
+            text_left: self.screen_copy.subsurface(0,self.end_header,self.end_first_screen_part,self.screenh-self.end_header),
+            text_right: self.screen_copy.subsurface(self.start_third_screen_part,self.end_header,
+                                                    self.screenw-self.start_third_screen_part,self.screenh-self.end_header),
+            text_middle: self.tript2
+        }
+        text_and_colors = {text_header:self.navy,text_left:self.black,text_middle:self.gray,text_right:self.dark}
+        for key in text_and_locations.keys():
+            text_and_locations[key].fill(text_and_colors[key])
+            self.blit_clickable_words(key,self.white,(None,0.3*self.down),screen=text_and_locations[key],start_end=(0.1,0.9))
