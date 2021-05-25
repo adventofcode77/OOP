@@ -54,10 +54,10 @@ class Game(globale_variablen.Settings):
         self.columnWidth = self.screenw // 8
         self.end_first_screen_part = (self.columnWidth) * ((len(self.gold_syls) // self.h) + 1)
         self.start_third_screen_part = self.screenw - self.columnWidth * (len(self.lila_syls) // self.h + 1)
-        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, 0,
-                                                  self.start_third_screen_part - self.end_first_screen_part, # times two?
-                                                  self.screenh)
         self.end_header = self.down
+        self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, self.end_header,
+                                                  self.start_third_screen_part - self.end_first_screen_part, # times two?
+                                                  self.screenh-self.end_header)
         self.header = self.screen_copy.subsurface(0, 0, self.screenw, self.end_header)
         self.tript1 = Surface((self.tript2.get_rect().w, self.tript2.get_rect().w),
                                           pg.SRCALPHA) # SRCALPHA initialises the surface to transparent
@@ -226,8 +226,8 @@ class Game(globale_variablen.Settings):
         y = 0.1* (self.screenh - self.end_header)
         x = 0.1*self.tript2.get_rect().right
 
-        draw.polygon(screen,self.orange,((8*x,6*y),(8.5*x,5.5*y),(9*x,6*y)))
-        draw.polygon(screen, self.orange, ((8 * x, 6.5 * y), (8.5 * x, 7 * y), (9 * x, 6.5 * y)))
+        draw.polygon(screen,self.orange,((9*x,6*y),(9.5*x,5.5*y),(10*x,6*y)))
+        draw.polygon(screen, self.orange, ((9 * x, 6.5 * y), (9.5 * x, 7 * y), (10 * x, 6.5 * y)))
 
 
 
@@ -657,20 +657,25 @@ class Game(globale_variablen.Settings):
     def localised_instructions(self):
 
         text_header = "Die Code-Wörter werden unter den Ziffern erscheinen, nachdem du sie aufbaust. " \
-                      "Klicke auf ein Wort und bewege es mit den Pfeiltasten."
+                      "Klicke auf ein Wort und bewege es mit den Pfeiltasten, um die Reihenfolge zu ändern. "
         text_left = "Hier erscheinen die gesammelten Code-Silben. " \
                     "Aus denen besteht den Code-Satz, den du brauchst. " \
-                    "Du musst die Code-Wörter aus den Code-Silben aufbauen. "
-        text_right = "Hier erscheinen die Silben, die du hättest vermeiden sollen. " \
-                     "Mache Wörten aus denen, um sie zu entfernen. "
+                    "Du musst aus den Code-Silben die Code-Wörter aufbauen. "
+        text_right = "Hier erscheinen die Silben, die du vermeiden solltest. " \
+                     "Mache Wörter aus ihnen, um sie zu entfernen. "
         text_middle = "Bewege dich mit den Pfeiltasten. " \
+                      "Nutze w und s für die Geschwindigkeit. " \
                       "Sammele Code-Silben. Sie blinken in gelb. " \
                       "Vermeide die anderen Silben, um nicht zu verlieren. " \
-                      "Klicke auf die gesammelten Silben, um ein Wort aufzubauen. " \
-                      "Wenn du blinkende Silben siehst, ist dies ein Hinweis. Sie sind Teil von demselben Wort. " \
+                      "KLICKE auf die gesammelten Silben, um ein Wort aufzubauen. " \
                       "Du kannst auf sie klicken, nachdem du mit der LEERTASTE den Action-Modus verlässt. " \
                       "Wenn du fertig bist, gehe zurück in den Action-Modus mit der Leertaste. " \
-                      "Nutze w und s für die Geschwindigkeit. "
+                      "Wenn du blinkende Silben siehst, ist dies ein Hinweis. " \
+                      "Sie sind Teil von demselben Wort. " \
+                      "Nachdem unter den Ziffern deine Code-Wörter erscheinen, kannst du auf sie klicken und bewegen. " \
+                      "Wenn du das tust, siehst du in der Mitte einen ungeordneten Text. " \
+                      "Wenn du den Codesatz in die richtige Reihenfolge bringst, wird auch der Codetext in der richtigen Reihenfolge."
+
 
         text_and_locations = {
             text_header: self.header,
@@ -682,4 +687,5 @@ class Game(globale_variablen.Settings):
         text_and_colors = {text_header:self.navy,text_left:self.black,text_middle:self.gray,text_right:self.dark}
         for key in text_and_locations.keys():
             text_and_locations[key].fill(text_and_colors[key])
-            self.blit_clickable_words(key,self.white,(None,0.3*self.down),screen=text_and_locations[key],start_end=(0.1,0.9))
+            self.blit_clickable_words(key,self.white,(None,0.3*self.down),screen=text_and_locations[key],
+                                      start_end=(0.1,0.9),snapshots=True)

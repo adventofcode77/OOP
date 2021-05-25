@@ -61,7 +61,6 @@ class Gameloop():
             In dieser FOR Schleife wird durch die Maus- und Taste- Events gegangen 
             und die Folgen von jedem bestimmt
             '''
-            #print("before adjustments:", self.game_objekt.text_snapshot_counter)
             for e in event.get():  # how to clear events?
                 '''switch e.type
                 case QUIT:
@@ -86,6 +85,7 @@ class Gameloop():
                             self.main_loop = False
                         else:
                             self.menu = False
+                            self.game_objekt.nicht_in_intro_or_outro = True
                             if not self.game_objekt.start_ticks:
                                 self.game_objekt.start_ticks = time.get_ticks()
                             self.game_objekt.next_counter = 0
@@ -108,16 +108,15 @@ class Gameloop():
                     elif e.key == K_DOWN:
                         if self.menu:
                             self.menu = False
+                            self.game_objekt.nicht_in_intro_or_outro = True
                             if not self.game_objekt.start_ticks:
                                 self.game_objekt.start_ticks = time.get_ticks()
                             self.game_objekt.next_counter = 0
                             self.main_loop = True
                         else:
                             self.game_objekt.text_snapshot_counter += 1
-                            print(self.game_objekt.text_snapshot_counter)
                     elif e.key == K_UP:
                         self.game_objekt.text_snapshot_counter -= 1
-                        print(self.game_objekt.text_snapshot_counter)
                 elif e.type == MOUSEBUTTONDOWN:
                     self.click = mouse.get_pos()
                 elif e.type == VIDEORESIZE:  # updates the size to which the screen_copy image should be scaled
@@ -194,6 +193,7 @@ class Gameloop():
                 # GEWINNVORAUSSETZUNG TESTEN
                 if " ".join([word.name for word in self.game_objekt.guessed_code_words]) == self.game_objekt.woerter.code_satz:
                     self.won = True
+                    self.game_objekt.nicht_in_intro_or_outro = False
                     self.wait = True
         quit()
 
@@ -222,7 +222,6 @@ class Gameloop():
         self.click = False
         self.binary_click = False
         self.wait = True
-        print("new start")
 
 
     def move_things_left_and_right(self, ln, richtung): # stellt fest was die Links und Rechts Pfeilen machen

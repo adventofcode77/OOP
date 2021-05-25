@@ -47,10 +47,11 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.space = self.font_spacing(self.default_font)
         # self.dauer_img = self.smaller_font.render(f'{5}:{0}',True,self.white)
         self.nicht_in_bewegung = True
+        self.nicht_in_intro_or_outro = False
         self.start_ticks = None
         self.time_left = 10 * 60000
         # MEDIA (falls die Pfäde falsch sind, probier die Verzeichnisse aus dem Pfad rauszunehmen)
-        self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Media/Sternenhintergrund.png'), (self.screenw,self.screenh)).convert()
+        self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Media/Sternenhintergrund2.png'), (self.screenw,self.screenh)).convert()
         # why re the below intro screens 200 short?
         self.first_screen = transform.scale(image.load('Woerterbuchspiel/Media/Intro.png'), (self.screenw+200, self.screenh)).convert()
         self.credits_screen = transform.scale(image.load('Woerterbuchspiel/Media/Credits.png'),
@@ -62,6 +63,13 @@ class Settings:  # there could be a function converting size/location numbers ba
         mixer.init()
         self.gute_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/gute_silbe_sound.mp3")
         self.bad_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/bad_silbe_sound.mp3")
+        self.help_sign_front = self.smaller_font.render("HELP = i", True, self.orange)
+        self.help_sign_back = self.smaller_font.render("BACK = i", True, self.orange)
+        self.signs = [self.help_sign_front, self.help_sign_back]
+        self.help_sign_index = 0
+
+    def display_help_sign(self, sign):
+        self.screen_copy.blit(self.signs[sign], (0.9 * self.screenw, self.font_spacing(self.default_font)))
 
     def font_spacing(self, font):
         img = font.render("A|&%)<QY", True, self.dark)
@@ -122,8 +130,12 @@ class Settings:  # there could be a function converting size/location numbers ba
         und zeichnet das Schirm-Copy auf dem echten Schirm
         :return: None
         """
+        # these should be in resize_screen() in order to appear in every frame
+        if self.nicht_in_intro_or_outro:
+            self.display_help_sign(self.help_sign_index)
         if not self.nicht_in_bewegung:
-            self.time_left = self.timer()  # should be in resize_screen() in order to appear in every frame
+            self.time_left = self.timer()
+
         resized_screen_copy = pg.transform.smoothscale(self.screen_copy,
                                                        self.screen_via_display_set_mode.get_rect().size)
         self.screen_via_display_set_mode.blit(resized_screen_copy, (0, 0))

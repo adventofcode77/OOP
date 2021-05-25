@@ -34,7 +34,7 @@ class Spieler():
         elif keys[K_UP]:
             self.rect.top = 0 if self.rect.top - self.speed < 0 else self.rect.top - self.speed
         elif keys[K_DOWN]:
-            self.rect.bottom = screen_rect.h if self.rect.bottom + self.speed > screen_rect.h else self.rect.bottom + self.speed
+            self.rect.bottom = self.info.screenh if self.rect.bottom + self.speed > self.info.screenh else self.rect.bottom + self.speed
         # change speed of itself (changes speed/direction of the loop too)
         '''
         Das Reste der Methode aendert die Geschwindigkeit
