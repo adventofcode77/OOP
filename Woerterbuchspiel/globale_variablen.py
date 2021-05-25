@@ -50,10 +50,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.start_ticks = None
         self.time_left = 10 * 60000
         # MEDIA (falls die Pfäde falsch sind, probier die Verzeichnisse aus dem Pfad rauszunehmen)
-        self.hintergrund = transform.scale(image.load('Media/Sternenhintergrund.png'), (self.screenw,self.screenh)).convert()
-        #self.background_alpha = Surface(self.screenw, self.screenh)
-        #self.background_alpha.fill(self.gray)
-        #self.background_alpha.set_alpha(128)
+        self.hintergrund = transform.scale(image.load('Media/Sternenhintergrund2.png'), (self.screenw,self.screenh)).convert()
         # why re the below intro screens 200 short?
         self.first_screen = transform.scale(image.load('Media/Intro.png'), (self.screenw+200, self.screenh)).convert()
         self.credits_screen = transform.scale(image.load('Media/Credits.png'),
