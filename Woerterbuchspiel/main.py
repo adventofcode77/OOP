@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pygame as pg
+from pygame import *
 import pickle
 
 from Woerterbuchspiel import gameloop
@@ -53,6 +54,9 @@ class Main:
 
     @staticmethod
     def newgame(code_satz, file_paths, letztes_spiel_code, spielwoerter):
+        mixer.init()
+        background_music = mixer.Sound("Woerterbuchspiel/Media/airtone_blackSnow.mp3")
+        background_music.play(-1)
         '''
         Hier wird ein Objekt aus der Klasse Gameloop erzeugt.
         Danach ruft dieses Objekt die mainloop() Methode, die das Spiel zum Laufen bringt.

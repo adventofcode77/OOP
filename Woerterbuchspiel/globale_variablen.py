@@ -61,9 +61,7 @@ class Settings:  # there could be a function converting size/location numbers ba
                                             (self.screenw+200, self.screenh)).convert()
         self.last_screen = transform.scale(image.load('Woerterbuchspiel/Media/Outro.png'),
                                                 (self.screenw + 200, self.screenh)).convert()
-        mixer.init()
-        self.background_music = mixer.Sound("Woerterbuchspiel/Media/airtone_blackSnow.mp3")
-        self.background_music.play(-1)
+
         self.gute_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/gute_silbe_sound.mp3")
         self.bad_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/bad_silbe_sound.mp3")
         self.help_sign_front = self.smaller_font.render("HILFE = i", True, self.red)
