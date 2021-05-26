@@ -170,6 +170,7 @@ class Game(globale_variablen.Settings):
         else:
             surface.blit(word_img, (
                 surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all + self.down))
+            # (bug: when the middle screen is too small for an individual word, the word gets cut (using either of the blit functions)
             height_of_all += self.down * 2
             blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
                 self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1], height_of_all)),
@@ -239,9 +240,8 @@ class Game(globale_variablen.Settings):
             aword = lst[i]
             if not aword: continue
             if type(aword) is word.Word:
-                if aword.color:
-                    color, aword = aword.color, aword.name
-                    print("blitclick", color, aword)
+                if aword.color: color = aword.color
+                aword = aword.name
             elif aword.isupper() or aword[0].isdigit():
                 color = self.lime
             word_img = afont.render(f'{aword} ', True, color)
@@ -292,12 +292,12 @@ class Game(globale_variablen.Settings):
                 self.deleted_word_bool = True
                 temp_bool = False
         if temp_bool:
-            for word in self.woerter.code_words:  # check in code words
+            for word in self.woerter.unguessed_code_words:  # check in code words
                 wordtuples = [a.tuple for a in word.syls]
                 if appendlisttuples == wordtuples:
                     self.deleted_word = word.name
                     self.delete_word()
-                    self.woerter.code_words.remove(word)
+                    self.woerter.unguessed_code_words.remove(word)
                     self.guessed_code_words.append(word)
                     self.deleted_code_word_bool = True
 
@@ -479,7 +479,7 @@ class Game(globale_variablen.Settings):
         '''
         gold = self.gold_syls[:]
         gold_tuples = [syl.tuple for syl in gold]
-        code_tuples = [w.tuples for w in self.woerter.code_words]
+        code_tuples = [w.tuples for w in self.woerter.unguessed_code_words]
 
         self.blit_loop_one_side(False, gold, self.gw, lambda columnIndex: columnIndex * self.columnWidth, gold_tuples, code_tuples)
 
@@ -592,9 +592,10 @@ class Game(globale_variablen.Settings):
         # WOERTERBUCH MIT CODE WOERTER UND ZIFFERN ERSTELLEN
         self.screen_copy.fill(self.black, Rect(0, 0, self.screenw, self.end_header))
         digits_line = self.font_spacing(self.bigger_font)
-        binary_list = {" NEU >>> ": " ALT>>>>"}
+        neu_list = [" NEU >>> "]
         self.screen_copy.blit(self.bigger_font.render(" ALT >>>> ", True, self.cyan), (0, digits_line))
-        list_code_satz = self.woerter.code_satz.split()
+        list_code_satz = self.woerter.all_code_words
+        print(list_code_satz)
         digit_identation = self.bigger_font.render(" ALT >>>> ", True, self.dark).get_rect().w
 
         the_calculation_result = []
@@ -602,35 +603,25 @@ class Game(globale_variablen.Settings):
         for i in range(len(list_code_satz)):  # füllt den Woerterbuch auf
             code_number_at_this_index = list(self.binary_code)[i]
             opposite = 0 if code_number_at_this_index == '1' else 1
-            if i < len(
-                    self.guessed_code_words):  # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
-                dieses_code_wort = self.guessed_code_words[i].name
-                space_nach_ziffer = self.bigger_font.render(f'{dieses_code_wort} ', True, self.dark).get_rect().w
+            if i < len(self.guessed_code_words):  # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
+                dieses_code_wort = self.guessed_code_words[i]
+                neu_list.append(dieses_code_wort)
+                space_nach_ziffer = self.bigger_font.render(f'{dieses_code_wort.name} ', True, self.dark).get_rect().w
                 # print(dieses_code_wort,len(space_nach_ziffer))
-                if dieses_code_wort == list_code_satz[i]:  # checkt, ob das richtige Wort im richtigen Platz ist
-                    binary_list[
-                        f'{dieses_code_wort}'] = f'{code_number_at_this_index}{"placeholder"}'  # wenn ja, ergibt die originelle Ziffer
-                else:
-                    binary_list[
-                        f'{dieses_code_wort}'] = f'{opposite}{"placeholder"}'  # wenn nein, ändert 1 zum 0 oder 0 zum 1
-                    code_number_at_this_index = opposite
             else:
                 ziffer = f'{i + 1}'
                 space_nach_ziffer = self.bigger_font.render(ziffer, True, self.dark).get_rect().w
-                binary_list[ziffer] = f'{opposite} '  # die nicht-erratene woerter ergeben immer 0
                 code_number_at_this_index = opposite
 
-            the_calculation_result.append((code_number_at_this_index, digit_identation))
-
+            self.screen_copy.blit(self.bigger_font.render(f'{code_number_at_this_index}', True, self.cyan),
+                                  (digit_identation, digits_line))
             digit_identation += space_nach_ziffer
 
-        for (code_number, indentation) in the_calculation_result:
-            self.screen_copy.blit(self.bigger_font.render(f'{code_number}',True,self.cyan), (indentation,digits_line))
 
 
         end_code_numbers = 2 * digits_line
         end_header = self.blit_clickable_words(
-            [a for a in binary_list.keys() if a not in [str(b) for b in range(0, 1000)]], self.yellow,
+            [a for a in neu_list], self.yellow,
             (self.screenw, end_code_numbers), no_buttons=False, start_end=(0, 100), afont=self.bigger_font)
         self.end_header = end_header
         self.top = self.end_header + self.space
@@ -645,16 +636,23 @@ class Game(globale_variablen.Settings):
         '''
 
         if self.buttons:  # self.buttons only refers to the guessed code words on trypt2
+            for each in self.guessed_code_words: each.color = None
             click_rect = Rect(click[0], click[1], 1, 1)
             index = click_rect.collidelist([a.rect for a in self.buttons]) -1
             # das "-1" kompensiert dafür, dass der erste object im self.buttons ("NEU>>>") nicht berücksichtigt wird
             if index != -1 and index != -2: # "-2" bedeutet keine Kollision und "-1" bedeutet das nicht zu berücksichtigen element "NEU>>>"
                 self.word_to_move = index
+                self.guessed_code_words[index].color = self.red
             else:
                 self.word_to_move = None
                 self.temp_update_code_defs = None
 
+
     def localised_instructions(self):
+        '''
+        Zeichnet Anleitungen fuer die verschiedenen Bereichen des Spiels jeweils in dem richtigen Bereich
+        :return: None
+        '''
 
         text_header = "Die Code-Wörter werden unter den Ziffern erscheinen, nachdem du sie aufbaust. " \
                       "Klicke auf ein Wort und bewege es mit den Pfeiltasten, um die Reihenfolge zu ändern. "

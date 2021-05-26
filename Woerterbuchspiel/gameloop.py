@@ -244,7 +244,6 @@ class Gameloop():
             else:
                 insert_at = self.game_objekt.word_to_move + plusminus1
             popped = self.game_objekt.guessed_code_words.pop(self.game_objekt.word_to_move) # nimmt das geklickte Wort raus aus der Liste
-            popped.color = self.game_objekt.orange
             try:
                 self.game_objekt.guessed_code_words.insert(insert_at, popped) # fügt das geklickte Wort einen Platz nach links oder rechts
                 self.game_objekt.word_to_move = insert_at

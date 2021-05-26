@@ -21,9 +21,10 @@ class Woerter:
         self.num_syls = self.get_num_code_syls(self.code_satz)
         self.placeholder_code_text = self.get_escape_game_text()
         self.code_word_text_bits = self.info.get_bits(self.placeholder_code_text.split(), len(self.code_satz.split()))
-        self.code_words = []
+        self.unguessed_code_words = []
         self.code_syls = []
         self.get_code_words_and_syls(self.code_satz)
+        self.all_code_words = self.unguessed_code_words[:]
 
     def get_num_code_syls(self, input_code):
         num_syls = 0
@@ -73,7 +74,7 @@ class Woerter:
             word_bit_string = " ".join(self.code_word_text_bits[i])
             word_object = word.Word(aword, word_bit_string, syls, self.worder, self.totalsyls, self.info)
             self.code_syls += word_object.syls
-            self.code_words.append(word_object)
+            self.unguessed_code_words.append(word_object)
             bits_counter += len_syls
             self.totalsyls += len(syls)
         #print("self code syls:", [syl.name + str(syl.tuple) for syl in self.code_syls])

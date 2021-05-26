@@ -15,11 +15,11 @@ class TestGameloop(TestCase):
         letztes_spiel_code = "0000011001"
         woerterbuch_objekt = woerterbuch.Woerterbuch(file_paths[0])
 
-        with open('die_erste_1000_word_lists.txt', 'rb') as handle:
+        with open('erste_1000_word_lists.txt', 'rb') as handle:
             data = handle.read()
-        die_erste_1000_word_lists = pickle.loads(data)
+        die_ersten_1000_word_lists = pickle.loads(data)
 
-        spielwoerter = woerterbuch_objekt.quick_get(50, list_of_word_lists=die_erste_1000_word_lists)
+        spielwoerter = woerterbuch_objekt.quick_get(50, list_of_word_lists=die_ersten_1000_word_lists)
 
         self.gameloop_ = gameloop.Gameloop(code_satz, file_paths, letztes_spiel_code, spielwoerter)
         #self.gameloop_.mainloop() # starts the game and upon closing it the needed modules are again unitiated
@@ -56,7 +56,7 @@ class GameMainTest(TestCase):
         code_satz = ["Das Herz der verliebten Dame schlägt für den Bauern"]  # CODE SATZ
         letztes_spiel_code = "000011001"
         woerterbuch_objekt = woerterbuch.Woerterbuch(file_paths[0])
-        with open('Woerterbuchspiel/die_erste_1000_word_lists.txt', 'rb') as handle:
+        with open('Woerterbuchspiel/erste_1000_word_lists.txt', 'rb') as handle:
             data = handle.read()
         die_erste_1000_word_lists = pickle.loads(data)
         spielwoerter = woerterbuch_objekt.quick_get(50, list_of_word_lists=die_erste_1000_word_lists)

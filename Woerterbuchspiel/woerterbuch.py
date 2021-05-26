@@ -2,7 +2,7 @@
 import random
 import re
 
-# from wiktionary_de_parser import Parser
+#from wiktionary_de_parser import Parser
 
 # ACTIVE MODE COMMENTED OUT
 
@@ -40,7 +40,7 @@ class Woerterbuch:
     def __init__(self, file_path):
         self.file_path = file_path
         self.listofrecords = [] # im Moment leer
-        # self.list_of_word_lists = self.get_list_of_word_lists()  # hier 1000 woerter durch die nächste zeile
+        #self.list_of_word_lists = self.get_list_of_word_lists()  # hier 1000 woerter durch die nächste zeile
 
 
         # saved a sample in main.py in case the imported parser stops working
@@ -53,13 +53,13 @@ class Woerterbuch:
     #         result = iterate(record)
     #         if result:
     #             bedeutung, syls = result
-    #             if 'ficken' in bedeutung or 'geil' in bedeutung: # diese woerter nicht in der liste nehmen
+    #             if 'ficken' in bedeutung or 'geil' in record["title"]: # diese woerter nicht in der liste nehmen
     #                 continue
     #             simplelistforaword = [record["title"], bedeutung, syls]
     #             list_of_word_lists.append(simplelistforaword) # ein wort zur listen hinfuegen
     #         if len(list_of_word_lists) == 1000: # mit dieser zahl ist die liste voll
     #             return list_of_word_lists
-
+    #
     # def getaword(self):
     #     j = random.randrange(0, 1000)
     #     record = self.listofrecords[j]
@@ -72,7 +72,7 @@ class Woerterbuch:
     #         return simplelistforaword
     #     else:
     #         return self.getaword()
-
+    #
     def quick_get(self, num, list_of_word_lists = None):
         if not list_of_word_lists:
             list_of_word_lists = self.list_of_word_lists
