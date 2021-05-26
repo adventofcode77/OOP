@@ -195,6 +195,7 @@ class Gameloop():
                     self.won = True
                     self.game_objekt.nicht_in_intro_or_outro = False
                     self.wait = True
+        mixer.quit()
         quit()
 
     def check_time_left(self, time_left=None):
