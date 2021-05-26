@@ -595,25 +595,28 @@ class Game(globale_variablen.Settings):
         neu_list = [" NEU >>> "]
         self.screen_copy.blit(self.bigger_font.render(" ALT >>>> ", True, self.cyan), (0, digits_line))
         list_code_satz = self.woerter.all_code_words
-        print(list_code_satz)
+        print([thing.name for thing in list_code_satz])
         digit_identation = self.bigger_font.render(" ALT >>>> ", True, self.dark).get_rect().w
 
         the_calculation_result = []
 
         for i in range(len(list_code_satz)):  # füllt den Woerterbuch auf
             code_number_at_this_index = list(self.binary_code)[i]
-            opposite = 0 if code_number_at_this_index == '1' else 1
+            print("this index:",code_number_at_this_index)
+            temporary_code_number = 0 if code_number_at_this_index == '1' else 1
+            print("opppsite:",temporary_code_number)
             if i < len(self.guessed_code_words):  # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
                 dieses_code_wort = self.guessed_code_words[i]
                 neu_list.append(dieses_code_wort)
                 space_nach_ziffer = self.bigger_font.render(f'{dieses_code_wort.name} ', True, self.dark).get_rect().w
-                # print(dieses_code_wort,len(space_nach_ziffer))
+                if dieses_code_wort == list_code_satz[i]:
+                    temporary_code_number = code_number_at_this_index
             else:
                 ziffer = f'{i + 1}'
                 space_nach_ziffer = self.bigger_font.render(ziffer, True, self.dark).get_rect().w
-                code_number_at_this_index = opposite
 
-            self.screen_copy.blit(self.bigger_font.render(f'{code_number_at_this_index}', True, self.cyan),
+
+            self.screen_copy.blit(self.bigger_font.render(f'{temporary_code_number}', True, self.cyan),
                                   (digit_identation, digits_line))
             digit_identation += space_nach_ziffer
 

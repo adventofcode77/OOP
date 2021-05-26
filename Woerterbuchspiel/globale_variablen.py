@@ -13,7 +13,7 @@ class Settings:  # there could be a function converting size/location numbers ba
     '''
     def __init__(self):
         self.top = 0
-        self.screen_via_display_set_mode = pg.display.set_mode((1920, 1080), RESIZABLE | DOUBLEBUF)
+        self.screen_via_display_set_mode = pg.display.set_mode((1920, 1080), RESIZABLE | DOUBLEBUF, FULLSCREEN)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         self.screen_copy = pg.transform.scale(self.screen_copy, (1920, 1080))
         self.screen_rect = self.screen_copy.get_rect()
@@ -106,7 +106,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         """
         hue = random.choice((0, 1, 2))
         rgb = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 200)]
-        rgb[hue] = 255 if hue != 2 else 200
+        rgb[hue] = 255 if hue != 0 else 200
         return rgb
 
     def scale_click(self, click, orig_screen, current_screen):
