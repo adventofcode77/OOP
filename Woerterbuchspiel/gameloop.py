@@ -71,9 +71,9 @@ class Gameloop():
                     self.end = True
                 elif e.type == KEYDOWN:
                     ln = len(self.game_objekt.guessed_code_words)
-                    if e.key == K_0:
-                        self.new_start()
-                    elif e.key == K_SPACE:  # go to the desk
+                    # if e.key == K_0:
+                    #     self.new_start()
+                    if e.key == K_SPACE:  # go to the desk
                         if self.wait:
                             if self.won:
                                 self.end = True
