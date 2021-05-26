@@ -75,7 +75,7 @@ class Gameloop():
                         self.new_start()
                     elif e.key == K_SPACE:  # go to the desk
                         if self.wait:
-                            if self.won or self.lost:
+                            if self.won:
                                 self.end = True
                             elif self.new_game:
                                 self.new_start()
@@ -132,8 +132,8 @@ class Gameloop():
                     self.game_objekt.screen_copy.blit(self.game_objekt.last_screen, (0,0))
 
                 else:
-                    text = "VERLOREN!" if self.lost else "NEU STARTEN!"
-                    text += " Drucke SPACE, um fortzufahren."
+                    text = "VERLOREN... Neu starten!" if self.lost else "NEU STARTEN!"
+                    text += " Drucke die LEERTASTE, um fortzufahren."
                     self.game_objekt.game_over(text)
                 continue
             # BEFORE THE GAMELOOP HAS STARTED
@@ -207,16 +207,18 @@ class Gameloop():
             time_left = self.game_objekt.time_left
         if time_left < 0:
             self.lost = True
-            self.wait = True  # warten, bis der Spieler Space druckt
+            self.new_game = True
+            self.wait = True
+
 
     def new_start(self): # Startet das ganze Spiel von neu, aber behaltet die Spielwoerter aus dem letzten
         '''
         Startet das Spiel erneut
 
         '''
-        start_ticks = self.game_objekt.start_ticks # transfer the timer status  to the new game
+        #start_ticks = self.game_objekt.start_ticks # transfer the timer status  to the new game
         self.game_objekt = game.Game(self.input_codes, self.file_paths, self.binary_code, self.spielwoerter)
-        self.game_objekt.start_ticks = start_ticks
+        #self.game_objekt.start_ticks = start_ticks
         self.main_loop = False
         self.menu = True
         self.click = False
@@ -254,6 +256,10 @@ class Gameloop():
             self.game_objekt.test_next_counter += plusminus1
 
     def update_layout(self):
+        '''
+        Berechnet die Rechteck-Bereiche des Spiels erneut jedes Loop
+        :return: None
+        '''
         self.game_objekt.end_first_screen_part = self.game_objekt.columnWidth * ((len(self.game_objekt.gold_syls) // self.game_objekt.h) + 1)
         self.game_objekt.start_third_screen_part = self.game_objekt.screenw - self.game_objekt.columnWidth * ((len(self.game_objekt.lila_syls) // self.game_objekt.h) + 1)
         self.game_objekt.header = self.game_objekt.screen_copy.subsurface(0, 0, self.game_objekt.screenw, self.game_objekt.end_header)
@@ -275,6 +281,5 @@ class Gameloop():
                                            self.game_objekt.screenw - self.game_objekt.start_third_screen_part,
                                self.game_objekt.screenh)
 
-        # self.background_alpha.set_alpha(128)
 
 

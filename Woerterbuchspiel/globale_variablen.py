@@ -49,7 +49,8 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.nicht_in_bewegung = True
         self.nicht_in_intro_or_outro = False
         self.start_ticks = None
-        self.time_left = 10 * 60000
+        self.total_time_minutes = 10
+        self.time_left = self.total_time_minutes * 60000
         # MEDIA (falls die Pfäde falsch sind, probier die Verzeichnisse aus dem Pfad rauszunehmen)
         self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Media/Sternenhintergrund2.png'), (self.screenw,self.screenh)).convert()
         # why re the below intro screens 200 short?
@@ -126,6 +127,8 @@ class Settings:  # there could be a function converting size/location numbers ba
 
     def resize_and_display_screen(self):
         """
+        Gesehen auf
+        https://stackoverflow.com/questions/34910086/pygame-how-do-i-resize-a-surface-and-keep-all-objects-within-proportionate-to-t
         Aendert die Groesse des Schirm-Copys auf die Groesse vom echten Schirm
         und zeichnet das Schirm-Copy auf dem echten Schirm
         :return: None
@@ -146,7 +149,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         Hier wird die gebliebene Zeit mittels "time.get_ticks()" berechnet
         :return: die gebliebene Zeit
         """
-        seconds_left = 10 * 60 + (self.start_ticks - time.get_ticks()) // 1000
+        seconds_left = self.total_time_minutes * 60 + (self.start_ticks - time.get_ticks()) // 1000
         minutes = max(0, int(seconds_left // 60))
         seconds = max(0, int(seconds_left - minutes*60))
         dauer_text = f'{minutes}:{seconds}'
