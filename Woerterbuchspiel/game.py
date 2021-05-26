@@ -684,7 +684,7 @@ class Game(globale_variablen.Settings):
                                                     self.screenw-self.start_third_screen_part,self.screenh-self.end_header),
             text_middle: self.tript2
         }
-        text_and_colors = {text_header:self.navy,text_left:self.black,text_middle:self.gray,text_right:self.dark}
+        text_and_colors = {text_header:self.black,text_left:self.navy,text_middle:self.dark,text_right:self.navy}
         for key in text_and_locations.keys():
             text_and_locations[key].fill(text_and_colors[key])
             self.blit_clickable_words(key,self.white,(None,0.3*self.down),screen=text_and_locations[key],

@@ -13,7 +13,7 @@ class Settings:  # there could be a function converting size/location numbers ba
     '''
     def __init__(self):
         self.top = 0
-        self.screen_via_display_set_mode = pg.display.set_mode((960, 540), RESIZABLE | DOUBLEBUF)
+        self.screen_via_display_set_mode = pg.display.set_mode((1920, 1080), RESIZABLE | DOUBLEBUF)
         self.screen_copy = self.screen_via_display_set_mode.copy()
         self.screen_copy = pg.transform.scale(self.screen_copy, (1920, 1080))
         self.screen_rect = self.screen_copy.get_rect()
@@ -63,8 +63,8 @@ class Settings:  # there could be a function converting size/location numbers ba
         mixer.init()
         self.gute_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/gute_silbe_sound.mp3")
         self.bad_silbe_sound = mixer.Sound("Woerterbuchspiel/Media/bad_silbe_sound.mp3")
-        self.help_sign_front = self.smaller_font.render("HELP = i", True, self.orange)
-        self.help_sign_back = self.smaller_font.render("BACK = i", True, self.orange)
+        self.help_sign_front = self.smaller_font.render("HILFE = i", True, self.red)
+        self.help_sign_back = self.smaller_font.render("ZURÜCK = i", True, self.orange)
         self.signs = [self.help_sign_front, self.help_sign_back]
         self.help_sign_index = 0
 
