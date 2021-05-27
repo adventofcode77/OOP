@@ -60,7 +60,7 @@ class Game(globale_variablen.Settings):
         self.screen_syls = self.get_screensyls()
         self.guessed_code_words = []
         self.buttons = []
-        self.word_to_move = None
+        self.clicked_word_index = None
         self.step_fps = 1
         self.temp_update_code_defs = None
         self.text_snapshot_counter = 0
@@ -84,6 +84,7 @@ class Game(globale_variablen.Settings):
             collision = click_rect.collidelist(all_syls)
             if collision != -1:
                 syl = all_syls[collision]
+                print("clicked on syl",syl.name)
                 if self.attempted_word.is_guessed:
                     self.attempted_word = self.empty_word_obj.make_blank_word()
                 if syl.clicked_on:
@@ -92,9 +93,10 @@ class Game(globale_variablen.Settings):
                 else:
                     syl.clicked_on = True
                     self.attempted_word.syls.append(syl)
-        if self.temp_update_code_defs or self.word_to_move:
+        if self.temp_update_code_defs or self.clicked_word_index:
             self.blit_code_text()
         else:
+            print("about to blit the current word")
             self.check_word()
             self.blit_word(surface=self.tript2)
 
@@ -526,18 +528,18 @@ class Game(globale_variablen.Settings):
         self.screen_copy.fill(self.black, Rect(0, 0, self.screenw, self.end_header))
         digits_line = self.font_spacing(self.bigger_font)
         neu_list = [" NEU >>> "]
-        self.screen_copy.blit(self.bigger_font.render(" ALT >>>> ", True, self.cyan), (0, digits_line))
-        list_code_satz = self.woerter.all_code_words
-        digit_identation = self.bigger_font.render(" ALT >>>> ", True, self.dark).get_rect().w
+        rendered_alt = self.bigger_font.render(" ALT >>>> ", True, self.cyan)
+        self.screen_copy.blit(rendered_alt, (0, digits_line))
+        digit_identation = rendered_alt.get_rect().w
 
-        for i in range(len(list_code_satz)):  # füllt den Woerterbuch auf
+        for i in range(len(self.woerter.all_code_words)):  # füllt den Woerterbuch auf
             code_number_at_this_index = list(self.binary_code)[i]
             temporary_code_number = 0 if code_number_at_this_index == '1' else 1
             if i < len(self.guessed_code_words):  # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
                 dieses_code_wort = self.guessed_code_words[i]
                 neu_list.append(dieses_code_wort)
                 space_nach_ziffer = self.bigger_font.render(f'{dieses_code_wort.name} ', True, self.dark).get_rect().w
-                if dieses_code_wort == list_code_satz[i]:
+                if dieses_code_wort == self.woerter.all_code_words[i]:
                     temporary_code_number = code_number_at_this_index
             else:
                 ziffer = f'{i + 1}'
@@ -547,17 +549,15 @@ class Game(globale_variablen.Settings):
                                   (digit_identation, digits_line))
             digit_identation += space_nach_ziffer
 
-        end_code_numbers = 2 * digits_line
-        end_header = self.blit_clickable_words(
-            [a for a in neu_list], self.yellow, end_code_numbers, buttons = True, start_end=(0, 100), afont=self.bigger_font)
-        self.end_header = end_header
-        self.top = self.end_header + self.space
+        self.end_header = self.blit_clickable_words(
+            [a for a in neu_list], self.yellow, digits_line*2, buttons = True, start_end=(0, 100), afont=self.bigger_font)
+
 
     def check_num_buttons(self,
                           click):  # the buttons were made using coordinates starting from 0,0 in the screen given to blit_words()
         '''
         Prueft, ob auf einem Button-Objekt geclickt wurde. Wenn ja, speichert der Index von diesem Objekt
-        in der Variabel "self.word_to_move"
+        in der Variabel "self.clicked_word_index"
         :param click: das Mausclick
         :return: None
         '''
@@ -565,13 +565,14 @@ class Game(globale_variablen.Settings):
         if self.buttons:  # self.buttons only refers to the guessed code words on trypt2
             for each in self.guessed_code_words: each.color = None
             click_rect = Rect(click[0], click[1], 1, 1)
-            index = click_rect.collidelist([a.rect for a in self.buttons]) -1
+            index = click_rect.collidelist([a.rect for a in self.buttons])
+            print([b.text for b in self.buttons])
             # das "-1" kompensiert dafür, dass der erste object im self.buttons ("NEU>>>") nicht berücksichtigt wird
-            if index != -1 and index != -2: # "-2" bedeutet keine Kollision und "-1" bedeutet das nicht zu berücksichtigen element "NEU>>>"
-                self.word_to_move = index
-                self.guessed_code_words[index].color = self.red
-            else:
-                self.word_to_move = None
+            if index != -1 and index != 0: # "-1" bedeutet keine Kollision und "0" bedeutet das nicht zu berücksichtigen element "NEU>>>"
+                self.clicked_word_index = index - 1 # index wird in guessed_code_words benutzt, wo "NEU>>>" nicht existiert
+                self.guessed_code_words[self.clicked_word_index].color = self.red
+            elif self.clicked_word_index:
+                self.clicked_word_index = None
                 self.temp_update_code_defs = None
 
 

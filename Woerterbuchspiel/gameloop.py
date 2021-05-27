@@ -80,19 +80,21 @@ class Gameloop():
                             self.wait = False
                         elif self.main_loop:
                             self.main_loop = False
-                        else:
+                        else: # main_loop = false; paused
                             self.menu = False
                             self.game_objekt.nicht_in_intro_or_outro = True
                             if not self.game_objekt.start_ticks:
                                 self.game_objekt.start_ticks = time.get_ticks()
                             self.game_objekt.next_counter = 0
                             self.main_loop = True
+                            self.game_objekt.nicht_in_bewegung = False
                             # clear the list and attributes for making words so that you start anew next time
                             for item in self.game_objekt.spieler.my_silben:
                                 item.clicked_on = False
                             self.game_objekt.attempted_word = self.game_objekt.empty_word_obj.make_blank_word()
-                            self.game_objekt.guessed_code_words[self.game_objekt.word_to_move].color = None
-                            self.game_objekt.word_to_move = None
+                            for each in self.game_objekt.guessed_code_words: each.color = None
+                            self.game_objekt.clicked_word_index = None
+                            self.game_objekt.temp_update_code_defs = None
                     elif e.key == K_LEFT or e.key == K_RIGHT:  # show next code_string explanation installment
                         self.move_things_left_and_right(ln, e.key)
                     elif e.key == K_i:
@@ -154,7 +156,7 @@ class Gameloop():
                 Hier ist der Zustand des Spiels "im Action-Loop".
                 Der Loop besteht aus dem Spieler-Objekt und Silbe-Objekte.
                 '''
-                self.game_objekt.nicht_in_bewegung = False
+
                 self.game_objekt.spieler.act(self.game_objekt.tript2.get_rect())  # PLAYER MOVES ONCE A LOOP
                 self.game_objekt.spieler.pick([syl for syl in self.game_objekt.syls if syl.visible])
                 # CHECKING FOR ENOUGH SPACE ON THE SCREEN
@@ -235,20 +237,20 @@ class Gameloop():
         :return: None
         '''
         plusminus1 = 1 if richtung == K_RIGHT else -1 # diese Wert ist entweder 1 oder -1 abhängend davon, ob Links oder Rechts gedruckt wurde
-        if self.game_objekt.word_to_move is not None: # checkt, ob der Spieler auf einem der Code_Wörter geklickt hat
+        if self.game_objekt.clicked_word_index is not None: # checkt, ob der Spieler auf einem der Code_Wörter geklickt hat
             # wenn ja, checkt ob dieses Wort ausser die COde Wörter Liste verlassen würde, wenn es nach links oder rechts bewegt würde
-            if self.game_objekt.word_to_move >= ln-1 and richtung == K_RIGHT:
-                self.game_objekt.word_to_move = ln - 1
+            if self.game_objekt.clicked_word_index >= ln-1 and richtung == K_RIGHT:
+                self.game_objekt.clicked_word_index = ln - 1
                 insert_at = 0
-            elif self.game_objekt.word_to_move <= 0 and richtung == K_LEFT:
-                self.game_objekt.word_to_move = 0
+            elif self.game_objekt.clicked_word_index <= 0 and richtung == K_LEFT:
+                self.game_objekt.clicked_word_index = 0
                 insert_at = ln-1
             else:
-                insert_at = self.game_objekt.word_to_move + plusminus1
-            popped = self.game_objekt.guessed_code_words.pop(self.game_objekt.word_to_move) # nimmt das geklickte Wort raus aus der Liste
+                insert_at = self.game_objekt.clicked_word_index + plusminus1
+            popped = self.game_objekt.guessed_code_words.pop(self.game_objekt.clicked_word_index) # nimmt das geklickte Wort raus aus der Liste
             try:
                 self.game_objekt.guessed_code_words.insert(insert_at, popped) # fügt das geklickte Wort einen Platz nach links oder rechts
-                self.game_objekt.word_to_move = insert_at
+                self.game_objekt.clicked_word_index = insert_at
 
             except:
                 print("out of bounds")
@@ -257,11 +259,17 @@ class Gameloop():
 
     def update_dynamic_vars(self):
         '''
-        Berechnet die Rechteck-Bereiche des Spiels erneut jedes Loop
+        Erstellt Schirm-Bereiche und Variablen erneut jedes Loop
         :return: None
         '''
         self.game_objekt.attempted_word.update()
 
+        self.game_objekt.screen_copy.blit(self.game_objekt.tript1, self.game_objekt.tript1rect)
+        self.game_objekt.screen_copy.blit(self.game_objekt.tript3, self.game_objekt.tript3rect)
+        self.game_objekt.blit_loop_left()
+        self.game_objekt.blit_loop_right()
+
+        self.game_objekt.top = self.game_objekt.end_header + self.game_objekt.space
         self.game_objekt.end_first_screen_part = self.game_objekt.columnWidth * ((len(self.game_objekt.gold_syls) // self.game_objekt.h) + 1)
         self.game_objekt.start_third_screen_part = self.game_objekt.screenw - self.game_objekt.columnWidth * ((len(self.game_objekt.bad_syls) // self.game_objekt.h) + 1)
         self.game_objekt.header = self.game_objekt.screen_copy.subsurface(0, 0, self.game_objekt.screenw, self.game_objekt.end_header)
