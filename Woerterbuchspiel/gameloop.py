@@ -37,9 +37,6 @@ class Gameloop():
         self.end = False
         self.clock = pg.time.Clock()  # speed depends on cpu?
 
-
-
-
     def mainloop(self):
         '''
         Hier laeuft das ganze Spiel vom Beginn zum Ende.
@@ -94,6 +91,8 @@ class Gameloop():
                             for item in self.game_objekt.spieler.my_silben:
                                 item.clicked_on = False
                             self.game_objekt.attempted_word = self.game_objekt.empty_word_obj.make_blank_word()
+                            self.game_objekt.guessed_code_words[self.game_objekt.word_to_move].color = None
+                            self.game_objekt.word_to_move = None
                     elif e.key == K_LEFT or e.key == K_RIGHT:  # show next code_string explanation installment
                         self.move_things_left_and_right(ln, e.key)
                     elif e.key == K_i:
@@ -250,6 +249,7 @@ class Gameloop():
             try:
                 self.game_objekt.guessed_code_words.insert(insert_at, popped) # fügt das geklickte Wort einen Platz nach links oder rechts
                 self.game_objekt.word_to_move = insert_at
+
             except:
                 print("out of bounds")
         else: # wenn es kein geklicktes Wort gibt, bewegt sich der Counter für Text-Fenster nach links oder nach rechts

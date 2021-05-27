@@ -393,8 +393,6 @@ class Game(globale_variablen.Settings):
                 syl.rect_in_circle.center = syl.rect.center
                 syl.rect_copy = syl.rect.copy()  # why does this leave rect in place
 
-
-
     def blit_loop_right(self):
         '''
         Zeichnet der rechte Teil des Loops
@@ -532,8 +530,6 @@ class Game(globale_variablen.Settings):
         list_code_satz = self.woerter.all_code_words
         digit_identation = self.bigger_font.render(" ALT >>>> ", True, self.dark).get_rect().w
 
-        the_calculation_result = []
-
         for i in range(len(list_code_satz)):  # füllt den Woerterbuch auf
             code_number_at_this_index = list(self.binary_code)[i]
             temporary_code_number = 0 if code_number_at_this_index == '1' else 1
@@ -547,12 +543,9 @@ class Game(globale_variablen.Settings):
                 ziffer = f'{i + 1}'
                 space_nach_ziffer = self.bigger_font.render(ziffer, True, self.dark).get_rect().w
 
-
             self.screen_copy.blit(self.bigger_font.render(f'{temporary_code_number}', True, self.cyan),
                                   (digit_identation, digits_line))
             digit_identation += space_nach_ziffer
-
-
 
         end_code_numbers = 2 * digits_line
         end_header = self.blit_clickable_words(
