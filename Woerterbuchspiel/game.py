@@ -78,30 +78,25 @@ class Game(globale_variablen.Settings):
         self.tript2.fill(self.dark)
         self.ziffern_und_code_woerter() # aktualisiert der obene mittlere Teil des Schirms (header)
         if click:
-            x, y = click
-            for syl in self.gold_syls + self.lila_syls:
-                if syl.rect.collidepoint(x, y):
-                    if self.attempted_word.is_guessed:
-                        self.attempted_word = self.empty_word_obj.make_blank_word()
-                    if syl.clicked_on:
-                        syl.clicked_on = False
-                        self.attempted_word.syls.remove(syl)
-                    else:
-                        syl.clicked_on = True
-                        self.attempted_word.syls.append(syl)
+            x,y = click
+            click_rect = Rect(x,y,1,1)
+            all_syls = self.gold_syls + self.lila_syls
+            collision = click_rect.collidelist(all_syls)
+            if collision:
+                syl = all_syls[collision]
+                if self.attempted_word.is_guessed:
+                    self.attempted_word = self.empty_word_obj.make_blank_word()
+                if syl.clicked_on:
+                    syl.clicked_on = False
+                    self.attempted_word.syls.remove(syl)
+                else:
+                    syl.clicked_on = True
+                    self.attempted_word.syls.append(syl)
         if self.temp_update_code_defs or self.word_to_move:
             self.blit_code_text(surface=self.tript2)
         else:
             self.check_word()
             self.blit_word(surface=self.tript2)
-
-    def make_def_list(self):
-        '''
-        Erzeugt eine Liste mit Teilen von der Definition des Wortes
-        :return: diese Liste
-        '''
-        bitlists = [word for syl in self.attempted_word.syls for word in syl.bit]
-        return bitlists
 
     def blit_word(self, surface=None):  # =None due to self.parameter not working (due to being out of the init?)
         '''
@@ -117,8 +112,7 @@ class Game(globale_variablen.Settings):
         word_img = self.default_font.render(self.attempted_word.name_from_syls, True, farbe[0])
         surface.blit(word_img, (surface.get_rect().center[0] - word_img.get_rect().w // 2, self.top))
         # (bug: when the middle screen is too small for an individual word, the word gets cut (using either of the blit functions)
-        blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
-            self.screen_copy.get_rect().center[0], self.top + self.down),
+        blit_h = self.blit_clickable_words(self.attempted_word.meaning, farbe[1], self.top + self.down,
                                            screen=surface,snapshots=True)  # starts one line below the blitted word per the function
 
     def blit_code_text(self, surface):
@@ -128,13 +122,12 @@ class Game(globale_variablen.Settings):
         guessed_code_words_definitions_str = " ".join(guessed_code_words_definitions_l)
         self.temp_update_code_defs = guessed_code_words_definitions_str
         temper = self.temp_update_code_defs
-        blit_h = self.blit_clickable_words(temper, self.yellow, (
-            self.screen_copy.get_rect().center[0], self.top),
+        blit_h = self.blit_clickable_words(temper, self.yellow, self.top,
                                            screen=surface,
                                            snapshots=True)  # starts one line below the blitted word per the function
 
-    def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
-                             no_buttons=True, snapshots=False,start_end=None):
+    def blit_clickable_words(self, lst, color, height, afont=0, screen=None,
+                             no_buttons=True, snapshots=False, start_end=None):
         '''
         Zeichnet eine String (z.Media. Anleitung-Saetze oder Wort-Definitionen) auf dem Schirm.
         Die gezeichneten Objekten (z.Media. Woerter) koennen auf Wunsch zum Button-Objekts werden,
@@ -142,7 +135,7 @@ class Game(globale_variablen.Settings):
 
         :param lst: die String zum Zeichnen
         :param color: farbe
-        :param midtop: koordinaten, wo gezeichnet wird (bestimmt die Hoehe)
+        :param height: koordinaten, wo gezeichnet wird (bestimmt die Hoehe)
         :param afont: der Font
         :param screen: der Schirm
         :param no_buttons: Buttons erzeugen oder nicht
@@ -159,15 +152,15 @@ class Game(globale_variablen.Settings):
         color_copy = color
         if not afont: afont = self.smaller_font
         spacing = self.font_spacing(afont)
-        last_line_down = midtop[1]
+        last_line_down = height
         if start_end: start, end = start_end
         else: start, end = 0.25, 0.75
         last_word_right = start * copy_screen_rect.w
         # for loop
         last_line_down, snapshots_counter, list_snapshots_to_blit = self.loop_through_text_to_display(afont, color, color_copy, copy_screen,
-                                                                           copy_screen_rect, end, last_line_down,
-                                                                           last_word_right, lst,
-                                                                           midtop, screen, spacing, start)
+                                                                                                      copy_screen_rect, end, last_line_down,
+                                                                                                      last_word_right, lst,
+                                                                                                      height, screen, spacing, start)
         # snapshots
         self.blit_text_snapshot(copy_screen, last_line_down, list_snapshots_to_blit, screen, snapshots,
                                 snapshots_counter)
@@ -195,7 +188,7 @@ class Game(globale_variablen.Settings):
 
 
     def loop_through_text_to_display(self, afont, color, color_copy, copy_screen, copy_screen_rect, end, last_line_down,
-                                     last_word_right, lst, midtop, screen, spacing, start):
+                                     last_word_right, lst, height, screen, spacing, start):
         snapshots_counter = 0
         list_snapshots_to_blit = {}
         for i in range(len(lst)):
@@ -215,7 +208,7 @@ class Game(globale_variablen.Settings):
                     last_line_down += spacing
                 else:
                     copy_screen = screen.copy()
-                    last_line_down = midtop[1]
+                    last_line_down = height
                     last_word_right = start * copy_screen_rect.w
                     snapshots_counter += 1
             word_rect.x, word_rect.y = last_word_right, last_line_down
@@ -538,7 +531,7 @@ class Game(globale_variablen.Settings):
         draw.rect(self.screen_copy, self.navy, border_rect)
         surface = self.screen_copy.subsurface(rect)
         surface.fill(self.gray)
-        self.blit_clickable_words(text, self.white, (0, self.down), screen=surface)
+        self.blit_clickable_words(text, self.white, self.down, screen=surface)
 
     def ziffern_und_code_woerter(self): # TODO combine the definitions underneath after clicking in the header
         '''
@@ -579,8 +572,7 @@ class Game(globale_variablen.Settings):
 
         end_code_numbers = 2 * digits_line
         end_header = self.blit_clickable_words(
-            [a for a in neu_list], self.yellow,
-            (self.screenw, end_code_numbers), no_buttons=False, start_end=(0, 100), afont=self.bigger_font)
+            [a for a in neu_list], self.yellow, end_code_numbers, no_buttons=False, start_end=(0, 100), afont=self.bigger_font)
         self.end_header = end_header
         self.top = self.end_header + self.space
 
@@ -643,5 +635,5 @@ class Game(globale_variablen.Settings):
         text_and_colors = {text_header:self.black,text_left:self.navy,text_middle:self.dark,text_right:self.navy}
         for key in text_and_locations.keys():
             text_and_locations[key].fill(text_and_colors[key])
-            self.blit_clickable_words(key,self.white,(None,0.3*self.down),screen=text_and_locations[key],
+            self.blit_clickable_words(key,self.white,0.3*self.down,screen=text_and_locations[key],
                                       start_end=(0.1,0.9),snapshots=True)

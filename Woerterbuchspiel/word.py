@@ -40,7 +40,6 @@ class Word():
         self.bits = [syl.bit for syl in self.syls]
         self.tuples = [s.tuple for s in self.syls]
         self.meaning = [word for bit in self.bits for word in bit]
-        print("type word meaning",self.meaning)
 
     def make_silben(self, rgb):
         syls = []
