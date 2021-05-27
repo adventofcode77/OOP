@@ -37,9 +37,6 @@ class Gameloop():
         self.end = False
         self.clock = pg.time.Clock()  # speed depends on cpu?
 
-
-
-
     def mainloop(self):
         '''
         Hier laeuft das ganze Spiel vom Beginn zum Ende.
@@ -55,7 +52,7 @@ class Gameloop():
             self.game_objekt.resize_and_display_screen()  # resizes the last iteration's image to the current screen size and draws it
             if self.game_objekt.blink_counter:
                 self.game_objekt.blink_counter += 1
-            self.update_layout()
+            self.update_dynamic_vars()
             # EVENT LOOP
             '''
             In dieser FOR Schleife wird durch die Maus- und Taste- Events gegangen 
@@ -94,6 +91,8 @@ class Gameloop():
                             for item in self.game_objekt.spieler.my_silben:
                                 item.clicked_on = False
                             self.game_objekt.attempted_word = self.game_objekt.empty_word_obj.make_blank_word()
+                            self.game_objekt.guessed_code_words[self.game_objekt.word_to_move].color = None
+                            self.game_objekt.word_to_move = None
                     elif e.key == K_LEFT or e.key == K_RIGHT:  # show next code_string explanation installment
                         self.move_things_left_and_right(ln, e.key)
                     elif e.key == K_i:
@@ -250,17 +249,20 @@ class Gameloop():
             try:
                 self.game_objekt.guessed_code_words.insert(insert_at, popped) # fügt das geklickte Wort einen Platz nach links oder rechts
                 self.game_objekt.word_to_move = insert_at
+
             except:
                 print("out of bounds")
         else: # wenn es kein geklicktes Wort gibt, bewegt sich der Counter für Text-Fenster nach links oder nach rechts
             self.game_objekt.next_counter += plusminus1
             self.game_objekt.test_next_counter += plusminus1
 
-    def update_layout(self):
+    def update_dynamic_vars(self):
         '''
         Berechnet die Rechteck-Bereiche des Spiels erneut jedes Loop
         :return: None
         '''
+        self.game_objekt.attempted_word.update()
+
         self.game_objekt.end_first_screen_part = self.game_objekt.columnWidth * ((len(self.game_objekt.gold_syls) // self.game_objekt.h) + 1)
         self.game_objekt.start_third_screen_part = self.game_objekt.screenw - self.game_objekt.columnWidth * ((len(self.game_objekt.lila_syls) // self.game_objekt.h) + 1)
         self.game_objekt.header = self.game_objekt.screen_copy.subsurface(0, 0, self.game_objekt.screenw, self.game_objekt.end_header)

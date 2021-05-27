@@ -17,8 +17,6 @@ class Menu:
         self.list_instructions = self.list_lists_instructions()
 
 
-
-
     def intro(self, schirm_zahl):
         intro_screens = {
             0: self.info.first_screen,
