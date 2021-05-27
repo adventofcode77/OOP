@@ -49,7 +49,7 @@ class Settings:  # there could be a function converting size/location numbers ba
         self.nicht_in_bewegung = True
         self.nicht_in_intro_or_outro = False
         self.start_ticks = None
-        self.total_time_minutes = 10
+        self.total_time_minutes = 6
         self.time_left = self.total_time_minutes * 60000
         # MEDIA (falls die Pfäde falsch sind, probier die Verzeichnisse aus dem Pfad rauszunehmen)
         self.hintergrund = transform.scale(image.load('Woerterbuchspiel/Media/Sternenhintergrund2.png'), (self.screenw,self.screenh)).convert()

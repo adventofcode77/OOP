@@ -125,7 +125,7 @@ class Game(globale_variablen.Settings):
             self.check_word()
         if not screen:
             screen = self.screen_copy
-        self.blit_word(height_of_all, surface=screen)
+        self.blit_word( surface=screen,height_of_all=self.down)
 
     def make_def_list(self):
         '''
@@ -165,16 +165,16 @@ class Game(globale_variablen.Settings):
             self.temp_update_code_defs = guessed_code_words_definitions_str
             temper = self.temp_update_code_defs
             blit_h = self.blit_clickable_words(temper, farbe[1], (
-                self.screen_copy.get_rect().center[0], self.end_header+0.5*self.down),
+                self.screen_copy.get_rect().center[0], height_of_all),
                                                screen=surface,snapshots=True)  # starts one line below the blitted word per the function
         else:
             surface.blit(word_img, (
-                surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all + self.down))
+                surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all))
             # (bug: when the middle screen is too small for an individual word, the word gets cut (using either of the blit functions)
-            height_of_all += self.down * 2
+            height_of_all += self.down
             blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
-                self.screen_copy.get_rect().center[0], max(self.screen_copy.get_rect().center[1], height_of_all)),
-                                               screen=surface)  # starts one line below the blitted word per the function
+                self.screen_copy.get_rect().center[0], height_of_all),
+                                               screen=surface,snapshots=True)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
                              no_buttons=True, snapshots=False,start_end=None):
@@ -595,16 +595,13 @@ class Game(globale_variablen.Settings):
         neu_list = [" NEU >>> "]
         self.screen_copy.blit(self.bigger_font.render(" ALT >>>> ", True, self.cyan), (0, digits_line))
         list_code_satz = self.woerter.all_code_words
-        print([thing.name for thing in list_code_satz])
         digit_identation = self.bigger_font.render(" ALT >>>> ", True, self.dark).get_rect().w
 
         the_calculation_result = []
 
         for i in range(len(list_code_satz)):  # füllt den Woerterbuch auf
             code_number_at_this_index = list(self.binary_code)[i]
-            print("this index:",code_number_at_this_index)
             temporary_code_number = 0 if code_number_at_this_index == '1' else 1
-            print("opppsite:",temporary_code_number)
             if i < len(self.guessed_code_words):  # diese Klause umfasst die code-woerter die moeglicherweise erraten wurden
                 dieses_code_wort = self.guessed_code_words[i]
                 neu_list.append(dieses_code_wort)

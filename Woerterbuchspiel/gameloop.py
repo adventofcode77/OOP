@@ -132,7 +132,7 @@ class Gameloop():
                     self.game_objekt.screen_copy.blit(self.game_objekt.last_screen, (0,0))
 
                 else:
-                    text = "VERLOREN... Neu starten!" if self.lost else "NEU STARTEN!"
+                    text = "Deine Zeit ist um! NEU STARTEN!" if self.lost else "NEU STARTEN!"
                     text += " Drucke die LEERTASTE, um fortzufahren."
                     self.game_objekt.game_over(text)
                 continue
