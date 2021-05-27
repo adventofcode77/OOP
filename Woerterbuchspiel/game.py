@@ -167,7 +167,7 @@ class Game(globale_variablen.Settings):
                                            snapshots=True)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, height, afont=0, screen=None,
-                             no_buttons=True, snapshots=False, start_end=None):
+                             buttons=False, snapshots=False, start_end=None):
         '''
         Zeichnet eine String (z.Media. Anleitung-Saetze oder Wort-Definitionen) auf dem Schirm.
         Die gezeichneten Objekten (z.Media. Woerter) koennen auf Wunsch zum Button-Objekts werden,
@@ -175,38 +175,29 @@ class Game(globale_variablen.Settings):
 
         :param lst: die String zum Zeichnen
         :param color: farbe
-        :param height: koordinaten, wo gezeichnet wird (bestimmt die Hoehe)
+        :param height: bestimmt die Hoehe
         :param afont: der Font
         :param screen: der Schirm
-        :param no_buttons: Buttons erzeugen oder nicht
+        :param buttons: Buttons erzeugen oder nicht
         :param start_end: koordinaten, wo gezeichnet wird (bestimmt die Breite)
         :return: Das Ende des Gezeichnetes (Y-Koordinate)
         '''
         # variablen
         if not screen: screen = self.screen_copy
         copy_screen = screen.copy()
-        copy_screen_rect = copy_screen.get_rect()
-        if no_buttons: copy_buttons = self.buttons[:]
-        self.buttons = []
         if type(lst) == str: lst = lst.split(" ")
-        color_copy = color
         if not afont: afont = self.smaller_font
-        spacing = self.font_spacing(afont)
-        last_line_down = height
         if start_end: start, end = start_end
         else: start, end = 0.25, 0.75
-        last_word_right = start * copy_screen_rect.w
         # for loop
-        last_line_down, snapshots_counter, list_snapshots_to_blit = self.loop_through_text_to_display(afont, color, color_copy, copy_screen,
-                                                                                                      copy_screen_rect, end, last_line_down,
-                                                                                                      last_word_right, lst,
-                                                                                                      height, screen, spacing, start)
-        # snapshots
+        last_line_down, snapshots_counter, list_snapshots_to_blit, list_buttons = self.loop_through_text_to_display(afont, color, copy_screen, end, height,
+                                                                                                                    lst,height, screen, start)
+        # blitting
         self.blit_text_snapshot(copy_screen, last_line_down, list_snapshots_to_blit, screen, snapshots,
                                 snapshots_counter)
         # buttons
-        if no_buttons:
-            self.buttons = copy_buttons
+        if buttons: self.buttons = list_buttons
+        # return lower end
         return last_line_down + self.font_spacing(afont)  # how far down the screen there is curently text
 
     def blit_text_snapshot(self, copy_screen, last_line_down, list_snapshots_to_blit, screen, snapshots,
@@ -227,10 +218,15 @@ class Game(globale_variablen.Settings):
 
 
 
-    def loop_through_text_to_display(self, afont, color, color_copy, copy_screen, copy_screen_rect, end, last_line_down,
-                                     last_word_right, lst, height, screen, spacing, start):
+    def loop_through_text_to_display(self, afont, color, copy_screen, end, last_line_down,
+                                     lst, height, screen, start):
+        x,y,w,h = copy_screen.get_rect()
+        spacing = self.font_spacing(afont)
+        last_word_right = start * w
         snapshots_counter = 0
         list_snapshots_to_blit = {}
+        buttons = []
+        color_copy = color
         for i in range(len(lst)):
             aword = lst[i]
             if not aword: continue
@@ -242,24 +238,24 @@ class Game(globale_variablen.Settings):
             word_img = afont.render(f'{aword} ', True, color)
             word_rect = word_img.get_rect()
             color = color_copy
-            if last_word_right + word_rect.w >= end * copy_screen_rect.w:
-                if last_line_down < copy_screen_rect.h - spacing * 3:  # twice the highest spacing?
-                    last_word_right = start * copy_screen_rect.w
+            if last_word_right + word_rect.w >= end * w:
+                if last_line_down < h - spacing * 3:  # twice the highest spacing?
+                    last_word_right = start * w
                     last_line_down += spacing
                 else:
                     copy_screen = screen.copy()
                     last_line_down = height
-                    last_word_right = start * copy_screen_rect.w
+                    last_word_right = start * w
                     snapshots_counter += 1
             word_rect.x, word_rect.y = last_word_right, last_line_down
-            self.buttons.append(word.Button(aword, word_img, word_rect, i))
+            buttons.append(word.Button(aword, word_img, word_rect, i))
             copy_screen.blit(word_img, word_rect)
             last_word_right = last_word_right + word_rect.w  # + afont.render(" ",True,self.white).get_rect().w
             if aword[-1] in ".!?:":  # mache eine neue Zeile nach diesen SYmbolen
-                last_word_right = start * copy_screen_rect.w
+                last_word_right = start * w
                 last_line_down += spacing * 1.5
             list_snapshots_to_blit[snapshots_counter] = copy_screen.copy()
-        return last_line_down, snapshots_counter, list_snapshots_to_blit
+        return last_line_down, snapshots_counter, list_snapshots_to_blit, buttons
 
     def divide_text_into_surfaces(self, list_snapshots_to_blit, screen):
         if len(list_snapshots_to_blit) == 0:
@@ -560,7 +556,7 @@ class Game(globale_variablen.Settings):
 
         end_code_numbers = 2 * digits_line
         end_header = self.blit_clickable_words(
-            [a for a in neu_list], self.yellow, end_code_numbers, no_buttons=False, start_end=(0, 100), afont=self.bigger_font)
+            [a for a in neu_list], self.yellow, end_code_numbers, buttons = True, start_end=(0, 100), afont=self.bigger_font)
         self.end_header = end_header
         self.top = self.end_header + self.space
 
