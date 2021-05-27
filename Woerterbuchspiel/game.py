@@ -127,7 +127,9 @@ class Game(globale_variablen.Settings):
 
     def remove_guessed_word_syls_from_list(self, lst):
         for syl in self.attempted_word.syls:
-            lst.remove(syl)
+            try:
+                lst.remove(syl) # ValueError: list.remove(x): x not in list
+            except: print("excepted ValueError: list.remove(x): x not in list")
 
     def remove_word_from_lists_if_guessed(self, lst):
         for word in lst:
