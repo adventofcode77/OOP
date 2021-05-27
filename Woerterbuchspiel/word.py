@@ -1,15 +1,18 @@
 from Woerterbuchspiel import silbe
 
 
+
+
 class Word():
     '''
     Diese Klasse erzeugt Wort-Objekte
     '''
     all_syls = []
+
     def __init__(self, key, meaning,txtsilben,worder,totalsyls,info,color=None):
         self.info = info
         self.totalsyls = totalsyls
-        self.tuples = []
+
         self.worder = worder
         self.name = key
         self.meaning = meaning.split()
@@ -23,6 +26,21 @@ class Word():
         self.image = self.info.default_font.render(self.name, True, self.info.gold)
         self.rect = self.image.get_rect() # draw_rect()?
         self.color = color
+        self.tuples = [s.tuple for s in self.syls]
+        self.is_code_word = False
+        self.is_guessed = False
+        self.name_from_syls = " ".join([syl.name for syl in self.syls])
+
+    def make_blank_word(self):
+        return Word("", "", [], 404, 404, self.info)
+
+
+    def update(self):
+        self.name_from_syls = "".join([syl.name for syl in self.syls])
+        self.bits = [syl.bit for syl in self.syls]
+        self.tuples = [s.tuple for s in self.syls]
+        self.meaning = [word for bit in self.bits for word in bit]
+        print("type word meaning",self.meaning)
 
     def make_silben(self, rgb):
         syls = []
@@ -35,7 +53,6 @@ class Word():
             word = self.name
             silbe1 = silbe.Silbe(it, word, bit, self.totalsyls, self.worder, self.info, rgb)
             syls.append(silbe1)
-            self.tuples.append((self.totalsyls, self.worder))
             self.totalsyls += 1
         return syls
 

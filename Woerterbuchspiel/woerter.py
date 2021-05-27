@@ -80,6 +80,11 @@ class Woerter:
         #print("self code syls:", [syl.name + str(syl.tuple) for syl in self.code_syls])
 
     def split_word_syls(self, word):  # german-specific #Angstschweiß
+        '''
+        Trennt ein Wort in Silben
+        :param word: das Wort
+        :return: die Silben
+        '''
         word_syls = []
         divide_before_with_priority = ['sch']
         divide_before = ["ck", "ph", "rh", "sh", "th", "bl", "cl", "fl", "gl", "pl", "tl"]

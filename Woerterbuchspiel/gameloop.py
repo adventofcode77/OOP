@@ -93,7 +93,7 @@ class Gameloop():
                             # clear the list and attributes for making words so that you start anew next time
                             for item in self.game_objekt.spieler.my_silben:
                                 item.clicked_on = False
-                            self.game_objekt.spieler.appendlist = []
+                            self.game_objekt.attempted_word = self.game_objekt.empty_word_obj.make_blank_word()
                     elif e.key == K_LEFT or e.key == K_RIGHT:  # show next code_string explanation installment
                         self.move_things_left_and_right(ln, e.key)
                     elif e.key == K_i:

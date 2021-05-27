@@ -22,7 +22,6 @@ class Spieler():
         self.brighter_image.fill((brighten, brighten, brighten), special_flags=BLEND_RGB_ADD)
         self.speed = round(self.info.initial_syl_speed_change * 1.5, 2)  # currently depends on fps too
         self.initial_speed = self.speed
-        self.appendlist = [] # TODO cant unclick words clicked before resuming play
         self.loop_down = True
 
     def act(self, screen_rect):

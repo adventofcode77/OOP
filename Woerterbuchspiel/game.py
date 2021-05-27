@@ -34,6 +34,7 @@ class Game(globale_variablen.Settings):
         self.initial_syl_speed_change = self.syl_speed_change
         # variables above may be needed to initialise other classes' instances
         self.spieler = spieler.Spieler(self)  # takes the game object as parameter
+        self.empty_word_obj = word.Word("", "", [], 404, 404, self)
         self.spielwoerter = dict
         self.woerter = woerter.Woerter(self)
         self.words = self.woerter.words
@@ -44,9 +45,6 @@ class Game(globale_variablen.Settings):
         # self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
         self.syl_pos_change = 0
-        self.deleted_word_bool = False
-        self.deleted_code_word_bool = False
-        self.deletedlist = []
         self.deleted_word = ""
         self.start_syls_cut_at = 0
         self.pos_list = self.get_pos_list()
@@ -72,6 +70,7 @@ class Game(globale_variablen.Settings):
         self.step_fps = 1
         self.temp_update_code_defs = None
         self.text_snapshot_counter = 0
+        self.attempted_word = self.empty_word_obj.make_blank_word()
 
 
     def desk(self, click):  # the click is adjusted for where it'd be on screen_copy
@@ -82,28 +81,25 @@ class Game(globale_variablen.Settings):
         :param click: Das Mausclick
         :return: None
         '''
+        self.attempted_word.update()
         self.tript2.fill(self.dark)
         self.ziffern_und_code_woerter() # aktualisiert der obene mittlere Teil des Schirms (header)
-        # if self.temp:
-        #     print("in game temp")
-        #     temper = self.temp
-        #     tempest = Rect(self.end_header,self.end_first_screen_part,self.screenh-self.end_header,self.start_third_screen_part-self.end_first_screen_part)
-        #     self.screen_copy.fill(self.black,tempest)
-        #     self.blit_clickable_words(temper,self.yellow,self.screen_rect.center,screen=self.tript2)
         if click:
             x, y = click
             for syl in self.gold_syls + self.lila_syls:
                 if syl.rect.collidepoint(x, y):
+                    if self.attempted_word.is_guessed:
+                        self.attempted_word = self.empty_word_obj.make_blank_word()
                     if syl.clicked_on:
                         syl.clicked_on = False
-                        index = self.spieler.appendlist.index(syl)
-                        del self.spieler.appendlist[index]
+                        self.attempted_word.syls.remove(syl)
                     else:
                         syl.clicked_on = True
-                        self.draw_word(height_of_all=self.top, syl=syl, screen=self.tript2)
-        self.draw_word(height_of_all=self.top, screen=self.tript2)
+                        self.attempted_word.syls.append(syl)
+        if self.attempted_word:
+            self.draw_word( screen=self.tript2)
 
-    def draw_word(self, height_of_all=None, syl=None, screen=None):
+    def draw_word(self, screen=None):
         '''
         Zeichnet die geclickten Silben in der Mitte des Schirms
 
@@ -113,33 +109,18 @@ class Game(globale_variablen.Settings):
         :return: None
         '''
         # TODO make object word_on_screen and keep the variables that define its state inside of it
-        if not height_of_all:
-            height_of_all = self.down
-        if syl:
-            self.spieler.appendlist.append(syl)
-            if self.deleted_word_bool or self.deleted_code_word_bool:
-                self.deleted_word_bool = False
-                self.deleted_code_word_bool = False
-                self.deletedlist = []
-                self.deleted_word = ""
-            self.check_word()
-        if not screen:
-            screen = self.screen_copy
-        self.blit_word( surface=screen,height_of_all=self.down)
+        self.check_word()
+        self.blit_word(surface=screen)
 
     def make_def_list(self):
         '''
         Erzeugt eine Liste mit Teilen von der Definition des Wortes
         :return: diese Liste
         '''
-        if self.deleted_word_bool or self.deleted_code_word_bool:
-            bitlists = [word for a in self.deletedlist[:] for word in a.bit]
-        else:
-            bitlists = [word for a in self.spieler.appendlist[:] for word in a.bit]
+        bitlists = [word for syl in self.attempted_word.syls for word in syl.bit]
         return bitlists
 
-    def blit_word(self, height_of_all=0,
-                  surface=None):  # =None due to self.parameter not working (due to being out of the init?)
+    def blit_word(self, surface=None):  # =None due to self.parameter not working (due to being out of the init?)
         '''
         Zeichnet die geclickten Silben (als Teil der draw_word() Methode)
 
@@ -147,15 +128,14 @@ class Game(globale_variablen.Settings):
         :param surface: Der Schirm
         :return: None
         '''
-        if self.deleted_word_bool or self.deleted_code_word_bool:
+        if self.attempted_word.is_guessed:
             farbe = (self.yellow, self.yellow)
-            word_string = self.deleted_word
         else:
             farbe = (self.lime, self.cyan)
-            word_string = "".join([a.name for a in self.spieler.appendlist])
+            print("syl its:",self.attempted_word.name_from_syls)
         if not surface:
             surface = self.screen_copy
-        word_img = self.default_font.render(word_string, True, farbe[0])
+        word_img = self.default_font.render(self.attempted_word.name_from_syls, True, farbe[0])
         if self.temp_update_code_defs or self.word_to_move:
 
             guessed_code_words_definitions_ll = [bit for word in self.guessed_code_words[:] for bit in
@@ -165,15 +145,14 @@ class Game(globale_variablen.Settings):
             self.temp_update_code_defs = guessed_code_words_definitions_str
             temper = self.temp_update_code_defs
             blit_h = self.blit_clickable_words(temper, farbe[1], (
-                self.screen_copy.get_rect().center[0], height_of_all),
+                self.screen_copy.get_rect().center[0], self.top),
                                                screen=surface,snapshots=True)  # starts one line below the blitted word per the function
         else:
             surface.blit(word_img, (
-                surface.get_rect().center[0] - word_img.get_rect().w // 2, height_of_all))
+                surface.get_rect().center[0] - word_img.get_rect().w // 2, self.top))
             # (bug: when the middle screen is too small for an individual word, the word gets cut (using either of the blit functions)
-            height_of_all += self.down
             blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
-                self.screen_copy.get_rect().center[0], height_of_all),
+                self.screen_copy.get_rect().center[0], self.top + self.down),
                                                screen=surface,snapshots=True)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
@@ -282,31 +261,29 @@ class Game(globale_variablen.Settings):
         :return: None
         '''
         temp_bool = True
-        appendlisttuples = [a.tuple for a in self.spieler.appendlist]
+        #appendlisttuples = [a.tuple for a in self.spieler.appendlist]
+        print("attempted word tuples:",self.attempted_word.tuples)
+
         for word in self.words:  # check for the word in non-code words
-            wordtuples = [a.tuple for a in word.syls]  # 1 comparison with wordtuples for each word in words
-            if appendlisttuples == wordtuples:
-                self.deleted_word = word.name
+            if word.tuples == self.attempted_word.tuples:
+                self.attempted_word.is_guessed = True
                 self.delete_word()
                 self.words.remove(word)  # words is used only for cheating
-                self.deleted_word_bool = True
                 temp_bool = False
         if temp_bool:
             for word in self.woerter.unguessed_code_words:  # check in code words
-                wordtuples = [a.tuple for a in word.syls]
-                if appendlisttuples == wordtuples:
-                    self.deleted_word = word.name
+                if word.tuples == self.attempted_word.tuples:
+                    self.attempted_word.is_guessed = True
                     self.delete_word()
                     self.woerter.unguessed_code_words.remove(word)
                     self.guessed_code_words.append(word)
-                    self.deleted_code_word_bool = True
 
     def delete_word(self):  # same syl is actually different objects in different lists, why?
         '''
         Loescht ein erratenes Wort
         :return:
         '''
-        for this in self.spieler.appendlist:
+        for this in self.attempted_word.syls:
             for syl in self.syls:
                 if this.tuple == syl.tuple:
                     index = self.syls.index(syl)
@@ -319,7 +296,7 @@ class Game(globale_variablen.Settings):
                     else:
                         self.syls.remove(syl)
                     self.sylscounter -= 1
-            for syl in self.spieler.my_silben:
+            for syl in self.spieler.my_silben: # update the other lists automatically?
                 if this.tuple == syl.tuple:
                     self.spieler.my_silben.remove(syl)
             for syl in self.gold_syls:
@@ -328,8 +305,6 @@ class Game(globale_variablen.Settings):
             for syl in self.lila_syls:
                 if this.tuple == syl.tuple:
                     self.lila_syls.remove(syl)
-        self.deletedlist = self.spieler.appendlist[:]
-        self.spieler.appendlist = []
 
     def blink(self, num_steps, syl, new_color, start_color=None):
         '''

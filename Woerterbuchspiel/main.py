@@ -68,7 +68,7 @@ class Main:
         :return: None
         '''
         pg.init()
-        print(pg.font.get_fonts())
+        #print(pg.font.get_fonts())
         gameloop_ = gameloop.Gameloop(code_satz, file_paths, letztes_spiel_code, spielwoerter)
         gameloop_.mainloop()
         print("Uebergabe Code:", gameloop_.game_objekt.output_code)
