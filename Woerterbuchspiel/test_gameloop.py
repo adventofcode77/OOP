@@ -15,7 +15,7 @@ class TestGameloop(TestCase):
         letztes_spiel_code = "0000011001"
         woerterbuch_objekt = woerterbuch.Woerterbuch(file_paths[0])
 
-        with open('erste_1000_word_lists.txt', 'rb') as handle:
+        with open('1000_word_lists.txt', 'rb') as handle:
             data = handle.read()
         die_ersten_1000_word_lists = pickle.loads(data)
 

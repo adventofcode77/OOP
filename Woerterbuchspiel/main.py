@@ -21,7 +21,7 @@ class Main:
 
     ''' CODE FÜR PASSIVE MODE: Die folgenden linien erstellen eine Textdatei, die 
     die Funktion vom File woerterbuch.py ersetzt. Sie sind auskommentiert, weil die Textdatei
-    (namens erste_1000_word_lists.txt) schon erstellt wurde.'''
+    (namens erste_1000_word_lists.txt) schon erstellt wurde.
 
     erste_1000_word_lists = woerterbuch_objekt.list_of_word_lists
 
@@ -30,7 +30,7 @@ class Main:
         pickle.dump(erste_1000_word_lists, file)
         file.close()
     except:
-        print("main.py records versuch gescheitert")
+        print("main.py records versuch gescheitert")'''
 
 
 
