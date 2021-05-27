@@ -96,21 +96,11 @@ class Game(globale_variablen.Settings):
                     else:
                         syl.clicked_on = True
                         self.attempted_word.syls.append(syl)
-        if self.attempted_word:
-            self.draw_word( screen=self.tript2)
-
-    def draw_word(self, screen=None):
-        '''
-        Zeichnet die geclickten Silben in der Mitte des Schirms
-
-        :param height_of_all: Das Ende des gezeichten Wortes (die Y-koordinate)
-        :param syl: Ein SIlbe-Objekt
-        :param screen: Der Schirm
-        :return: None
-        '''
-        # TODO make object word_on_screen and keep the variables that define its state inside of it
-        self.check_word()
-        self.blit_word(surface=screen)
+        if self.temp_update_code_defs or self.word_to_move:
+            self.blit_code_text(surface=self.tript2)
+        else:
+            self.check_word()
+            self.blit_word(surface=self.tript2)
 
     def make_def_list(self):
         '''
@@ -122,38 +112,36 @@ class Game(globale_variablen.Settings):
 
     def blit_word(self, surface=None):  # =None due to self.parameter not working (due to being out of the init?)
         '''
-        Zeichnet die geclickten Silben (als Teil der draw_word() Methode)
+        Zeichnet die geclickten Silben in der Mitte des Schirms
 
         :param height_of_all: Das Ende des gezeichten Wortes (die Y-koordinate)
         :param surface: Der Schirm
         :return: None
         '''
-        if self.attempted_word.is_guessed:
-            farbe = (self.yellow, self.yellow)
+        if self.attempted_word.is_guessed: farbe = (self.yellow, self.yellow)
         else:
             farbe = (self.lime, self.cyan)
             print("syl its:",self.attempted_word.name_from_syls)
-        if not surface:
-            surface = self.screen_copy
+        if not surface: surface = self.screen_copy
         word_img = self.default_font.render(self.attempted_word.name_from_syls, True, farbe[0])
-        if self.temp_update_code_defs or self.word_to_move:
+        surface.blit(word_img, (
+            surface.get_rect().center[0] - word_img.get_rect().w // 2, self.top))
+        # (bug: when the middle screen is too small for an individual word, the word gets cut (using either of the blit functions)
+        blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
+            self.screen_copy.get_rect().center[0], self.top + self.down),
+                                           screen=surface,snapshots=True)  # starts one line below the blitted word per the function
 
-            guessed_code_words_definitions_ll = [bit for word in self.guessed_code_words[:] for bit in
-                                                 word.bits]
-            guessed_code_words_definitions_l = [" ".join(lst) for lst in guessed_code_words_definitions_ll]
-            guessed_code_words_definitions_str = " ".join(guessed_code_words_definitions_l)
-            self.temp_update_code_defs = guessed_code_words_definitions_str
-            temper = self.temp_update_code_defs
-            blit_h = self.blit_clickable_words(temper, farbe[1], (
-                self.screen_copy.get_rect().center[0], self.top),
-                                               screen=surface,snapshots=True)  # starts one line below the blitted word per the function
-        else:
-            surface.blit(word_img, (
-                surface.get_rect().center[0] - word_img.get_rect().w // 2, self.top))
-            # (bug: when the middle screen is too small for an individual word, the word gets cut (using either of the blit functions)
-            blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
-                self.screen_copy.get_rect().center[0], self.top + self.down),
-                                               screen=surface,snapshots=True)  # starts one line below the blitted word per the function
+    def blit_code_text(self, surface):
+        guessed_code_words_definitions_ll = [bit for word in self.guessed_code_words[:] for bit in
+                                             word.bits]
+        guessed_code_words_definitions_l = [" ".join(lst) for lst in guessed_code_words_definitions_ll]
+        guessed_code_words_definitions_str = " ".join(guessed_code_words_definitions_l)
+        self.temp_update_code_defs = guessed_code_words_definitions_str
+        temper = self.temp_update_code_defs
+        blit_h = self.blit_clickable_words(temper, self.yellow, (
+            self.screen_copy.get_rect().center[0], self.top),
+                                           screen=surface,
+                                           snapshots=True)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, midtop, afont=0, screen=None,
                              no_buttons=True, snapshots=False,start_end=None):
