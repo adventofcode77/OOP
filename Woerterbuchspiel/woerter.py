@@ -10,9 +10,9 @@ class Woerter:
     '''
     all_syls = []
 
-    def __init__(self, game_instance):
+    def __init__(self, game_instance, dict):
         self.info = game_instance
-        self.dictwithkeyname = self.info.spielwoerter
+        self.dictwithkeyname = dict
         self.totalsyls = 0
         self.worder = 0
         self.words = self.get_words(self.dictwithkeyname)

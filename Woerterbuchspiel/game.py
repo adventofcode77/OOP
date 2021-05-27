@@ -17,7 +17,6 @@ class Game(globale_variablen.Settings):
     '''
     def __init__(self, code_satz, file_paths, binary_code, dict):
         super().__init__()
-        self.radiuses = []
         self.blink_counter = 0
         self.top = 0
         self.gw, self.nw = None, None
@@ -27,7 +26,6 @@ class Game(globale_variablen.Settings):
         self.code_satz = code_satz
         self.output_code = code_satz[0]
         self.next_counter = 0
-        self.test_next_counter = 0
         self.menu = menu.Menu(self)
         self.file_path = file_paths[0]
         self.syl_speed_change = 10
@@ -35,17 +33,13 @@ class Game(globale_variablen.Settings):
         # variables above may be needed to initialise other classes' instances
         self.spieler = spieler.Spieler(self)  # takes the game object as parameter
         self.empty_word_obj = word.Word("", "", [], 404, 404, self)
-        self.spielwoerter = dict
-        self.woerter = woerter.Woerter(self)
+        self.woerter = woerter.Woerter(self, dict)
         self.words = self.woerter.words
         syls = self.woerter.silben + self.woerter.code_syls
         self.syls = random.sample(syls, len(syls))
-        self.silben_copy, self.code_silben_copy, self.syls_copy = self.woerter.silben[:], self.woerter.code_syls[
-                                                                                          :], self.syls[:]
         # self.syls = silbe.Silbe.silbe_all_syls # why does this cause errors compared to self.bank.silben?
         self.sylscounter = len(self.syls)
         self.syl_pos_change = 0
-        self.deleted_word = ""
         self.start_syls_cut_at = 0
         self.pos_list = self.get_pos_list()
         self.gold_syls, self.lila_syls = [], []
@@ -81,7 +75,6 @@ class Game(globale_variablen.Settings):
         :param click: Das Mausclick
         :return: None
         '''
-        self.attempted_word.update()
         self.tript2.fill(self.dark)
         self.ziffern_und_code_woerter() # aktualisiert der obene mittlere Teil des Schirms (header)
         if click:
@@ -119,13 +112,10 @@ class Game(globale_variablen.Settings):
         :return: None
         '''
         if self.attempted_word.is_guessed: farbe = (self.yellow, self.yellow)
-        else:
-            farbe = (self.lime, self.cyan)
-            print("syl its:",self.attempted_word.name_from_syls)
+        else: farbe = (self.lime, self.cyan)
         if not surface: surface = self.screen_copy
         word_img = self.default_font.render(self.attempted_word.name_from_syls, True, farbe[0])
-        surface.blit(word_img, (
-            surface.get_rect().center[0] - word_img.get_rect().w // 2, self.top))
+        surface.blit(word_img, (surface.get_rect().center[0] - word_img.get_rect().w // 2, self.top))
         # (bug: when the middle screen is too small for an individual word, the word gets cut (using either of the blit functions)
         blit_h = self.blit_clickable_words(self.make_def_list(), farbe[1], (
             self.screen_copy.get_rect().center[0], self.top + self.down),
@@ -179,16 +169,21 @@ class Game(globale_variablen.Settings):
                                                                            last_word_right, lst,
                                                                            midtop, screen, spacing, start)
         # snapshots
-        if snapshots and snapshots_counter:
-            snapshot_to_blit = self.divide_text_into_surfaces(list_snapshots_to_blit, copy_screen)
-            self.blit_snapshots_arrows(snapshot_to_blit,last_line_down)
-        else:
-            snapshot_to_blit = copy_screen.copy()
-        screen.blit(snapshot_to_blit, (0, 0))
+        self.blit_text_snapshot(copy_screen, last_line_down, list_snapshots_to_blit, screen, snapshots,
+                                snapshots_counter)
         # buttons
         if no_buttons:
             self.buttons = copy_buttons
         return last_line_down + self.font_spacing(afont)  # how far down the screen there is curently text
+
+    def blit_text_snapshot(self, copy_screen, last_line_down, list_snapshots_to_blit, screen, snapshots,
+                           snapshots_counter):
+        if snapshots and snapshots_counter:
+            snapshot_to_blit = self.divide_text_into_surfaces(list_snapshots_to_blit, copy_screen)
+            self.blit_snapshots_arrows(snapshot_to_blit, last_line_down)
+        else:
+            snapshot_to_blit = copy_screen.copy()
+        screen.blit(snapshot_to_blit, (0, 0))
 
     def blit_snapshots_arrows(self,screen,last_line_down):
         y = 0.1* (self.screenh - self.end_header)
