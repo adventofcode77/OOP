@@ -80,8 +80,6 @@ class Spieler():
             if pikd in self.info.woerter.code_syls:
                 self.info.gold_syls.append(pikd)
                 self.info.gute_silbe_sound.play()
-                # time.wait(int(self.info.gute_silbe_sound.get_length()))
             else:
-                self.info.lila_syls.append(pikd)
+                self.info.bad_syls.append(pikd)
                 self.info.bad_silbe_sound.play()
-                # time.wait(int(self.info.gute_silbe_sound.get_length()))

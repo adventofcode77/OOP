@@ -42,10 +42,10 @@ class Game(globale_variablen.Settings):
         self.syl_pos_change = 0
         self.start_syls_cut_at = 0
         self.pos_list = self.get_pos_list()
-        self.gold_syls, self.lila_syls = [], []
+        self.gold_syls, self.bad_syls = [], []
         self.columnWidth = self.screenw // 8
         self.end_first_screen_part = (self.columnWidth) * ((len(self.gold_syls) // self.h) + 1)
-        self.start_third_screen_part = self.screenw - self.columnWidth * (len(self.lila_syls) // self.h + 1)
+        self.start_third_screen_part = self.screenw - self.columnWidth * (len(self.bad_syls) // self.h + 1)
         self.end_header = self.down
         self.tript2 = self.screen_copy.subsurface(self.end_first_screen_part, self.end_header,
                                                   self.start_third_screen_part - self.end_first_screen_part, # times two?
@@ -80,9 +80,9 @@ class Game(globale_variablen.Settings):
         if click:
             x,y = click
             click_rect = Rect(x,y,1,1)
-            all_syls = self.gold_syls + self.lila_syls
+            all_syls = self.gold_syls + self.bad_syls
             collision = click_rect.collidelist(all_syls)
-            if collision:
+            if collision != -1:
                 syl = all_syls[collision]
                 if self.attempted_word.is_guessed:
                     self.attempted_word = self.empty_word_obj.make_blank_word()
@@ -93,7 +93,7 @@ class Game(globale_variablen.Settings):
                     syl.clicked_on = True
                     self.attempted_word.syls.append(syl)
         if self.temp_update_code_defs or self.word_to_move:
-            self.blit_code_text(surface=self.tript2)
+            self.blit_code_text()
         else:
             self.check_word()
             self.blit_word(surface=self.tript2)
@@ -115,15 +115,55 @@ class Game(globale_variablen.Settings):
         blit_h = self.blit_clickable_words(self.attempted_word.meaning, farbe[1], self.top + self.down,
                                            screen=surface,snapshots=True)  # starts one line below the blitted word per the function
 
-    def blit_code_text(self, surface):
+    def check_word(self):
+        '''
+        Prueft, ob das aufgebaute Wort richtig ist.
+        :return: None
+        '''
+        self.remove_word_from_lists_if_guessed(self.words)
+        self.remove_word_from_lists_if_guessed(self.woerter.unguessed_code_words)
+
+    def remove_guessed_word_syls_from_list(self, lst):
+        for syl in self.attempted_word.syls:
+            lst.remove(syl)
+
+    def remove_word_from_lists_if_guessed(self, lst):
+        for word in lst:
+            if word.tuples == self.attempted_word.tuples:
+                self.attempted_word.is_guessed = True
+                self.delete_word()
+                lst.remove(word)
+                if lst == self.woerter.unguessed_code_words:
+                    self.guessed_code_words.append(word)
+                    self.remove_guessed_word_syls_from_list(self.gold_syls)
+                else:
+                    self.remove_guessed_word_syls_from_list(self.bad_syls)
+
+    def delete_word(self):  # same syl is actually different objects in different lists, why?
+        '''
+        Loescht ein erratenes Wort
+        :return:
+        '''
+        self.sylscounter -= len(self.attempted_word.syls)
+        for this in self.attempted_word.syls:
+            if len(self.syls) < len(self.pos_list):
+                replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self, self.dark)  # replace with simpler object?
+                replacement.visible = False
+                replacement.rect.w, replacement.rect.h = 1, 1
+                index = self.syls.index(this)
+                self.syls[index] = replacement
+            else:
+                self.syls.remove(this)
+            self.spieler.my_silben.remove(this)
+
+    def blit_code_text(self):
         guessed_code_words_definitions_ll = [bit for word in self.guessed_code_words[:] for bit in
                                              word.bits]
         guessed_code_words_definitions_l = [" ".join(lst) for lst in guessed_code_words_definitions_ll]
         guessed_code_words_definitions_str = " ".join(guessed_code_words_definitions_l)
         self.temp_update_code_defs = guessed_code_words_definitions_str
-        temper = self.temp_update_code_defs
-        blit_h = self.blit_clickable_words(temper, self.yellow, self.top,
-                                           screen=surface,
+        blit_h = self.blit_clickable_words(guessed_code_words_definitions_str, self.yellow, self.top,
+                                           screen=self.tript2,
                                            snapshots=True)  # starts one line below the blitted word per the function
 
     def blit_clickable_words(self, lst, color, height, afont=0, screen=None,
@@ -229,58 +269,6 @@ class Game(globale_variablen.Settings):
         elif self.text_snapshot_counter > len(list_snapshots_to_blit) - 1:
             self.text_snapshot_counter = 0
         return list_snapshots_to_blit[self.text_snapshot_counter]
-
-
-    def check_word(self):
-        '''
-        Prueft, ob das aufgebaute Wort richtig ist.
-        :return: None
-        '''
-        temp_bool = True
-        #appendlisttuples = [a.tuple for a in self.spieler.appendlist]
-        print("attempted word tuples:",self.attempted_word.tuples)
-
-        for word in self.words:  # check for the word in non-code words
-            if word.tuples == self.attempted_word.tuples:
-                self.attempted_word.is_guessed = True
-                self.delete_word()
-                self.words.remove(word)  # words is used only for cheating
-                temp_bool = False
-        if temp_bool:
-            for word in self.woerter.unguessed_code_words:  # check in code words
-                if word.tuples == self.attempted_word.tuples:
-                    self.attempted_word.is_guessed = True
-                    self.delete_word()
-                    self.woerter.unguessed_code_words.remove(word)
-                    self.guessed_code_words.append(word)
-
-    def delete_word(self):  # same syl is actually different objects in different lists, why?
-        '''
-        Loescht ein erratenes Wort
-        :return:
-        '''
-        for this in self.attempted_word.syls:
-            for syl in self.syls:
-                if this.tuple == syl.tuple:
-                    index = self.syls.index(syl)
-                    if len(self.syls) < len(self.pos_list):
-                        replacement = silbe.Silbe("o", "word", ["bit"], 404, 404, self,
-                                                  (0, 0, 0))  # replace with simpler object?
-                        replacement.visible = False
-                        replacement.rect.x, replacement.rect.y = 1, 1
-                        self.syls[index] = replacement
-                    else:
-                        self.syls.remove(syl)
-                    self.sylscounter -= 1
-            for syl in self.spieler.my_silben: # update the other lists automatically?
-                if this.tuple == syl.tuple:
-                    self.spieler.my_silben.remove(syl)
-            for syl in self.gold_syls:
-                if this.tuple == syl.tuple:
-                    self.gold_syls.remove(syl)
-            for syl in self.lila_syls:
-                if this.tuple == syl.tuple:
-                    self.lila_syls.remove(syl)
 
     def blink(self, num_steps, syl, new_color, start_color=None):
         '''
@@ -416,7 +404,7 @@ class Game(globale_variablen.Settings):
         Zeichnet der rechte Teil des Loops
         :return:
         '''
-        lil = self.lila_syls[:]
+        lil = self.bad_syls[:]
         lila_tuples = [syl.tuple for syl in lil]
         non_code_tuples = [word.tuples for word in self.words]
 

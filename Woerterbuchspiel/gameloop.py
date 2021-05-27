@@ -263,7 +263,7 @@ class Gameloop():
         self.game_objekt.attempted_word.update()
 
         self.game_objekt.end_first_screen_part = self.game_objekt.columnWidth * ((len(self.game_objekt.gold_syls) // self.game_objekt.h) + 1)
-        self.game_objekt.start_third_screen_part = self.game_objekt.screenw - self.game_objekt.columnWidth * ((len(self.game_objekt.lila_syls) // self.game_objekt.h) + 1)
+        self.game_objekt.start_third_screen_part = self.game_objekt.screenw - self.game_objekt.columnWidth * ((len(self.game_objekt.bad_syls) // self.game_objekt.h) + 1)
         self.game_objekt.header = self.game_objekt.screen_copy.subsurface(0, 0, self.game_objekt.screenw, self.game_objekt.end_header)
         self.game_objekt.tript2 = self.game_objekt.screen_copy.subsurface(self.game_objekt.end_first_screen_part, self.game_objekt.end_header,
                                                   self.game_objekt.start_third_screen_part - self.game_objekt.end_first_screen_part,
