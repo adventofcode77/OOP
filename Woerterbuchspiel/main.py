@@ -35,7 +35,7 @@ class Main:
 
 
 
-    with open('Woerterbuchspiel/1000_word_lists.txt', 'rb') as handle:
+    with open('1000_word_lists.txt', 'rb') as handle:
         '''
         Hier wird die Textdatei aus dem Format XML zum Format Python (.py) umwandelt 
         und in der Variabel "spielwoerter" gespeichert.
@@ -55,7 +55,7 @@ class Main:
     @staticmethod
     def newgame(code_satz, file_paths, letztes_spiel_code, spielwoerter):
         mixer.init()
-        background_music = mixer.Sound("Woerterbuchspiel/Media/airtone_blackSnow.mp3")
+        background_music = mixer.Sound("Media/airtone_blackSnow.mp3")
         background_music.play(-1)
         '''
         Hier wird ein Objekt aus der Klasse Gameloop erzeugt.

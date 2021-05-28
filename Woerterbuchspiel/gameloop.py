@@ -71,7 +71,9 @@ class Gameloop():
                     # if e.key == K_0:
                     #     self.new_start()
                     if e.key == K_SPACE:  # go to the desk
-                        if self.wait:
+                        if self.menu:
+                            continue
+                        elif self.wait:
                             if self.won:
                                 self.end = True
                             elif self.new_game:
@@ -82,12 +84,10 @@ class Gameloop():
                             self.main_loop = False
                         else: # main_loop = false; paused
                             self.menu = False
-                            self.game_objekt.nicht_in_intro_or_outro = True
                             if not self.game_objekt.start_ticks:
                                 self.game_objekt.start_ticks = time.get_ticks()
                             self.game_objekt.next_counter = 0
                             self.main_loop = True
-                            self.game_objekt.nicht_in_bewegung = False
                             # clear the list and attributes for making words so that you start anew next time
                             for item in self.game_objekt.spieler.my_silben:
                                 item.clicked_on = False
@@ -108,10 +108,9 @@ class Gameloop():
                             self.main_loop = False
                     elif e.key == K_DOWN:
                         if self.menu:
+                            self.game_objekt.display_timer_and_help_sign = True
+                            self.game_objekt.start_ticks = time.get_ticks()
                             self.menu = False
-                            self.game_objekt.nicht_in_intro_or_outro = True
-                            if not self.game_objekt.start_ticks:
-                                self.game_objekt.start_ticks = time.get_ticks()
                             self.game_objekt.next_counter = 0
                             self.main_loop = True
                         else:
@@ -126,6 +125,7 @@ class Gameloop():
             # AFTER A NEW GAME HAS STARTED
             self.check_time_left(self.time_left)
             if self.wait:
+                self.game_objekt.display_timer_and_help_sign = False
                 '''
                 Hier ist der Zustand des Spiels entweden gewonnen, verloren oder Neustart
                 '''
@@ -143,12 +143,10 @@ class Gameloop():
                 Hier ist der Zustand des Spiels entweder "am Anfang bei der Anleitung" oder
                 "pausiert, um die Anleitung nochmals zu lesen"
                 '''
-                self.game_objekt.nicht_in_bewegung = True
                 # next = self.game_objekt.menu.tutorial(self.game_objekt.next_counter)
                 next = self.game_objekt.menu.intro(self.game_objekt.next_counter)
                 self.game_objekt.next_counter = next
             elif self.menu_aenderbar:
-                self.game_objekt.nicht_in_bewegung = True
                 self.game_objekt.localised_instructions()
                 #self.game_objekt.next_counter = self.game_objekt.menu.tutorial(self.game_objekt.next_counter)
             elif self.main_loop:
@@ -194,7 +192,6 @@ class Gameloop():
                 # GEWINNVORAUSSETZUNG TESTEN
                 if " ".join([word.name for word in self.game_objekt.guessed_code_words]) == self.game_objekt.woerter.code_satz:
                     self.won = True
-                    self.game_objekt.nicht_in_intro_or_outro = False
                     self.wait = True
         mixer.quit()
         quit()
