@@ -84,7 +84,6 @@ class Game(globale_variablen.Settings):
             collision = click_rect.collidelist(all_syls)
             if collision != -1:
                 syl = all_syls[collision]
-                print("clicked on syl",syl.name)
                 if self.attempted_word.is_guessed:
                     self.attempted_word = self.empty_word_obj.make_blank_word()
                 if syl.clicked_on:
@@ -96,7 +95,6 @@ class Game(globale_variablen.Settings):
         if self.temp_update_code_defs or self.clicked_word_index:
             self.blit_code_text()
         else:
-            print("about to blit the current word")
             self.check_word()
             self.blit_word(surface=self.tript2)
 
@@ -568,7 +566,6 @@ class Game(globale_variablen.Settings):
             for each in self.guessed_code_words: each.color = None
             click_rect = Rect(click[0], click[1], 1, 1)
             index = click_rect.collidelist([a.rect for a in self.buttons])
-            print([b.text for b in self.buttons])
             # das "-1" kompensiert dafür, dass der erste object im self.buttons ("NEU>>>") nicht berücksichtigt wird
             if index != -1 and index != 0: # "-1" bedeutet keine Kollision und "0" bedeutet das nicht zu berücksichtigen element "NEU>>>"
                 self.clicked_word_index = index - 1 # index wird in guessed_code_words benutzt, wo "NEU>>>" nicht existiert
